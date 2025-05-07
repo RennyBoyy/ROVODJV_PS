@@ -1,0 +1,9 @@
+# Enable Unity’s YAML merge tool for scenes, prefabs, and other text assets
+*.unity   merge=unityyamlmerge eol=lf
+*.prefab  merge=unityyamlmerge eol=lf
+*.asset   merge=unityyamlmerge eol=lf
+
+# Lock large binary assets to avoid merge conflicts
+*.fbx     lockable
+*.png     lockable
+*.wav     lockable
