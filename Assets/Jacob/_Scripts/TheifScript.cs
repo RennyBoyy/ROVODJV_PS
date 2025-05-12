@@ -6,14 +6,17 @@ using UnityEngine;
 public class TheifScript : MonoBehaviour
 {
     [SerializeField] private GameManager_Fruity gameManager;
-    [SerializeField] private float moveSpeed = 3f;
+    
     [SerializeField] private GameObject monsterPrefab;
 
-    private bool canWave = true;
+    [SerializeField] private GameObject[] monsterSpawner;
+
+    private bool canWave = false;
 
     void Start()
     {
-
+        canWave = true;
+        int RandomSpawner = Random.Range(0, monsterSpawner.Length);
     }
 
     // Update is called once per frame  
@@ -24,17 +27,14 @@ public class TheifScript : MonoBehaviour
             StartCoroutine(WaveCoroutine(Random.Range(5f, 10f)));
         }
 
-        if (gameManager.gameActive)
-        {
-            monsterPrefab.transform.position += -transform.forward * moveSpeed * Time.deltaTime;
-        }
+        
     }
 
 
     private void SpawnWaves()
     {
-        monsterPrefab = Instantiate(monsterPrefab, transform.position, transform.rotation);
-
+      int RandomSpawner = Random.Range(0, monsterSpawner.Length);
+      Instantiate(monsterPrefab, monsterSpawner[RandomSpawner].transform.position, transform.rotation);
     }
 
     private IEnumerator WaveCoroutine(float waitTime)
