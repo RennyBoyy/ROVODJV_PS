@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4608631304379427911}
   - component: {fileID: 248744360780747176}
   - component: {fileID: 6280282400652828211}
-  - component: {fileID: 1986492667465170580}
   m_Layer: 0
   m_Name: Tomato
   m_TagString: Tomato
@@ -122,31 +121,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b3eb62cb4cce714a8431741eac154c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deathTime: 4
   projectileSpeed: 10
---- !u!54 &1986492667465170580
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032593534228985478}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0

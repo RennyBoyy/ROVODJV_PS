@@ -18,6 +18,7 @@ public class PlayerScript : MonoBehaviour
     }
     private void Shoot()
     {
-        tomato = Instantiate(tomato, transform.position, transform.rotation);
+        Instantiate(tomato, transform.position, transform.rotation);
     }
+
 }

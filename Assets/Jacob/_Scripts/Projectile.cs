@@ -2,11 +2,16 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public float deathTime = 4f;
     public float projectileSpeed = 10f;
-   
+
+    void Start()
+    {
+        Destroy(this.gameObject, deathTime);
+    }
+
     void Update()
     {
-     this.transform.position += transform.forward * projectileSpeed * Time.deltaTime;
-        
+        transform.position += transform.forward * projectileSpeed * Time.deltaTime;
     }
 }

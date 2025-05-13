@@ -13,6 +13,13 @@ public class GameManager_Fruity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Fruit_Remaining <= 0)
+        {
+            loseGame();
+        }
+    }
+    private void loseGame()
+    {
+
     }
 }
