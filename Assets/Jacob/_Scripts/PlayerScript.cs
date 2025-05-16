@@ -14,6 +14,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private GameObject tomato;
     [SerializeField] private bool canMove = true;
     [SerializeField] private Transform[] lanePoints;
+    [SerializeField] private Transform hand;
     public int maxBullets = 10;
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI fullAmmoText;
@@ -21,66 +22,112 @@ public class PlayerScript : MonoBehaviour
     public int bullets;
     private int currentLane = 3;
 
+    // Lerp movement fields
+    [SerializeField] private float laneMoveDuration = 0.7f;
+    private bool isMoving = false;
+    private Vector3 targetPosition;
+    private float moveElapsed = 0f;
+    private Vector3 startPosition;
+
+    private Animator animator;
+
     private void Start()
     {
         bullets = maxBullets;
         UpdateAmmoUI();
         canMove = true;
-        if (lanePoints != null && lanePoints.Length > 0)
-        {
+        animator = GetComponent<Animator>();
+       
             transform.localPosition = lanePoints[currentLane].localPosition;
-        }
+       
+       
     }
 
     private void Update()
     {
         HandleMovement();
         HandleShooting();
+        HandleLerpMovement();
     }
 
     private void HandleMovement()
     {
+        if (isMoving || !canMove) return;
+
         float move = Input.GetAxisRaw("Horizontal");
 
-        if (move > 0.1f && canMove)
+        if (move > 0.1f)
         {
             if (currentLane > 0)
             {
                 currentLane--;
-                MoveToLane(currentLane);
+                StartLerpToLane(currentLane);
+                TriggerMoveAnimation(-1);
             }
             canMove = false;
             StartCoroutine(MoveLock());
         }
-        else if (move < -0.1f && canMove)
+        else if (move < -0.1f)
         {
             if (currentLane < lanePoints.Length - 1)
             {
                 currentLane++;
-                MoveToLane(currentLane);
+                StartLerpToLane(currentLane);
+                TriggerMoveAnimation(1);
             }
             canMove = false;
             StartCoroutine(MoveLock());
         }
     }
 
-    private void MoveToLane(int laneIndex)
+    private void StartLerpToLane(int laneIndex)
     {
         if (lanePoints != null && laneIndex >= 0 && laneIndex < lanePoints.Length)
         {
-            transform.position = lanePoints[laneIndex].position;
+            startPosition = transform.position;
+            targetPosition = lanePoints[laneIndex].position;
+            moveElapsed = 0f;
+            isMoving = true;
         }
     }
+
+    private void HandleLerpMovement()
+    {
+        if (!isMoving) return;
+
+        moveElapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(moveElapsed / laneMoveDuration);
+        transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+
+        if (t >= 1f)
+        {
+            isMoving = false;
+            transform.position = targetPosition;
+        }
+    }
+
+    private void TriggerMoveAnimation(int direction)
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger(direction > 0 ? "JumpRight" : "JumpLeft");
+        }
+    }
+
+    // 1. Remove Shoot() call from HandleShooting(), only trigger animation there.
+    // 2. Create a public method Shoot() to be called by animation event at the end of "Throw" animation.
 
     private void HandleShooting()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Shoot();
+            animator.SetTrigger("Throw");
+
         }
     }
 
-    private void Shoot()
+    // This method should be called by an Animation Event at the end of the "Throw" animation.
+    public void Shoot()
     {
         if (bullets <= 0)
         {
@@ -89,7 +136,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            Instantiate(tomato, transform.position, transform.rotation);
+            Instantiate(tomato, hand.transform.position, transform.rotation);
             bullets--;
             UpdateAmmoUI();
         }
@@ -134,9 +181,10 @@ public class PlayerScript : MonoBehaviour
             fullAmmoText.gameObject.SetActive(false);
         }
     }
+
     private IEnumerator MoveLock()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(laneMoveDuration);
         canMove = true;
     }
 }
