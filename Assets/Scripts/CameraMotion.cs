@@ -23,12 +23,12 @@ public class CameraMotion : MonoBehaviour
     {
         if (target == null)
         {
-            Debug.LogError("CameraZoom: No target assigned!");
+            Debug.LogError("CameraMotion: No target assigned!");
             enabled = false;
             return;
         }
 
-        // Place camera at the far offset
+        // Place camera at the far offset and look at the Earth
         transform.position = target.position + startOffset;
         transform.LookAt(target);
 
@@ -42,12 +42,13 @@ public class CameraMotion : MonoBehaviour
         {
             t += Time.deltaTime / zoomDuration;
 
-            // Lerp position
+            // Lerp offset and update position
             Vector3 currentOffset = Vector3.Lerp(startOffset, endOffset, t);
             transform.position = target.position + currentOffset;
 
             // Always look at the Earth
             transform.LookAt(target);
+
             yield return null;
         }
     }
