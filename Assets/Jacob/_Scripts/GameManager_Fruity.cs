@@ -1,10 +1,13 @@
+using TMPro;
 using UnityEngine;
 
 public class GameManager_Fruity : MonoBehaviour
 {
     public int Stage = 0;
-    public int Fruit_Remaining = 5;
+    public int Fruit_Remaining = 1;
     public bool gameActive = false;
+    [SerializeField] private TextMeshProUGUI loseText;
+
     void Start()
     {
         
@@ -20,6 +23,7 @@ public class GameManager_Fruity : MonoBehaviour
     }
     private void loseGame()
     {
-
+        Debug.Log("You lose!");
+        loseText.gameObject.SetActive(true);
     }
 }
