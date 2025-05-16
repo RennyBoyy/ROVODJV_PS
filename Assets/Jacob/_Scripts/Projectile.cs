@@ -1,9 +1,29 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
     public float deathTime = 4f;
     public float projectileSpeed = 10f;
+    public float spinSpeed = 360f;
+
+    private Vector3 moveDirection;
+    private Transform visual;
+    private bool isGravityOn = false;
+
+    void Awake()
+    {
+        moveDirection = transform.forward;
+
+        if (transform.childCount > 0)
+        {
+            visual = transform.GetChild(0);
+        }
+        else
+        {
+            visual = transform;
+        }
+    }
 
     void Start()
     {
@@ -12,6 +32,31 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
-        transform.position += -transform.forward * projectileSpeed * Time.deltaTime;
+        if (!isGravityOn)
+        {
+            transform.position += -moveDirection * projectileSpeed * Time.deltaTime;
+        }
+
+        if (visual != null)
+        {
+            if (!isGravityOn)
+            {
+                visual.Rotate(Vector3.one, spinSpeed * Time.deltaTime, Space.Self);
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Monster"))
+        {
+            Rigidbody rb;
+            if (TryGetComponent<Rigidbody>(out rb))
+            {
+                rb.useGravity = true;
+                isGravityOn = true;
+                
+            }
+        }
     }
 }

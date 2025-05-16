@@ -662,6 +662,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -147.82288
       objectReference: {fileID: 0}
+    - target: {fileID: -5805326926300847223, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8e4a26ff17e27a346a3e33728b25d12b, type: 2}
     - target: {fileID: -4874003512123141728, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -13.642501
@@ -916,7 +920,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42094cdcb2d894942b770998ef8fe900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tomato: {fileID: 6032593534228985478, guid: 3320263ca344348458bc4f1dfe25bf72, type: 3}
+  tomato: {fileID: 7557888044053601718, guid: 52135e9df133ad242bd14bcd3b5b27da, type: 3}
   canMove: 1
   lanePoints:
   - {fileID: 833175451}

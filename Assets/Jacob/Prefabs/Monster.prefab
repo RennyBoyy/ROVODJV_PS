@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7258887971050883631}
   m_Layer: 0
   m_Name: Monster
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,6 +125,7 @@ MonoBehaviour:
   moveSpeed: 3
   monsterHealth: 3
   gameManager: {fileID: 0}
+  monsterEatingTime: 3
 --- !u!54 &7258887971050883631
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ TagManager:
   - GameManager
   - LoseCon
   - LoseText
+  - Monster
   layers:
   - Default
   - TransparentFX
