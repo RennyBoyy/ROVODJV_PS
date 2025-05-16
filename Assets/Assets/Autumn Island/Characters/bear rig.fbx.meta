@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c686793bf728af14782df9964cc7a3fb
+guid: faefcbc2959de734abaa51e23566c2e4
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,6 +31,64 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
+      name: Fight God Animation
+      takeName: Armature|Fight God Animation
+      internalID: 11340990947831803
+      firstFrame: 0
+      lastFrame: 79
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Fight God Loop
+      takeName: Armature|Fight God Loop
+      internalID: -5360235484660260818
+      firstFrame: 0
+      lastFrame: 29
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
       name: Idle stance
       takeName: Armature|Idle stance
       internalID: -7704227059369049933
@@ -60,11 +118,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|IKPoleLeg.LAction
-      takeName: Armature|IKPoleLeg.LAction
-      internalID: 8650682161541694922
+      name: Jump to the left
+      takeName: Armature|Jump to the left
+      internalID: 7571441637342215291
       firstFrame: 0
-      lastFrame: 0
+      lastFrame: 9
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -89,11 +147,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|IKPoleLeg.RAction
-      takeName: Armature|IKPoleLeg.RAction
-      internalID: -1418155513103385717
+      name: Jump to the right
+      takeName: Armature|Jump to the right
+      internalID: 702811888054027332
       firstFrame: 0
-      lastFrame: 0
+      lastFrame: 9
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -147,9 +205,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Windback
+      name: wind back animation
       takeName: Armature|Throw Animation
-      internalID: 3686363708648687677
+      internalID: 5494973897368580383
       firstFrame: 14
       lastFrame: 23
       wrapMode: 0
