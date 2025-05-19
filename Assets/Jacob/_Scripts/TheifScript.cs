@@ -19,7 +19,6 @@ public class TheifScript : MonoBehaviour
         int RandomSpawner = Random.Range(0, monsterSpawner.Length);
     }
 
-    // Update is called once per frame  
     void Update()
     {
         if (gameManager.gameActive && canWave)

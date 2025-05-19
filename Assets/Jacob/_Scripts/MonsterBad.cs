@@ -31,17 +31,21 @@ public class MonsterBad : MonoBehaviour
                 if (targetLife != null)
                 {
                     Debug.Log("Life lost");
-                    Destroy(targetLife);
+                    if (targetLife != null)
+                    {
+                        Debug.Log("Life lost");
+                        var collider = targetLife.GetComponent<Collider>();
+                        if (collider != null)
+                        {
+                            Destroy(collider);
+                        }
+                    }
+
+
+                    isEating = false;
+                    eatingTimer = 0f;
                 }
-
-                isEating = false;
-                eatingTimer = 0f;
             }
-        }
-
-        if (monsterHealth <= 0)
-        {
-            Destroy(this.gameObject);
         }
     }
 

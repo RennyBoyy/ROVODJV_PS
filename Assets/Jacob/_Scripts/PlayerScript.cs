@@ -1,18 +1,10 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-
-// Pseudocode:
-// - Track the current lane index (int currentLane).
-// - On left input (move < -0.1f), increment currentLane (move right in array).
-// - On right input (move > 0.1f), decrement currentLane (move left in array).
-// - Clamp currentLane between 0 and lanePoints.Length - 1.
-// - Set transform.localPosition to lanePoints[currentLane].localPosition.
-
+using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private GameObject tomato;
-    [SerializeField] private bool canMove = true;
     [SerializeField] private Transform[] lanePoints;
     [SerializeField] private Transform hand;
     public int maxBullets = 10;
@@ -21,8 +13,6 @@ public class PlayerScript : MonoBehaviour
 
     public int bullets;
     private int currentLane = 3;
-
-    // Lerp movement fields
     [SerializeField] private float laneMoveDuration = 0.7f;
     private bool isMoving = false;
     private Vector3 targetPosition;
@@ -30,33 +20,48 @@ public class PlayerScript : MonoBehaviour
     private Vector3 startPosition;
 
     private Animator animator;
+    private float moveInput;
+    private bool shootInput;
+    private bool canMove = true;
 
     private void Start()
     {
         bullets = maxBullets;
         UpdateAmmoUI();
-        canMove = true;
         animator = GetComponent<Animator>();
-       
+        if (lanePoints != null && lanePoints.Length > currentLane && lanePoints[currentLane] != null)
             transform.localPosition = lanePoints[currentLane].localPosition;
-       
-       
     }
 
     private void Update()
     {
         HandleMovement();
-        HandleShooting();
         HandleLerpMovement();
+
+        if (shootInput)
+        {
+            if (animator != null)
+                animator.SetTrigger("Throw");
+            shootInput = false;
+        }
+    }
+
+    public void OnMove(InputAction.CallbackContext ctx)
+    {
+        moveInput = ctx.ReadValue<Vector2>().x;
+    }
+
+    public void OnAttack(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+            shootInput = true;
     }
 
     private void HandleMovement()
     {
         if (isMoving || !canMove) return;
 
-        float move = Input.GetAxisRaw("Horizontal");
-
-        if (move > 0.1f)
+        if (moveInput > 0.1f)
         {
             if (currentLane > 0)
             {
@@ -67,7 +72,7 @@ public class PlayerScript : MonoBehaviour
             canMove = false;
             StartCoroutine(MoveLock());
         }
-        else if (move < -0.1f)
+        else if (moveInput < -0.1f)
         {
             if (currentLane < lanePoints.Length - 1)
             {
@@ -82,7 +87,7 @@ public class PlayerScript : MonoBehaviour
 
     private void StartLerpToLane(int laneIndex)
     {
-        if (lanePoints != null && laneIndex >= 0 && laneIndex < lanePoints.Length)
+        if (lanePoints != null && laneIndex >= 0 && laneIndex < lanePoints.Length && lanePoints[laneIndex] != null)
         {
             startPosition = transform.position;
             targetPosition = lanePoints[laneIndex].position;
@@ -114,19 +119,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    // 1. Remove Shoot() call from HandleShooting(), only trigger animation there.
-    // 2. Create a public method Shoot() to be called by animation event at the end of "Throw" animation.
-
-    private void HandleShooting()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            animator.SetTrigger("Throw");
-
-        }
-    }
-
-    // This method should be called by an Animation Event at the end of the "Throw" animation.
+    // Called by animation event in throw animation
     public void Shoot()
     {
         if (bullets <= 0)
@@ -136,7 +129,8 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            Instantiate(tomato, hand.transform.position, transform.rotation);
+            if (tomato != null && hand != null)
+                Instantiate(tomato, hand.transform.position, transform.rotation);
             bullets--;
             UpdateAmmoUI();
         }
@@ -154,7 +148,7 @@ public class PlayerScript : MonoBehaviour
 
     private IEnumerator ShowOutOfAmmo()
     {
-        if (ammoText != null)
+        if (fullAmmoText != null)
         {
             fullAmmoText.text = "Out of Ammo!";
             fullAmmoText.color = Color.red;
@@ -164,7 +158,8 @@ public class PlayerScript : MonoBehaviour
             float elapsed = 0f;
             Color startColor = fullAmmoText.color;
             Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
-            if (ammoText != null && fullAmmoText.rectTransform != null)
+
+            if (fullAmmoText.rectTransform != null)
             {
                 fullAmmoText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
                 fullAmmoText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
@@ -188,3 +183,5 @@ public class PlayerScript : MonoBehaviour
         canMove = true;
     }
 }
+
+    
