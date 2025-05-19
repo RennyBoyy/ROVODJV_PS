@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class EarthMotion : MonoBehaviour
 {
     [Header("Speeds")]
-    [SerializeField] private float controlRotationSpeed = 30f;   // user drag
-    [SerializeField] private float idleSpinSpeed = 10f;   // auto-spin when idle
+    [SerializeField] private float controlRotationSpeed = 30f;
+    [SerializeField] private float idleSpinSpeed = 10f;
 
     [Header("Bobbing")]
     [SerializeField] private float bobSpeed = 1f;
@@ -24,18 +24,19 @@ public class EarthMotion : MonoBehaviour
     [Header("Focus / Snap Settings")]
     [SerializeField] private float raycastDistance = 7f;
     [SerializeField] private float snapDuration = 0.5f;
+    [Range(0f, 1f)]
+    [SerializeField] private float snapSmoothStep = 0.8f;  // 0=linear, 1=full SmoothStep
     [SerializeField] private KeyCode exitKeyKeyboard = KeyCode.B;
     [SerializeField] private KeyCode exitKeyJoystick = KeyCode.JoystickButton1;
 
     [Header("Snap Cooldown")]
     [SerializeField] private float snapCooldownDuration = 2f;
 
-    // Make this struct serializable so it shows up in the Inspector
     [System.Serializable]
     public struct ContinentPanel
     {
-        public string continentName;  // e.g. "Africa"
-        public GameObject panel;        // assign the matching UI panel here
+        public string continentName;  // matches continent Transform.name
+        public GameObject panel;        // assign UI panels here 
     }
 
     [Header("Continent Panels")]
@@ -44,8 +45,10 @@ public class EarthMotion : MonoBehaviour
     // Internals
     private Transform _cam;
     private Vector3 _startPos;
+    private float _bobPhase;
     private float _idleTimer;
     private float _idleWeight = 1f;
+    private float _idleWeightVel = 0f;
     private Vector2 _lastInput = Vector2.up;
 
     private bool _isSnapping;
@@ -61,8 +64,7 @@ public class EarthMotion : MonoBehaviour
     void Awake()
     {
         _cam = Camera.main.transform;
-
-        // Hide all continent panels at start
+        // hide all panels at startup
         foreach (var cp in continentPanels)
             if (cp.panel != null)
                 cp.panel.SetActive(false);
@@ -71,22 +73,23 @@ public class EarthMotion : MonoBehaviour
     void Start()
     {
         _startPos = transform.position;
+        _bobPhase = 0f;
     }
 
     void Update()
     {
-        // Cooldown tick
+        // cooldown tick
         if (_snapCooldownTimer > 0f)
             _snapCooldownTimer -= Time.deltaTime;
 
-        // If mid?snap, advance it
+        // advancing a snap
         if (_isSnapping)
         {
             RunSnap();
             return;
         }
 
-        // If a panel is up, only watch for the exit key
+        // if panel is open, only watch for exit
         if (_isFocused)
         {
             if (Input.GetKeyDown(exitKeyKeyboard) || Input.GetKeyDown(exitKeyJoystick))
@@ -98,14 +101,13 @@ public class EarthMotion : MonoBehaviour
             return;
         }
 
-        // Normal rotate vs. idle
+        // user input vs idle
         Vector2 inV = GatherInput();
         if (inV.sqrMagnitude > 0.001f)
             HandleMovement(inV);
         else
             ApplyIdleMotion();
 
-        // Try auto?snap
         TryAutoSnap();
     }
 
@@ -129,7 +131,8 @@ public class EarthMotion : MonoBehaviour
     {
         _lastInput = inV.normalized;
         _idleTimer = 0f;
-        _idleWeight = Mathf.Lerp(_idleWeight, 0f, Time.deltaTime * idleFadeSpeed);
+        // smoothly fade idle weight down
+        _idleWeight = Mathf.SmoothDamp(_idleWeight, 0f, ref _idleWeightVel, 1f / idleFadeSpeed);
 
         transform.Rotate(Vector3.up,
                          inV.x * controlRotationSpeed * Time.deltaTime,
@@ -138,16 +141,27 @@ public class EarthMotion : MonoBehaviour
         transform.Rotate(_cam.right,
                          -inV.y * controlRotationSpeed * Time.deltaTime,
                          Space.World);
+        // always stay at base position while rotating
+        transform.position = _startPos;
     }
 
     void ApplyIdleMotion()
     {
         _idleTimer += Time.deltaTime;
-        if (_idleTimer < idleDelay) return;
+        if (_idleTimer < idleDelay)
+        {
+            // before bobbing starts, stay at base
+            transform.position = _startPos;
+            return;
+        }
 
-        _idleWeight = Mathf.Lerp(_idleWeight, 1f, Time.deltaTime * idleFadeSpeed);
-        if (_idleWeight <= 0.001f) return;
+        // smoothly fade idle weight up
+        _idleWeight = Mathf.SmoothDamp(_idleWeight, 1f, ref _idleWeightVel, 1f / idleFadeSpeed);
 
+        // custom phase in/out
+        _bobPhase += Time.deltaTime * bobSpeed;
+
+        // rotate slowly around the last input axis
         Vector3 axis;
         float sign;
         if (Mathf.Abs(_lastInput.x) >= Mathf.Abs(_lastInput.y))
@@ -165,8 +179,9 @@ public class EarthMotion : MonoBehaviour
                          sign * idleSpinSpeed * _idleWeight * Time.deltaTime,
                          Space.World);
 
-        float newY = _startPos.y + Mathf.Sin(Time.time * bobSpeed) * bobAmount * _idleWeight;
-        transform.position = new Vector3(_startPos.x, newY, _startPos.z);
+        // bob using our phase
+        float offsetY = Mathf.Sin(_bobPhase) * bobAmount * _idleWeight;
+        transform.position = _startPos + Vector3.up * offsetY;
     }
 
     void TryAutoSnap()
@@ -185,24 +200,32 @@ public class EarthMotion : MonoBehaviour
 
     void BeginSnap(Transform target)
     {
+        // reset bob & pos
+        _bobPhase = 0f;
+        transform.position = _startPos;
+
         _snapTargetName = target.name;
         _isSnapping = true;
         _snapLerp = 0f;
         _snapStartRot = transform.rotation;
 
         Vector3 normal = (target.position - transform.position).normalized;
-        Vector3 toCamera = (_cam.position - transform.position).normalized;
-        Quaternion align = Quaternion.FromToRotation(normal, toCamera);
+        Vector3 toCam = (_cam.position - transform.position).normalized;
+        Quaternion align = Quaternion.FromToRotation(normal, toCam);
         _snapEndRot = align * transform.rotation;
     }
 
     void RunSnap()
     {
         _snapLerp += Time.deltaTime / snapDuration;
-        float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(_snapLerp));
-        transform.rotation = Quaternion.Slerp(_snapStartRot, _snapEndRot, t);
+        float rawT = Mathf.Clamp01(_snapLerp);
+        float smoothT = Mathf.SmoothStep(0f, 1f, rawT);
+        float t = Mathf.Lerp(rawT, smoothT, snapSmoothStep);
 
-        if (_snapLerp >= 1f)
+        transform.rotation = Quaternion.Slerp(_snapStartRot, _snapEndRot, t);
+        transform.position = _startPos;
+
+        if (rawT >= 1f)
         {
             _isSnapping = false;
             _isFocused = true;
@@ -221,7 +244,7 @@ public class EarthMotion : MonoBehaviour
                 return;
             }
         }
-        Debug.LogWarning($"No UI panel assigned for continent '{continentName}'");
+        Debug.LogWarning($"No panel assigned for continent '{continentName}'");
     }
 
     void ClosePanel()
@@ -231,7 +254,11 @@ public class EarthMotion : MonoBehaviour
             _activePanel.SetActive(false);
             _activePanel = null;
         }
+        // reset to start fresh next idle
         _idleTimer = 0f;
+        _idleWeightVel = 0f;
         _idleWeight = 1f;
+        _bobPhase = 0f;
+        transform.position = _startPos;
     }
 }
