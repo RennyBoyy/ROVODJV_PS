@@ -11,6 +11,7 @@ public class PlayerScript : MonoBehaviour
     public int maxBullets = 10;
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI fullAmmoText;
+    [SerializeField] private bool LeftOrRight;
 
     public int bullets;
     private int currentLane = 3;
@@ -30,6 +31,12 @@ public class PlayerScript : MonoBehaviour
         bullets = maxBullets;
         UpdateAmmoUI();
         animator = GetComponent<Animator>();
+
+        // Set rotation based on LeftOrRight
+        if (LeftOrRight)
+            transform.rotation = Quaternion.Euler(0, 180, 0); 
+        else
+            transform.rotation = Quaternion.Euler(0, 0, 0);
 
         Transform laneGroup = GameObject.Find(laneGroupName)?.transform;
         if (laneGroup != null)
@@ -197,15 +204,21 @@ public class PlayerScript : MonoBehaviour
         canMove = true;
     }
   
-   public void OnPlayerJoined(PlayerInput playerInput)
+public void OnPlayerJoined(PlayerInput playerInput)
     {
         var playerScript = playerInput.GetComponent<PlayerScript>();
         if (playerScript != null)
         {
             if (playerInput.playerIndex == 0)
+            {
                 playerScript.laneGroupName = "Collliders_Lives";
+                playerScript.LeftOrRight = true; // Left player
+            }
             else if (playerInput.playerIndex == 1)
+            {
                 playerScript.laneGroupName = "Collliders_Lives (1)";
+                playerScript.LeftOrRight = false; // Right player
+            }
             // ...and so on for more players
         }
     }

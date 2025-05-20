@@ -1544,6 +1544,7 @@ GameObject:
   m_Component:
   - component: {fileID: 611932715}
   - component: {fileID: 611932714}
+  - component: {fileID: 611932716}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1584,6 +1585,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &611932716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 611932713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9d7f718fdafcc04980e50686bc2fec5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player1AmmoText: {fileID: 811322719}
+  player1EmptyText: {fileID: 576306431}
+  player2AmmoText: {fileID: 285536829}
+  player2EmptyText: {fileID: 1796326271}
 --- !u!114 &617094127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4694,7 +4711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NotificationBehavior: 2
-  m_MaxPlayerCount: -1
+  m_MaxPlayerCount: 2
   m_AllowJoining: 1
   m_JoinBehavior: 0
   m_PlayerJoinedEvent:
@@ -4702,6 +4719,18 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6728099140723499517, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
         m_TargetAssemblyTypeName: PlayerScript, Assembly-CSharp
+        m_MethodName: OnPlayerJoined
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 611932716}
+        m_TargetAssemblyTypeName: PlayerUIAssigner, Assembly-CSharp
         m_MethodName: OnPlayerJoined
         m_Mode: 0
         m_Arguments:

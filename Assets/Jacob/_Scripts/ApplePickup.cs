@@ -30,10 +30,10 @@ public class AmmoPile : MonoBehaviour
                 playerammo = player.GetComponent<PlayerScript>();
                 if (playerammo != null)
                 {
-                    break; // Player and PlayerScript found, exit loop
+                    break;
                 }
             }
-            yield return null; // Wait for next frame and try again
+            yield return null; 
         }
 
         if (ammoStages == null || ammoStages.Length == 0)
