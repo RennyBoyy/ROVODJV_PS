@@ -17,24 +17,29 @@ public class AmmoPile : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindWithTag("Player");
-        if (player == null)
-        {
-            Debug.LogError("AmmoPile: No GameObject with tag 'Player' found!");
-            return;
-        }
+        StartCoroutine(WaitForPlayer());
+    }
 
-        playerammo = player.GetComponent<PlayerScript>();
-        if (playerammo == null)
+    private IEnumerator WaitForPlayer()
+    {
+        while (true)
         {
-            Debug.LogError("AmmoPile: Player GameObject does not have a PlayerScript component!");
-            return;
+            player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                playerammo = player.GetComponent<PlayerScript>();
+                if (playerammo != null)
+                {
+                    break; // Player and PlayerScript found, exit loop
+                }
+            }
+            yield return null; // Wait for next frame and try again
         }
 
         if (ammoStages == null || ammoStages.Length == 0)
         {
             Debug.LogError("AmmoPile: No ammo stage prefabs assigned!");
-            return;
+            yield break;
         }
 
         for (int i = 0; i < ammoStages.Length; i++)

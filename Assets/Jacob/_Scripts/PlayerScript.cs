@@ -7,6 +7,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private GameObject tomato;
     [SerializeField] private Transform[] lanePoints;
     [SerializeField] private Transform hand;
+    [SerializeField] private string laneGroupName = "Collliders_Lives";
     public int maxBullets = 10;
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI fullAmmoText;
@@ -29,8 +30,22 @@ public class PlayerScript : MonoBehaviour
         bullets = maxBullets;
         UpdateAmmoUI();
         animator = GetComponent<Animator>();
-        
+
+        Transform laneGroup = GameObject.Find(laneGroupName)?.transform;
+        if (laneGroup != null)
+        {
+            lanePoints = new Transform[laneGroup.childCount];
+            for (int i = 0; i < laneGroup.childCount; i++)
+            {
+                lanePoints[i] = laneGroup.GetChild(i);
+            }
+        }
+        else
+        {
+            Debug.LogError("Lane group not found: " + laneGroupName);
+        }
     }
+   
 
     private void Update()
     {
@@ -180,6 +195,24 @@ public class PlayerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(laneMoveDuration);
         canMove = true;
+    }
+  
+   public void OnPlayerJoined(PlayerInput playerInput)
+    {
+        var playerScript = playerInput.GetComponent<PlayerScript>();
+        if (playerScript != null)
+        {
+            if (playerInput.playerIndex == 0)
+                playerScript.laneGroupName = "Collliders_Lives";
+            else if (playerInput.playerIndex == 1)
+                playerScript.laneGroupName = "Collliders_Lives (1)";
+            // ...and so on for more players
+        }
+    }
+    public void SetAmmoUI(TextMeshProUGUI ammo, TextMeshProUGUI empty)
+    {
+        ammoText = ammo;
+        fullAmmoText = empty;
     }
 }
 
