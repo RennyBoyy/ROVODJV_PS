@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1009790402994810015
+--- !u!114 &-6748331514956955975
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Enemy Scarecrow
+  m_Name: Basket 2
   m_Shader: {fileID: -6465566751694194690, guid: 8c7f253add6e3ed4aba8192ceaa7daaa, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -38,11 +38,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Emmision_texture:
-        m_Texture: {fileID: 2800000, guid: 427e65abc0a54364f8f4b11178800a60, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2D:
-        m_Texture: {fileID: 2800000, guid: 933b0224cb3fb4d4aa4e504257da9437, type: 3}
+        m_Texture: {fileID: 2800000, guid: a8564526922c7f542b116b334e624307, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -59,16 +59,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Highlight_brightness: 0.975
+    - _Highlight_brightness: 0.99
     - _QueueControl: 0
     - _QueueOffset: 0
     - _highlight: 0
-    - _lighting_cutoff: 0.7
-    - _shadow_brightness: 0.48
+    - _lighting_cutoff: 0.3
+    - _shadow_brightness: 0.5
     m_Colors:
-    - _Color: {r: 0.54427195, g: 0.6377185, b: 0.93962264, a: 0}
-    - _Emmision_color: {r: 0.21180944, g: 1, b: 0.1490565, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Emmision_color: {r: 1, g: 1, b: 1, a: 1}
     - _Highlight_Color: {r: 1, g: 1, b: 1, a: 0}
-    - _Shadow_Color: {r: 0.9902567, g: 0.88113207, b: 1, a: 0}
+    - _Shadow_Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
