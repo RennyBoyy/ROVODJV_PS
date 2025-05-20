@@ -29,8 +29,7 @@ public class PlayerScript : MonoBehaviour
         bullets = maxBullets;
         UpdateAmmoUI();
         animator = GetComponent<Animator>();
-        if (lanePoints != null && lanePoints.Length > currentLane && lanePoints[currentLane] != null)
-            transform.localPosition = lanePoints[currentLane].localPosition;
+        
     }
 
     private void Update()

@@ -47,6 +47,12 @@ public class MonsterBad : MonoBehaviour
                 }
             }
         }
+        if (monsterHealth <= 0)
+        {
+            Destroy(this.gameObject);
+        }
+    
+
     }
 
     private void OnTriggerEnter(Collider other)

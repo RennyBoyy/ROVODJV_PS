@@ -10,6 +10,7 @@ TagManager:
   - LoseCon
   - LoseText
   - Monster
+  - AppleBarrier
   layers:
   - Default
   - TransparentFX
