@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float deathTime = 4f;
+    public float deathTime = 3f;
     public float projectileSpeed = 10f;
     public float spinSpeed = 360f;
 
@@ -58,6 +58,9 @@ public class Projectile : MonoBehaviour
                 
             }
         }
-        
+        if (other.CompareTag("AppleBarrier"))
+        {
+            Destroy(this.gameObject);
+        }
     }
 }
