@@ -1025,23 +1025,54 @@ MonoBehaviour:
   bobAmount: 0.1
   idleDelay: 0.2
   idleFadeSpeed: 3.5
-  joystickXAxis: JoystickX
-  joystickYAxis: JoystickY
-  joystickDeadzone: 0.2
   raycastDistance: 7
   snapDuration: 0.5
-  exitKeyKeyboard: 98
-  exitKeyJoystick: 331
+  snapSmoothStep: 0.8
   snapCooldownDuration: 2
   continentPanels:
   - continentName: Game1
     panel: {fileID: 1980231936}
+    sceneName: JacobScene
   - continentName: Game2
     panel: {fileID: 1690508157}
+    sceneName: 
   - continentName: Game3
     panel: {fileID: 940925765}
+    sceneName: 
   - continentName: Game4
     panel: {fileID: 684063963}
+    sceneName: 
+  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+--- !u!114 &470017685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470017676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &520075348
 GameObject:
   m_ObjectHideFlags: 0
@@ -4295,6 +4326,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1272213629455218791, guid: 828f1625ce273c94bbb1096d54c1bafa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 470017684}
+    - targetCorrespondingSourceObject: {fileID: 1272213629455218791, guid: 828f1625ce273c94bbb1096d54c1bafa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 470017685}
   m_SourcePrefab: {fileID: 100100000, guid: 828f1625ce273c94bbb1096d54c1bafa, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

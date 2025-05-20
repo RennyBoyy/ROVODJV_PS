@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class EarthMotion : MonoBehaviour
@@ -15,34 +17,28 @@ public class EarthMotion : MonoBehaviour
     [SerializeField] private float idleDelay = 0.5f;
     [SerializeField] private float idleFadeSpeed = 3f;
 
-    [Header("Joystick Axes & Deadzone")]
-    [SerializeField] private string joystickXAxis = "JoystickX";
-    [SerializeField] private string joystickYAxis = "JoystickY";
-    [Range(0f, 1f)]
-    [SerializeField] private float joystickDeadzone = 0.2f;
-
     [Header("Focus / Snap Settings")]
     [SerializeField] private float raycastDistance = 7f;
     [SerializeField] private float snapDuration = 0.5f;
     [Range(0f, 1f)]
-    [SerializeField] private float snapSmoothStep = 0.8f;  // 0=linear, 1=full SmoothStep
-    [SerializeField] private KeyCode exitKeyKeyboard = KeyCode.B;
-    [SerializeField] private KeyCode exitKeyJoystick = KeyCode.JoystickButton1;
+    [SerializeField] private float snapSmoothStep = 0.8f;
 
     [Header("Snap Cooldown")]
     [SerializeField] private float snapCooldownDuration = 2f;
 
-    [System.Serializable]
-    public struct ContinentPanel
-    {
-        public string continentName;  // matches continent Transform.name
-        public GameObject panel;        // assign UI panels here 
-    }
-
-    [Header("Continent Panels")]
+    [Header("Continent Panels & Scenes")]
+    [Tooltip("For each continent, assign the UI panel GameObject and the scene name to load on Confirm")]
     [SerializeField] private List<ContinentPanel> continentPanels;
 
-    // Internals
+    [Header("Input Actions (via PlayerInput)")]
+    public InputActionAsset actions;
+
+    // hooked up in Awake()
+    private InputAction moveAction;
+    private InputAction backAction;
+    private InputAction confirmAction;
+
+    // internals
     private Transform _cam;
     private Vector3 _startPos;
     private float _bobPhase;
@@ -60,14 +56,32 @@ public class EarthMotion : MonoBehaviour
     private float _snapCooldownTimer = 0f;
     private string _snapTargetName;
     private GameObject _activePanel;
+    private string _activeSceneName;  // ? track which scene to load
+
+    [System.Serializable]
+    public struct ContinentPanel
+    {
+        public string continentName;  // must match the Transform.name of your continent
+        public GameObject panel;         // the UI panel to show
+        public string sceneName;      // the scene to load when Confirm is pressed
+    }
 
     void Awake()
     {
         _cam = Camera.main.transform;
-        // hide all panels at startup
+
+        // hide all continent panels at startup
         foreach (var cp in continentPanels)
             if (cp.panel != null)
                 cp.panel.SetActive(false);
+
+        // grab our PlayerInput component and current action map
+        var pi = GetComponent<PlayerInput>();
+        var map = pi.currentActionMap;
+
+        moveAction = map.FindAction("Move", true);
+        backAction = map.FindAction("Back", true);
+        confirmAction = map.FindAction("Confirm", true);
     }
 
     void Start()
@@ -76,33 +90,54 @@ public class EarthMotion : MonoBehaviour
         _bobPhase = 0f;
     }
 
+    void OnEnable()
+    {
+        moveAction?.Enable();
+        backAction?.Enable();
+        confirmAction?.Enable();
+    }
+
+    void OnDisable()
+    {
+        moveAction?.Disable();
+        backAction?.Disable();
+        confirmAction?.Disable();
+    }
+
     void Update()
     {
-        // cooldown tick
+        // countdown for snap cooldown
         if (_snapCooldownTimer > 0f)
             _snapCooldownTimer -= Time.deltaTime;
 
-        // advancing a snap
+        // if we're in the middle of snapping, just do that
         if (_isSnapping)
         {
             RunSnap();
             return;
         }
 
-        // if panel is open, only watch for exit
+        // if a panel is open, listen only for Back or Confirm
         if (_isFocused)
         {
-            if (Input.GetKeyDown(exitKeyKeyboard) || Input.GetKeyDown(exitKeyJoystick))
+            if (backAction.triggered)
             {
                 ClosePanel();
                 _isFocused = false;
                 _snapCooldownTimer = snapCooldownDuration;
             }
+            else if (confirmAction.triggered)
+            {
+                if (!string.IsNullOrEmpty(_activeSceneName))
+                    SceneManager.LoadScene(_activeSceneName);
+                else
+                    Debug.LogWarning($"No scene assigned for continent '{_snapTargetName}'");
+            }
             return;
         }
 
-        // user input vs idle
-        Vector2 inV = GatherInput();
+        // normal rotation input
+        Vector2 inV = moveAction.ReadValue<Vector2>();
         if (inV.sqrMagnitude > 0.001f)
             HandleMovement(inV);
         else
@@ -111,37 +146,22 @@ public class EarthMotion : MonoBehaviour
         TryAutoSnap();
     }
 
-    Vector2 GatherInput()
-    {
-        Vector2 v = Vector2.zero;
-        if (Input.GetKey(KeyCode.A)) v.x = -1f;
-        if (Input.GetKey(KeyCode.D)) v.x = 1f;
-        if (Input.GetKey(KeyCode.W)) v.y = 1f;
-        if (Input.GetKey(KeyCode.S)) v.y = -1f;
-
-        float jx = Input.GetAxis(joystickXAxis);
-        float jy = -Input.GetAxis(joystickYAxis);
-        if (Mathf.Abs(jx) > joystickDeadzone) v.x += jx;
-        if (Mathf.Abs(jy) > joystickDeadzone) v.y += jy;
-
-        return Vector2.ClampMagnitude(v, 1f);
-    }
-
     void HandleMovement(Vector2 inV)
     {
         _lastInput = inV.normalized;
         _idleTimer = 0f;
-        // smoothly fade idle weight down
         _idleWeight = Mathf.SmoothDamp(_idleWeight, 0f, ref _idleWeightVel, 1f / idleFadeSpeed);
 
+        // horizontal rotation
         transform.Rotate(Vector3.up,
                          inV.x * controlRotationSpeed * Time.deltaTime,
                          Space.World);
 
+        // vertical rotation
         transform.Rotate(_cam.right,
                          -inV.y * controlRotationSpeed * Time.deltaTime,
                          Space.World);
-        // always stay at base position while rotating
+
         transform.position = _startPos;
     }
 
@@ -150,18 +170,13 @@ public class EarthMotion : MonoBehaviour
         _idleTimer += Time.deltaTime;
         if (_idleTimer < idleDelay)
         {
-            // before bobbing starts, stay at base
             transform.position = _startPos;
             return;
         }
 
-        // smoothly fade idle weight up
         _idleWeight = Mathf.SmoothDamp(_idleWeight, 1f, ref _idleWeightVel, 1f / idleFadeSpeed);
-
-        // custom phase in/out
         _bobPhase += Time.deltaTime * bobSpeed;
 
-        // rotate slowly around the last input axis
         Vector3 axis;
         float sign;
         if (Mathf.Abs(_lastInput.x) >= Mathf.Abs(_lastInput.y))
@@ -179,7 +194,6 @@ public class EarthMotion : MonoBehaviour
                          sign * idleSpinSpeed * _idleWeight * Time.deltaTime,
                          Space.World);
 
-        // bob using our phase
         float offsetY = Mathf.Sin(_bobPhase) * bobAmount * _idleWeight;
         transform.position = _startPos + Vector3.up * offsetY;
     }
@@ -200,7 +214,6 @@ public class EarthMotion : MonoBehaviour
 
     void BeginSnap(Transform target)
     {
-        // reset bob & pos
         _bobPhase = 0f;
         transform.position = _startPos;
 
@@ -241,6 +254,7 @@ public class EarthMotion : MonoBehaviour
             {
                 cp.panel?.SetActive(true);
                 _activePanel = cp.panel;
+                _activeSceneName = cp.sceneName;
                 return;
             }
         }
@@ -254,7 +268,7 @@ public class EarthMotion : MonoBehaviour
             _activePanel.SetActive(false);
             _activePanel = null;
         }
-        // reset to start fresh next idle
+
         _idleTimer = 0f;
         _idleWeightVel = 0f;
         _idleWeight = 1f;
