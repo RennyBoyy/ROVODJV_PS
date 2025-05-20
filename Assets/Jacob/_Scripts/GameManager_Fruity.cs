@@ -1,14 +1,14 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager_Fruity : MonoBehaviour
 {
-    public int Stage = 0;
+  //  public int Stage = 0;
     public int Fruit_Remaining = 1;
     public bool gameActive = false;
     [SerializeField] private TextMeshProUGUI loseText;
-    [SerializeField] private bool Player1;
-    [SerializeField] private bool Player2;
     void Start()
     {
         
@@ -25,5 +25,12 @@ public class GameManager_Fruity : MonoBehaviour
     {
         Debug.Log("You lose!");
         loseText.gameObject.SetActive(true);
+        StartCoroutine(LoadSceneAfterDelay());
+    }
+
+    private IEnumerator LoadSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene("RenTest");
     }
 }
