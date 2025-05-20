@@ -1035,7 +1035,7 @@ MonoBehaviour:
     sceneName: JacobScene
   - continentName: Game2
     panel: {fileID: 1690508157}
-    sceneName: 
+    sceneName: David Scene
   - continentName: Game3
     panel: {fileID: 940925765}
     sceneName: 
@@ -1822,7 +1822,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &684063964
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2039,7 +2039,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &940925766
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3413,7 +3413,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1690508158
 RectTransform:
   m_ObjectHideFlags: 0
