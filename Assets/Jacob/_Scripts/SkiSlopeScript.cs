@@ -11,33 +11,26 @@ public class SkiSlopeScript : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(SpawnObstaclesRoutine());
+        SpawnObstacles();
+       // StartCoroutine(SpawnObstaclesRoutine());
     }
 
-    private IEnumerator SpawnObstaclesRoutine()
+    /*private IEnumerator SpawnObstaclesRoutine()
     {
         while (true)
         {
             SpawnObstacles();
             yield return new WaitForSeconds(spawnInterval);
         }
-    }
+    }*/
 
     private void SpawnObstacles()
     {
         foreach (var floor in spawnPoints)
         {
-            // Pick 1 or 2 unique lanes
             List<int> laneIndices = new List<int> { 0, 1, 2 };
-            int obstaclesToSpawn = Random.Range(1, 3);
-            int idx = Random.Range(0, laneIndices.Count);
-            int laneIdx = laneIndices[idx];
-            laneIndices.RemoveAt(idx);
-
-            Vector3 spawnPos = floor.position + new Vector3(laneOffsets[laneIdx], 0, 0);
-            GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
-            Instantiate(prefab, spawnPos, Quaternion.identity);
-            /*for (int i = 0; i < obstaclesToSpawn; i++)
+            // Pick 2 unique lanes
+            for (int i = 0; i < 2; i++)
             {
                 int idx = Random.Range(0, laneIndices.Count);
                 int laneIdx = laneIndices[idx];
@@ -46,7 +39,7 @@ public class SkiSlopeScript : MonoBehaviour
                 Vector3 spawnPos = floor.position + new Vector3(laneOffsets[laneIdx], 0, 0);
                 GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
                 Instantiate(prefab, spawnPos, Quaternion.identity);
-            }*/
+            }
         }
     }
 }

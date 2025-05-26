@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     private float moveInput;
 
-    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float jumpForce = 30f;
     private bool isGrounded = true;
 
     [SerializeField] private Rigidbody m_Rigidbody;
