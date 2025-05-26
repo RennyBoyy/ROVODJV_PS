@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1968759843003973690
+--- !u!114 &-2034042492045124526
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,13 +20,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Outline
-  m_Shader: {fileID: -6465566751694194690, guid: 303dfaade894253479a8cea60c8f4678, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
+  m_Name: Water Test
+  m_Shader: {fileID: -6465566751694194690, guid: cf340ad0750ba5d4d898f11887f07704, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: cf340ad0750ba5d4d898f11887f07704, type: 3}
+  m_ModifiedSerializedProperties: 2
   m_ValidKeywords: []
   m_InvalidKeywords: []
-  m_LightmapFlags: 4
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -36,26 +36,20 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs:
-    - unity_Lightmaps:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_LightmapsInd:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_ShadowMasks:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+    m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Fade_Distance: 75
-    - _Outline_Thickness: 0.0065
-    - _QueueControl: 0
-    - _QueueOffset: 0
+    - _Depth: -0.3
+    - _FoamCutOff: 1.54
+    - _FoamSize: 30.31
+    - _SheenGlibness: 23.5
+    - _SheenSize: 54.39
+    - _SheenSpeed: 1.85
+    - _Smoothness: 0.55
+    - _Strength: 0.34
+    - _TransparentWater: 0
     m_Colors:
-    - _Outline_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _DeepWaterColor: {r: 0.098039195, g: 0.47741556, b: 0.49411765, a: 1}
+    - _ShallowWaterColor: {r: 0.435849, g: 0.92587775, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
