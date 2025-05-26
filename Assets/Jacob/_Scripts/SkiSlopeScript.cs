@@ -30,7 +30,14 @@ public class SkiSlopeScript : MonoBehaviour
             // Pick 1 or 2 unique lanes
             List<int> laneIndices = new List<int> { 0, 1, 2 };
             int obstaclesToSpawn = Random.Range(1, 3);
-            for (int i = 0; i < obstaclesToSpawn; i++)
+            int idx = Random.Range(0, laneIndices.Count);
+            int laneIdx = laneIndices[idx];
+            laneIndices.RemoveAt(idx);
+
+            Vector3 spawnPos = floor.position + new Vector3(laneOffsets[laneIdx], 0, 0);
+            GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
+            Instantiate(prefab, spawnPos, Quaternion.identity);
+            /*for (int i = 0; i < obstaclesToSpawn; i++)
             {
                 int idx = Random.Range(0, laneIndices.Count);
                 int laneIdx = laneIndices[idx];
@@ -39,7 +46,7 @@ public class SkiSlopeScript : MonoBehaviour
                 Vector3 spawnPos = floor.position + new Vector3(laneOffsets[laneIdx], 0, 0);
                 GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
                 Instantiate(prefab, spawnPos, Quaternion.identity);
-            }
+            }*/
         }
     }
 }
