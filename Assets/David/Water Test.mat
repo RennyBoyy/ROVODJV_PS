@@ -42,6 +42,7 @@ Material:
     - _Depth: -0.3
     - _FoamCutOff: 1.54
     - _FoamSize: 30.31
+    - _QueueControl: 0
     - _SheenGlibness: 23.5
     - _SheenSize: 54.39
     - _SheenSpeed: 1.85
