@@ -23,7 +23,11 @@ public class SkiSlopeScript : MonoBehaviour
             yield return new WaitForSeconds(spawnInterval);
         }
     }*/
-
+    /*fix jumping, 
+     * connect to main scene
+     * 2 player setup
+     collision deleting object and slower speed increse overall
+    */
     private void SpawnObstacles()
     {
         foreach (var floor in spawnPoints)
