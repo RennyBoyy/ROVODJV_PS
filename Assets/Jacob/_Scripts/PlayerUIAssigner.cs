@@ -15,7 +15,7 @@ public class PlayerUIAssigner : MonoBehaviour
 
     private void OnEnable()
     {
-        // Register to the PlayerInputManager event
+        
         var manager = FindFirstObjectByType<PlayerInputManager>();
         if (manager != null)
             manager.onPlayerJoined += OnPlayerJoined;
@@ -23,7 +23,7 @@ public class PlayerUIAssigner : MonoBehaviour
 
     private void OnDisable()
     {
-        // Unregister to avoid memory leaks
+        
         var manager = FindFirstObjectByType<PlayerInputManager>();
         if (manager != null)
             manager.onPlayerJoined -= OnPlayerJoined;
