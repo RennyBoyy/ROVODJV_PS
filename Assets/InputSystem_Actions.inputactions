@@ -1427,6 +1427,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "FishingMap",
+            "id": "16d3e515-32ee-4145-9ebd-e2fe4e9c1874",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "f625f8d3-537e-44a5-a1bf-fbba63b58b0d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a2a0c169-997b-4059-8b15-9782b9cf8f95",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
