@@ -1519,26 +1519,168 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             ""id"": ""16d3e515-32ee-4145-9ebd-e2fe4e9c1874"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
-                    ""type"": ""Button"",
+                    ""name"": ""Cast"",
+                    ""type"": ""Value"",
                     ""id"": ""f625f8d3-537e-44a5-a1bf-fbba63b58b0d"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Bite"",
+                    ""type"": ""Button"",
+                    ""id"": ""211d542f-9c77-4985-a430-84a8287d1169"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelSouth"",
+                    ""type"": ""Button"",
+                    ""id"": ""56b48ef7-8c9b-43c2-8620-33eb95d67770"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelEast"",
+                    ""type"": ""Button"",
+                    ""id"": ""275d44bd-9f28-4e8b-8ad1-544fdd8e89d5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelWest"",
+                    ""type"": ""Button"",
+                    ""id"": ""203d88e4-2b05-4ec5-b768-0847a4d6adf9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelNorth"",
+                    ""type"": ""Button"",
+                    ""id"": ""89826aed-65dd-4c14-a2cb-f5780becb71b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelFinish"",
+                    ""type"": ""Value"",
+                    ""id"": ""6b747485-3907-4b20-908f-7a24464a1650"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""a2a0c169-997b-4059-8b15-9782b9cf8f95"",
-                    ""path"": """",
+                    ""id"": ""3f71260e-3289-46d2-b912-cd9b3a1019fc"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Bite"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0232574d-e71f-47db-b01c-024b8aa92087"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelSouth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5cbfdcda-e1ed-4dad-924e-2c80dc6f8d3a"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelEast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43bab959-888d-4761-b681-e6fa356fa058"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelWest"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aafa04f0-1f7f-4acb-9d40-373cf82be52b"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelNorth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""29e04c68-a0e1-48cf-b231-b0b5c019c465"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelFinish"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""27f9b5db-7d60-46c6-a18e-1d48de137a9a"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cast"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Negative"",
+                    ""id"": ""3f5477f6-1e0f-4208-907f-d0271078716e"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Positive"",
+                    ""id"": ""a3c4d59d-d3c7-40f8-9812-7da89ef5dd54"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -1603,6 +1745,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isOR"": false
                 }
             ]
+        },
+        {
+            ""name"": ""PS4_P1"",
+            ""bindingGroup"": ""PS4_P1"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""PS4_P2"",
+            ""bindingGroup"": ""PS4_P2"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
         }
     ]
 }");
@@ -1644,7 +1808,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         // FishingMap
         m_FishingMap = asset.FindActionMap("FishingMap", throwIfNotFound: true);
-        m_FishingMap_Newaction = m_FishingMap.FindAction("New action", throwIfNotFound: true);
+        m_FishingMap_Cast = m_FishingMap.FindAction("Cast", throwIfNotFound: true);
+        m_FishingMap_Bite = m_FishingMap.FindAction("Bite", throwIfNotFound: true);
+        m_FishingMap_ReelSouth = m_FishingMap.FindAction("ReelSouth", throwIfNotFound: true);
+        m_FishingMap_ReelEast = m_FishingMap.FindAction("ReelEast", throwIfNotFound: true);
+        m_FishingMap_ReelWest = m_FishingMap.FindAction("ReelWest", throwIfNotFound: true);
+        m_FishingMap_ReelNorth = m_FishingMap.FindAction("ReelNorth", throwIfNotFound: true);
+        m_FishingMap_ReelFinish = m_FishingMap.FindAction("ReelFinish", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -2313,7 +2483,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     // FishingMap
     private readonly InputActionMap m_FishingMap;
     private List<IFishingMapActions> m_FishingMapActionsCallbackInterfaces = new List<IFishingMapActions>();
-    private readonly InputAction m_FishingMap_Newaction;
+    private readonly InputAction m_FishingMap_Cast;
+    private readonly InputAction m_FishingMap_Bite;
+    private readonly InputAction m_FishingMap_ReelSouth;
+    private readonly InputAction m_FishingMap_ReelEast;
+    private readonly InputAction m_FishingMap_ReelWest;
+    private readonly InputAction m_FishingMap_ReelNorth;
+    private readonly InputAction m_FishingMap_ReelFinish;
     /// <summary>
     /// Provides access to input actions defined in input action map "FishingMap".
     /// </summary>
@@ -2326,9 +2502,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public FishingMapActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "FishingMap/Newaction".
+        /// Provides access to the underlying input action "FishingMap/Cast".
         /// </summary>
-        public InputAction @Newaction => m_Wrapper.m_FishingMap_Newaction;
+        public InputAction @Cast => m_Wrapper.m_FishingMap_Cast;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/Bite".
+        /// </summary>
+        public InputAction @Bite => m_Wrapper.m_FishingMap_Bite;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelSouth".
+        /// </summary>
+        public InputAction @ReelSouth => m_Wrapper.m_FishingMap_ReelSouth;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelEast".
+        /// </summary>
+        public InputAction @ReelEast => m_Wrapper.m_FishingMap_ReelEast;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelWest".
+        /// </summary>
+        public InputAction @ReelWest => m_Wrapper.m_FishingMap_ReelWest;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelNorth".
+        /// </summary>
+        public InputAction @ReelNorth => m_Wrapper.m_FishingMap_ReelNorth;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelFinish".
+        /// </summary>
+        public InputAction @ReelFinish => m_Wrapper.m_FishingMap_ReelFinish;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2355,9 +2555,27 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_FishingMapActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_FishingMapActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            @Cast.started += instance.OnCast;
+            @Cast.performed += instance.OnCast;
+            @Cast.canceled += instance.OnCast;
+            @Bite.started += instance.OnBite;
+            @Bite.performed += instance.OnBite;
+            @Bite.canceled += instance.OnBite;
+            @ReelSouth.started += instance.OnReelSouth;
+            @ReelSouth.performed += instance.OnReelSouth;
+            @ReelSouth.canceled += instance.OnReelSouth;
+            @ReelEast.started += instance.OnReelEast;
+            @ReelEast.performed += instance.OnReelEast;
+            @ReelEast.canceled += instance.OnReelEast;
+            @ReelWest.started += instance.OnReelWest;
+            @ReelWest.performed += instance.OnReelWest;
+            @ReelWest.canceled += instance.OnReelWest;
+            @ReelNorth.started += instance.OnReelNorth;
+            @ReelNorth.performed += instance.OnReelNorth;
+            @ReelNorth.canceled += instance.OnReelNorth;
+            @ReelFinish.started += instance.OnReelFinish;
+            @ReelFinish.performed += instance.OnReelFinish;
+            @ReelFinish.canceled += instance.OnReelFinish;
         }
 
         /// <summary>
@@ -2369,9 +2587,27 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="FishingMapActions" />
         private void UnregisterCallbacks(IFishingMapActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @Cast.started -= instance.OnCast;
+            @Cast.performed -= instance.OnCast;
+            @Cast.canceled -= instance.OnCast;
+            @Bite.started -= instance.OnBite;
+            @Bite.performed -= instance.OnBite;
+            @Bite.canceled -= instance.OnBite;
+            @ReelSouth.started -= instance.OnReelSouth;
+            @ReelSouth.performed -= instance.OnReelSouth;
+            @ReelSouth.canceled -= instance.OnReelSouth;
+            @ReelEast.started -= instance.OnReelEast;
+            @ReelEast.performed -= instance.OnReelEast;
+            @ReelEast.canceled -= instance.OnReelEast;
+            @ReelWest.started -= instance.OnReelWest;
+            @ReelWest.performed -= instance.OnReelWest;
+            @ReelWest.canceled -= instance.OnReelWest;
+            @ReelNorth.started -= instance.OnReelNorth;
+            @ReelNorth.performed -= instance.OnReelNorth;
+            @ReelNorth.canceled -= instance.OnReelNorth;
+            @ReelFinish.started -= instance.OnReelFinish;
+            @ReelFinish.performed -= instance.OnReelFinish;
+            @ReelFinish.canceled -= instance.OnReelFinish;
         }
 
         /// <summary>
@@ -2468,6 +2704,32 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         {
             if (m_XRSchemeIndex == -1) m_XRSchemeIndex = asset.FindControlSchemeIndex("XR");
             return asset.controlSchemes[m_XRSchemeIndex];
+        }
+    }
+    private int m_PS4_P1SchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme PS4_P1Scheme
+    {
+        get
+        {
+            if (m_PS4_P1SchemeIndex == -1) m_PS4_P1SchemeIndex = asset.FindControlSchemeIndex("PS4_P1");
+            return asset.controlSchemes[m_PS4_P1SchemeIndex];
+        }
+    }
+    private int m_PS4_P2SchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme PS4_P2Scheme
+    {
+        get
+        {
+            if (m_PS4_P2SchemeIndex == -1) m_PS4_P2SchemeIndex = asset.FindControlSchemeIndex("PS4_P2");
+            return asset.controlSchemes[m_PS4_P2SchemeIndex];
         }
     }
     /// <summary>
@@ -2712,11 +2974,53 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     public interface IFishingMapActions
     {
         /// <summary>
-        /// Method invoked when associated input action "New action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Cast" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnCast(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Bite" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBite(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelSouth" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelSouth(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelEast" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelEast(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelWest" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelWest(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelNorth" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelNorth(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelFinish" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelFinish(InputAction.CallbackContext context);
     }
 }
