@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,17 +14,21 @@ public class PlayerController : MonoBehaviour
     public float m_Thrust = 1.0f;
     public float maxSpeed = 100f;
     private bool jumpInput;
+    private bool moving;
 
     private void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-       
+        moving = true;
     }
     private void Update()
     {
         HandleMovement();
-
-        m_Rigidbody.AddForce(new Vector3(0, -1f, 0.8f), ForceMode.Impulse);
+        if (moving)
+        {
+            m_Rigidbody.AddForce(new Vector3(0, -1f, 0.8f), ForceMode.Impulse);
+        }
+        
 
         if (jumpInput && isGrounded)
         {
@@ -54,7 +60,21 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Destroy(collision.gameObject);
+            StartCoroutine(StopMoving());
+        }
+        if (collision.gameObject.CompareTag("Respawn"))
+        {
+            SceneManager.LoadScene("RenTest");
+        }
     }
+    private IEnumerator StopMoving()
+    {
+        yield return new WaitForSeconds(2f);
+    }
+
     private void HandleMovement()
     {
        
@@ -67,4 +87,5 @@ public class PlayerController : MonoBehaviour
             m_Rigidbody.AddForce(new Vector3(-m_Thrust, 0, 0), ForceMode.Impulse);
         }
     }
+   
 }
