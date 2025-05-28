@@ -56,14 +56,16 @@ public class EarthMotion : MonoBehaviour
     private float _snapCooldownTimer = 0f;
     private string _snapTargetName;
     private GameObject _activePanel;
-    private string _activeSceneName;  // ? track which scene to load
+    private string _activeSceneName;
+    private int _activeLevelNumber; // Added to track level number
 
     [System.Serializable]
     public struct ContinentPanel
     {
-        public string continentName;  // must match the Transform.name of your continent
-        public GameObject panel;         // the UI panel to show
-        public string sceneName;      // the scene to load when Confirm is pressed
+        public string continentName; // must match the Transform.name of your continent
+        public GameObject panel;    // the UI panel to show
+        public string sceneName;    // the scene to load when Confirm is pressed
+        public int levelNumber;     // Added: level identifier for the persistent manager
     }
 
     void Awake()
@@ -129,7 +131,19 @@ public class EarthMotion : MonoBehaviour
             else if (confirmAction.triggered)
             {
                 if (!string.IsNullOrEmpty(_activeSceneName))
-                    SceneManager.LoadScene(_activeSceneName);
+                {
+                    // Use PersistentSceneManager instead of direct scene loading
+                    PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
+                    if (sceneManager != null)
+                    {
+                        sceneManager.LoadLevelWithTransition(_activeLevelNumber, _activeSceneName);
+                    }
+                    else
+                    {
+                        // Fallback to direct loading if no scene manager
+                        SceneManager.LoadScene(_activeSceneName);
+                    }
+                }
                 else
                     Debug.LogWarning($"No scene assigned for continent '{_snapTargetName}'");
             }
@@ -255,6 +269,7 @@ public class EarthMotion : MonoBehaviour
                 cp.panel?.SetActive(true);
                 _activePanel = cp.panel;
                 _activeSceneName = cp.sceneName;
+                _activeLevelNumber = cp.levelNumber; // Store level number
                 return;
             }
         }

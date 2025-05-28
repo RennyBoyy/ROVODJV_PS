@@ -4,8 +4,8 @@ using TMPro;
 
 public class MonsterBad : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private int monsterHealth = 3;
+    [SerializeField] private float moveSpeed = 2.5f;
+    [SerializeField] private int monsterHealth = 2;
     [SerializeField] private GameManager_Fruity gameManager;
     [SerializeField] private float monsterEatingTime = 3f;
     private bool isEating = false;
@@ -57,7 +57,7 @@ public class MonsterBad : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Tomato"))
+        if (other.gameObject.CompareTag("Tomato"))  
         {
             Debug.Log("hit Tomato");
             monsterHealth--;
