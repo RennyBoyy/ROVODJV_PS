@@ -26,14 +26,17 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Depth: 0
+    - _Depth: -1.76
     - _FoamCutOff: 1.5
     - _FoamSize: 30
+    - _Metallic: 0
+    - _QueueControl: 0
     - _SheenGlibness: 20
     - _SheenSize: 8
     - _SheenSpeed: 1
-    - _Smoothness: 0.8
-    - _Strength: 1
+    - _Smoothness: 0.678
+    - _Strength: 0.29
+    - _TransparentWater: 0
     m_Colors:
     - _DeepWaterColor: {r: 0.09803919, g: 0.30588236, b: 0.49411756, a: 1}
     - _ShallowWaterColor: {r: 0.43529406, g: 0.9254902, b: 1, a: 1}
