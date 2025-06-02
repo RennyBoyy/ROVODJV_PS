@@ -31,6 +31,6 @@ public class GameManager_Fruity : MonoBehaviour
     private IEnumerator LoadSceneAfterDelay()
     {
         yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene("RenTest");
+        SceneManager.LoadScene("BugabooPlanet");
     }
 }
