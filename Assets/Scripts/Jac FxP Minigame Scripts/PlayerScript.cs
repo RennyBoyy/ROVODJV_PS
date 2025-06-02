@@ -8,6 +8,8 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private Transform[] lanePoints;
     [SerializeField] private Transform hand;
     [SerializeField] private string laneGroupName = "Collliders_Lives";
+    public PlayerInput player1Input; 
+    public PlayerInput player2Input;
     public int maxBullets = 10;
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI fullAmmoText;
@@ -32,24 +34,18 @@ public class PlayerScript : MonoBehaviour
         UpdateAmmoUI();
         animator = GetComponent<Animator>();
 
-        // Set rotation based on LeftOrRight
-        if (LeftOrRight)
-            transform.rotation = Quaternion.Euler(0, 180, 0); 
-        else
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-
-        Transform laneGroup = GameObject.Find(laneGroupName)?.transform;
-        if (laneGroup != null)
+        // Assign keyboard to player 1
+        if (player1Input != null && Keyboard.current != null)
         {
-            lanePoints = new Transform[laneGroup.childCount];
-            for (int i = 0; i < laneGroup.childCount; i++)
-            {
-                lanePoints[i] = laneGroup.GetChild(i);
-            }
+            player1Input.SwitchCurrentControlScheme(Keyboard.current);
+            player1Input.ActivateInput();
         }
-        else
+
+        // Assign first gamepad to player 2
+        if (player2Input != null && Gamepad.all.Count > 0)
         {
-            Debug.LogError("Lane group not found: " + laneGroupName);
+            player2Input.SwitchCurrentControlScheme(Gamepad.all[0]);
+            player2Input.ActivateInput();
         }
     }
    
@@ -70,6 +66,7 @@ public class PlayerScript : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         moveInput = ctx.ReadValue<Vector2>().x;
+        Debug.Log(ctx.ReadValue<Vector2>());
     }
 
     public void OnAttack(InputAction.CallbackContext ctx)
@@ -203,20 +200,20 @@ public class PlayerScript : MonoBehaviour
         yield return new WaitForSeconds(laneMoveDuration);
         canMove = true;
     }
-  
-public void OnPlayerJoined(PlayerInput playerInput)
+
+    public void OnPlayerJoined(PlayerInput playerInput)
     {
         var playerScript = playerInput.GetComponent<PlayerScript>();
         if (playerScript != null)
         {
             if (playerInput.playerIndex == 0)
             {
-                playerScript.laneGroupName = "Collliders_Lives";
+                //playerScript.laneGroupName = "Collliders_Lives";
                 playerScript.LeftOrRight = true; // Left player
             }
             else if (playerInput.playerIndex == 1)
             {
-                playerScript.laneGroupName = "Collliders_Lives (1)";
+                //playerScript.laneGroupName = "Collliders_Lives (1)";
                 playerScript.LeftOrRight = false; // Right player
             }
             // ...and so on for more players

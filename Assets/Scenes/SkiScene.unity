@@ -1012,6 +1012,42 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f625f8d3-537e-44a5-a1bf-fbba63b58b0d
+    m_ActionName: FishingMap/Cast
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 211d542f-9c77-4985-a430-84a8287d1169
+    m_ActionName: FishingMap/Bite
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 56b48ef7-8c9b-43c2-8620-33eb95d67770
+    m_ActionName: FishingMap/ReelSouth
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 275d44bd-9f28-4e8b-8ad1-544fdd8e89d5
+    m_ActionName: FishingMap/ReelEast
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 203d88e4-2b05-4ec5-b768-0847a4d6adf9
+    m_ActionName: FishingMap/ReelWest
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 89826aed-65dd-4c14-a2cb-f5780becb71b
+    m_ActionName: FishingMap/ReelNorth
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6b747485-3907-4b20-908f-7a24464a1650
+    m_ActionName: FishingMap/ReelFinish
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603
+    m_ActionName: FruitGame/Move
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4ebcb98-196b-4d94-ad8a-64f3bf21148e
+    m_ActionName: FruitGame/Attack
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -2204,7 +2240,7 @@ Transform:
   m_GameObject: {fileID: 1045731036}
   serializedVersion: 2
   m_LocalRotation: {x: 0.21653353, y: -0, z: -0, w: 0.9762752}
-  m_LocalPosition: {x: 0, y: 578.65, z: -2063.41}
+  m_LocalPosition: {x: 0, y: 586, z: -2085}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2408,7 +2444,6 @@ MonoBehaviour:
   - {fileID: 297963916}
   - {fileID: 980244827}
   - {fileID: 723690900}
-  - {fileID: 1312421634}
   - {fileID: 45807301}
   - {fileID: 1698801854}
   - {fileID: 88116805}
@@ -2427,7 +2462,6 @@ MonoBehaviour:
   - -15
   - 0
   - 15
-  spawnInterval: 2
 --- !u!1 &1210345532
 GameObject:
   m_ObjectHideFlags: 0
@@ -2516,37 +2550,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.21653353, y: -0, z: -0, w: 0.9762752}
   m_LocalPosition: {x: 0, y: 416.8, z: -1467.1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1557672368}
-  m_LocalEulerAnglesHint: {x: 25.011, y: 0, z: 0}
---- !u!1 &1312421633
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1312421634}
-  m_Layer: 0
-  m_Name: Spawner (9)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1312421634
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1312421633}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.21653353, y: -0, z: -0, w: 0.9762752}
-  m_LocalPosition: {x: 0, y: 360, z: -1280}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3040,7 +3043,6 @@ Transform:
   - {fileID: 297963916}
   - {fileID: 980244827}
   - {fileID: 723690900}
-  - {fileID: 1312421634}
   - {fileID: 45807301}
   - {fileID: 1698801854}
   - {fileID: 88116805}
@@ -3078,7 +3080,7 @@ Transform:
   m_GameObject: {fileID: 1557865492}
   serializedVersion: 2
   m_LocalRotation: {x: 0.21653353, y: -0, z: -0, w: 0.9762752}
-  m_LocalPosition: {x: 0, y: 435, z: -1535.4}
+  m_LocalPosition: {x: 0, y: 438, z: -1544}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3299,6 +3301,42 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f625f8d3-537e-44a5-a1bf-fbba63b58b0d
+    m_ActionName: FishingMap/Cast
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 211d542f-9c77-4985-a430-84a8287d1169
+    m_ActionName: FishingMap/Bite
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 56b48ef7-8c9b-43c2-8620-33eb95d67770
+    m_ActionName: FishingMap/ReelSouth
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 275d44bd-9f28-4e8b-8ad1-544fdd8e89d5
+    m_ActionName: FishingMap/ReelEast
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 203d88e4-2b05-4ec5-b768-0847a4d6adf9
+    m_ActionName: FishingMap/ReelWest
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 89826aed-65dd-4c14-a2cb-f5780becb71b
+    m_ActionName: FishingMap/ReelNorth
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6b747485-3907-4b20-908f-7a24464a1650
+    m_ActionName: FishingMap/ReelFinish
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603
+    m_ActionName: FruitGame/Move
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4ebcb98-196b-4d94-ad8a-64f3bf21148e
+    m_ActionName: FruitGame/Attack
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player2

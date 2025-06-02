@@ -7,7 +7,7 @@ public class SkiSlopeScript : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private GameObject[] obstaclePrefabs;
     [SerializeField] private float[] laneOffsets = new float[] { -2f, 0f, 2f };
-    [SerializeField] private float spawnInterval = 2f;
+    //[SerializeField] private float spawnInterval = 2f;
 
     private void Start()
     {

@@ -112,7 +112,7 @@
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
+                    "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -1597,6 +1597,76 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "FruitGame",
+            "id": "ee7e9397-36c2-4e28-895b-088a8655f2fb",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "f4ebcb98-196b-4d94-ad8a-64f3bf21148e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "1D Axis",
+                    "id": "6f947374-092f-40f8-89c9-ccbd1366da30",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Negative",
+                    "id": "c1f0a79b-64f5-4848-a209-2372c23107b4",
+                    "path": "<Gamepad>/leftStick/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Positive",
+                    "id": "3a33d6f2-2f47-4fbf-bc29-09a21cdb35cf",
+                    "path": "<Gamepad>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "50970fe8-6af2-40ed-b57c-6eb50ea09916",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
@@ -1677,6 +1747,28 @@
             "devices": [
                 {
                     "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Xbox1",
+            "bindingGroup": "Xbox1",
+            "devices": [
+                {
+                    "devicePath": "<XInputController>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Xbox2",
+            "bindingGroup": "Xbox2",
+            "devices": [
+                {
+                    "devicePath": "<XInputController>",
                     "isOptional": false,
                     "isOR": false
                 }
