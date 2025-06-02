@@ -15,7 +15,7 @@ public class TheifScript : MonoBehaviour
 
     void Start()
     {
-        canWave = true;
+        canWave = false;
         int RandomSpawner = Random.Range(0, monsterSpawner.Length);
     }
 

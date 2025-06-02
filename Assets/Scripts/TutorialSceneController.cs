@@ -7,10 +7,10 @@ using System.Collections;
 public class TutorialSceneController : MonoBehaviour
 {
     [Header("Tutorial UI Panels")]
-    [SerializeField] private GameObject[] tutorialPanels; // Different panels for different levels
+    [SerializeField] private GameObject[] tutorialPanels;      
 
     [Header("Ready System")]
-    [SerializeField] private TextMeshProUGUI[] playerReadyTexts; // "Ready?" / "Ready!" texts for each player
+    [SerializeField] private TextMeshProUGUI[] playerReadyTexts;        
     [SerializeField] private string waitingText = "Press X to Ready Up";
     [SerializeField] private string readyText = "Ready!";
     [SerializeField] private Color readyColor = Color.green;
@@ -19,14 +19,24 @@ public class TutorialSceneController : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] private InputActionAsset inputActions;
 
-    private InputAction[] confirmActions; // Confirm actions for each player
+    [Header("Debug Options")]
+    [SerializeField] private bool singleControllerDebug = false;      
+    [SerializeField] private KeyCode debugReadyKey = KeyCode.JoystickButton2;     
+
+    private InputAction[] confirmActions;      
     private bool[] playerReady = new bool[2];
     private int currentTutorialIndex = 0;
     private bool allPlayersReady = false;
 
+    void Awake()
+    {
+        confirmActions = new InputAction[2];
+
+        SetupInputActions();
+    }
+
     void Start()
     {
-        // Get the level info from PersistentSceneManager
         PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
         if (sceneManager != null)
         {
@@ -34,32 +44,37 @@ public class TutorialSceneController : MonoBehaviour
             Debug.Log($"Tutorial Scene: Showing tutorial for level {currentTutorialIndex}");
         }
 
-        SetupInputActions();
         ShowTutorial();
+
         StartCoroutine(FadeInFromBlack());
     }
 
     void SetupInputActions()
     {
-        // Initialize input actions for both players
-        confirmActions = new InputAction[2];
+        try
+        {
+            if (inputActions != null)
+            {
+                var playerMap1 = inputActions.FindActionMap("Player");
+                var playerMap2 = inputActions.FindActionMap("Player2");
 
-        // You might need to adjust this based on your input system setup
-        // Option 1: Separate action maps for each player
-        var playerMap1 = inputActions?.FindActionMap("Player");
-        var playerMap2 = inputActions?.FindActionMap("Player2");
+                if (playerMap1 != null)
+                    confirmActions[0] = playerMap1.FindAction("Confirm");
+                if (playerMap2 != null)
+                    confirmActions[1] = playerMap2.FindAction("Confirm");
 
-        if (playerMap1 != null)
-            confirmActions[0] = playerMap1.FindAction("Confirm");
-        if (playerMap2 != null)
-            confirmActions[1] = playerMap2.FindAction("Confirm");
+                Debug.Log($"Input setup complete. Player1 action: {(confirmActions[0] != null ? "Found" : "Not found")}, Player2 action: {(confirmActions[1] != null ? "Found" : "Not found")}");
+            }
+            else
+            {
+                Debug.LogWarning("InputActions asset not assigned! Tutorial will use fallback input.");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Input setup failed: {e.Message}. Using fallback input system.");
+        }
 
-        // Option 2: If using PlayerInput with multiple players, you might need to find them differently
-        // PlayerInput[] playerInputs = FindObjectsByType<PlayerInput>(FindObjectsSortMode.None);
-        // for (int i = 0; i < playerInputs.Length && i < confirmActions.Length; i++)
-        // {
-        //     confirmActions[i] = playerInputs[i].currentActionMap.FindAction("Confirm");
-        // }
     }
 
     void OnEnable()
@@ -69,7 +84,7 @@ public class TutorialSceneController : MonoBehaviour
             if (confirmActions[i] != null)
             {
                 confirmActions[i].Enable();
-                int playerIndex = i; // Capture for closure
+                int playerIndex = i;    
                 confirmActions[i].performed += (ctx) => OnPlayerConfirm(playerIndex);
             }
         }
@@ -87,23 +102,55 @@ public class TutorialSceneController : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (singleControllerDebug)
+        {
+            if (Input.GetKeyDown(KeyCode.JoystickButton1))   
+            {
+                for (int i = 0; i < playerReady.Length; i++)
+                {
+                    if (!playerReady[i])
+                    {
+                        OnPlayerConfirm(i);
+                        return;      
+                    }
+                }
+            }
+        }
+        else if (confirmActions[0] == null || confirmActions[1] == null)
+        {
+            if (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space))
+            {
+                OnPlayerConfirm(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Joystick2Button1) || Input.GetKeyDown(KeyCode.Return))
+            {
+                OnPlayerConfirm(1);
+            }
+        }
+    }
+
     void ShowTutorial()
     {
-        // Hide all tutorial panels first
         foreach (var panel in tutorialPanels)
         {
             if (panel != null)
                 panel.SetActive(false);
         }
 
-        // Show the appropriate tutorial panel based on selected level
-        int panelIndex = Mathf.Clamp(currentTutorialIndex, 0, tutorialPanels.Length - 1);
+        int panelIndex = Mathf.Clamp(currentTutorialIndex - 1, 0, tutorialPanels.Length - 1);         
         if (panelIndex < tutorialPanels.Length && tutorialPanels[panelIndex] != null)
         {
             tutorialPanels[panelIndex].SetActive(true);
+            Debug.Log($"Showing tutorial panel {panelIndex} for level {currentTutorialIndex}");
+        }
+        else
+        {
+            Debug.LogWarning($"No tutorial panel found for level {currentTutorialIndex} (panel index {panelIndex})");
         }
 
-        // Reset ready states
         for (int i = 0; i < playerReady.Length; i++)
         {
             playerReady[i] = false;
@@ -117,9 +164,9 @@ public class TutorialSceneController : MonoBehaviour
         if (allPlayersReady || playerIndex >= playerReady.Length) return;
 
         playerReady[playerIndex] = true;
+        Debug.Log($"Player {playerIndex + 1} is ready!");
         UpdateReadyUI();
 
-        // Check if all players are ready
         bool allReady = true;
         for (int i = 0; i < playerReady.Length; i++)
         {
@@ -133,6 +180,7 @@ public class TutorialSceneController : MonoBehaviour
         if (allReady)
         {
             allPlayersReady = true;
+            Debug.Log("All players ready! Starting game...");
             StartCoroutine(StartGameAfterDelay());
         }
     }
@@ -153,7 +201,6 @@ public class TutorialSceneController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        // Tell the PersistentSceneManager to load the actual game scene
         PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
         if (sceneManager != null)
         {
@@ -167,12 +214,11 @@ public class TutorialSceneController : MonoBehaviour
 
     IEnumerator FadeInFromBlack()
     {
-        // The scene manager will handle the fade in, but we might want to do additional setup here
         yield return new WaitForSeconds(0.1f);
-        // Any additional setup can go here
+
+        Debug.Log("Tutorial scene loaded and faded in via PersistentSceneManager");
     }
 
-    // Public method for UI buttons if you prefer button-based ready system instead of input actions
     public void OnReadyButtonPressed(int playerIndex)
     {
         OnPlayerConfirm(playerIndex);

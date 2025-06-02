@@ -13,6 +13,13 @@ public class PersistentSceneManager : MonoBehaviour
 
     [Header("Scene Names")]
     [SerializeField] private string tutorialSceneName = "TutorialScene";
+    [SerializeField]
+    private string[] gameSceneNames = {
+        "",     
+        "FrutyLevel",   
+        "Level2Scene",   
+        "Level3Scene",   
+    };
 
     private static PersistentSceneManager instance;
     private int selectedLevel = -1;
@@ -25,13 +32,12 @@ public class PersistentSceneManager : MonoBehaviour
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<PersistentSceneManager>();
+                instance = FindFirstObjectByType<PersistentSceneManager>();
             }
             return instance;
         }
     }
 
-    // Public property to get selected level info
     public int SelectedLevel => selectedLevel;
     public string TargetGameScene => targetGameScene;
 
@@ -53,7 +59,6 @@ public class PersistentSceneManager : MonoBehaviour
     {
         if (transitionCanvas == null)
         {
-            // Create transition canvas if not assigned
             GameObject canvasGO = new GameObject("TransitionCanvas");
             Canvas canvas = canvasGO.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -65,7 +70,6 @@ public class PersistentSceneManager : MonoBehaviour
 
             canvasGO.AddComponent<GraphicRaycaster>();
 
-            // Create fade image
             GameObject imageGO = new GameObject("FadeImage");
             imageGO.transform.SetParent(canvasGO.transform, false);
 
@@ -83,7 +87,6 @@ public class PersistentSceneManager : MonoBehaviour
             DontDestroyOnLoad(canvasGO);
         }
 
-        // Start with transparent fade image
         if (fadeImage != null)
         {
             Color c = fadeImage.color;
@@ -92,13 +95,28 @@ public class PersistentSceneManager : MonoBehaviour
         }
     }
 
-    // Called from EarthMotion when player selects a level
     public void LoadLevelWithTransition(int levelNumber, string gameSceneName)
     {
         if (isTransitioning) return;
 
         selectedLevel = levelNumber;
-        targetGameScene = gameSceneName;
+
+        if (string.IsNullOrEmpty(gameSceneName))
+        {
+            if (levelNumber > 0 && levelNumber < gameSceneNames.Length)
+            {
+                targetGameScene = gameSceneNames[levelNumber];
+            }
+            else
+            {
+                Debug.LogError($"Invalid level number: {levelNumber}. Check gameSceneNames array.");
+                return;
+            }
+        }
+        else
+        {
+            targetGameScene = gameSceneName;
+        }
 
         StartCoroutine(TransitionToTutorial());
     }
@@ -107,23 +125,21 @@ public class PersistentSceneManager : MonoBehaviour
     {
         isTransitioning = true;
 
-        // Fade to black
         yield return StartCoroutine(FadeOut());
 
-        // Load tutorial scene
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(tutorialSceneName);
 
-        // Wait for scene to load
         while (!loadOperation.isDone)
         {
             yield return null;
         }
 
-        // Tutorial scene will handle its own fade in and UI
+        yield return new WaitForSeconds(0.1f);
+        yield return StartCoroutine(FadeIn());
+
         isTransitioning = false;
     }
 
-    // Called from tutorial scene when players are ready
     public void LoadGameSceneWithTransition()
     {
         if (isTransitioning || string.IsNullOrEmpty(targetGameScene)) return;
@@ -135,26 +151,21 @@ public class PersistentSceneManager : MonoBehaviour
     {
         isTransitioning = true;
 
-        // Fade to black
         yield return StartCoroutine(FadeOut());
 
-        // Load the actual game scene
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(targetGameScene);
 
-        // Wait for scene to load
         while (!loadOperation.isDone)
         {
             yield return null;
         }
 
-        // Fade in to reveal the game
+        yield return new WaitForSeconds(0.1f);
         yield return StartCoroutine(FadeIn());
 
-        // Game scene intro manager will take over from here
         isTransitioning = false;
     }
 
-    // Method to fade to black and return to hub/main menu
     public void ReturnToHub(string hubSceneName = "MainMenu")
     {
         if (isTransitioning) return;
@@ -166,26 +177,63 @@ public class PersistentSceneManager : MonoBehaviour
     {
         isTransitioning = true;
 
-        // Fade to black
         yield return StartCoroutine(FadeOut());
 
-        // Reset level selection
         selectedLevel = -1;
         targetGameScene = "";
 
-        // Load hub scene
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(hubSceneName);
 
-        // Wait for scene to load
         while (!loadOperation.isDone)
         {
             yield return null;
         }
 
-        // Fade in to reveal hub
+        yield return new WaitForSeconds(0.1f);
         yield return StartCoroutine(FadeIn());
 
         isTransitioning = false;
+    }
+
+    public void FadeToBlack()
+    {
+        if (!isTransitioning)
+        {
+            StartCoroutine(FadeOut());
+        }
+    }
+
+    public void FadeFromBlack()
+    {
+        if (!isTransitioning)
+        {
+            StartCoroutine(FadeIn());
+        }
+    }
+
+    public void SetBlackImmediate()
+    {
+        if (fadeImage != null)
+        {
+            Color c = fadeImage.color;
+            c.a = 1f;
+            fadeImage.color = c;
+        }
+    }
+
+    public void SetTransparentImmediate()
+    {
+        if (fadeImage != null)
+        {
+            Color c = fadeImage.color;
+            c.a = 0f;
+            fadeImage.color = c;
+        }
+    }
+
+    public bool IsTransitioning()
+    {
+        return isTransitioning;
     }
 
     private IEnumerator FadeOut()
@@ -224,11 +272,5 @@ public class PersistentSceneManager : MonoBehaviour
         }
 
         fadeImage.color = endColor;
-    }
-
-    // Public method for other scripts to check transition state
-    public bool IsTransitioning()
-    {
-        return isTransitioning;
     }
 }
