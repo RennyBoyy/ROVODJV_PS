@@ -303,15 +303,12 @@ public class GameIntroManager : MonoBehaviour
             player.enabled = true;
         }
 
-        TheifScript thief = FindFirstObjectByType<TheifScript>();
-        if (thief != null)
+        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
+        foreach (var thief in thieves)
         {
-            thief.enabled = true;
-            var canWaveField = typeof(TheifScript).GetField("canWave", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (canWaveField != null)
-            {
-                canWaveField.SetValue(thief, true);
-            }
+            thief.canWave = true;
+            // If you want to ensure the script is enabled:
+            // thief.enabled = true;
         }
 
         Debug.Log("Gameplay enabled!");

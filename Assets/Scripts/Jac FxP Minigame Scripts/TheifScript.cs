@@ -6,34 +6,53 @@ using UnityEngine;
 public class TheifScript : MonoBehaviour
 {
     [SerializeField] private GameManager_Fruity gameManager;
-    
     [SerializeField] private GameObject monsterPrefab;
-
     [SerializeField] private GameObject[] monsterSpawner;
 
-    private bool canWave = false;
+    public bool canWave = false;
+
+    [Header("Difficulty Increase")]
+    [SerializeField] private float minSpawnInterval = 5f;
+    [SerializeField] private float maxSpawnInterval = 10f;
+    [SerializeField] private float spawnIntervalDecrease = 0.5f; 
+    [SerializeField] private int monstersPerWave = 1;
+    [SerializeField] private int maxMonstersPerWave = 10;
+    [SerializeField] private float difficultyIncreaseInterval = 15f; 
+
+    private float nextDifficultyIncreaseTime = 0f;
 
     void Start()
     {
         canWave = false;
-        int RandomSpawner = Random.Range(0, monsterSpawner.Length);
+        nextDifficultyIncreaseTime = Time.time + difficultyIncreaseInterval;
     }
 
     void Update()
     {
         if (gameManager.gameActive && canWave)
         {
-            StartCoroutine(WaveCoroutine(Random.Range(5f, 10f)));
+            canWave = false; // Prevent multiple coroutines
+            StartCoroutine(WaveCoroutine(Random.Range(minSpawnInterval, maxSpawnInterval)));
         }
 
-        
+        // Increase difficulty over time
+        if (gameManager.gameActive && Time.time >= nextDifficultyIncreaseTime)
+        {
+            minSpawnInterval = Mathf.Max(1f, minSpawnInterval - spawnIntervalDecrease);
+            maxSpawnInterval = Mathf.Max(2f, maxSpawnInterval - spawnIntervalDecrease);
+            monstersPerWave = Mathf.Min(maxMonstersPerWave, monstersPerWave + 1);
+            nextDifficultyIncreaseTime = Time.time + difficultyIncreaseInterval;
+        }
     }
-
 
     private void SpawnWaves()
     {
-      int RandomSpawner = Random.Range(0, monsterSpawner.Length);
-      Instantiate(monsterPrefab, monsterSpawner[RandomSpawner].transform.position, transform.rotation);
+        for (int i = 0; i < monstersPerWave; i++)
+        {
+            int RandomSpawner = Random.Range(0, monsterSpawner.Length);
+            Instantiate(monsterPrefab, monsterSpawner[RandomSpawner].transform.position, transform.rotation);
+            Debug.Log("Monster SPanwed on", gameObject);
+        }
     }
 
     private IEnumerator WaveCoroutine(float waitTime)
