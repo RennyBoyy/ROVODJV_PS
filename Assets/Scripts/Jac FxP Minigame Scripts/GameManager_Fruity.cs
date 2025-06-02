@@ -13,6 +13,7 @@ public class GameManager_Fruity : MonoBehaviour
     {
         
     }
+    /*particles, proper tutorial changes, delay for start, slower at start, more visuals*/
 
     void Update()
     {
