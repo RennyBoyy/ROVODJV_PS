@@ -285,7 +285,7 @@ public class FishingCastController : MonoBehaviour
         int length = isBigFish ? bigFishSequenceLength : smallFishSequenceLength;
 
         float initialDelay = 0.2f;
-        float spacing = 0.4f;
+        float spacing = 0.5f;
         float now = Time.time;
         for (int i = 0; i < length; i++)
         {

@@ -1571,15 +1571,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""ReelFinish"",
-                    ""type"": ""Value"",
-                    ""id"": ""6b747485-3907-4b20-908f-7a24464a1650"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1635,17 +1626,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ReelNorth"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""29e04c68-a0e1-48cf-b231-b0b5c019c465"",
-                    ""path"": ""<Gamepad>/rightStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ReelFinish"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1814,7 +1794,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_FishingMap_ReelEast = m_FishingMap.FindAction("ReelEast", throwIfNotFound: true);
         m_FishingMap_ReelWest = m_FishingMap.FindAction("ReelWest", throwIfNotFound: true);
         m_FishingMap_ReelNorth = m_FishingMap.FindAction("ReelNorth", throwIfNotFound: true);
-        m_FishingMap_ReelFinish = m_FishingMap.FindAction("ReelFinish", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -2489,7 +2468,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_FishingMap_ReelEast;
     private readonly InputAction m_FishingMap_ReelWest;
     private readonly InputAction m_FishingMap_ReelNorth;
-    private readonly InputAction m_FishingMap_ReelFinish;
     /// <summary>
     /// Provides access to input actions defined in input action map "FishingMap".
     /// </summary>
@@ -2525,10 +2503,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "FishingMap/ReelNorth".
         /// </summary>
         public InputAction @ReelNorth => m_Wrapper.m_FishingMap_ReelNorth;
-        /// <summary>
-        /// Provides access to the underlying input action "FishingMap/ReelFinish".
-        /// </summary>
-        public InputAction @ReelFinish => m_Wrapper.m_FishingMap_ReelFinish;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2573,9 +2547,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ReelNorth.started += instance.OnReelNorth;
             @ReelNorth.performed += instance.OnReelNorth;
             @ReelNorth.canceled += instance.OnReelNorth;
-            @ReelFinish.started += instance.OnReelFinish;
-            @ReelFinish.performed += instance.OnReelFinish;
-            @ReelFinish.canceled += instance.OnReelFinish;
         }
 
         /// <summary>
@@ -2605,9 +2576,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ReelNorth.started -= instance.OnReelNorth;
             @ReelNorth.performed -= instance.OnReelNorth;
             @ReelNorth.canceled -= instance.OnReelNorth;
-            @ReelFinish.started -= instance.OnReelFinish;
-            @ReelFinish.performed -= instance.OnReelFinish;
-            @ReelFinish.canceled -= instance.OnReelFinish;
         }
 
         /// <summary>
@@ -3015,12 +2983,5 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnReelNorth(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "ReelFinish" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnReelFinish(InputAction.CallbackContext context);
     }
 }

@@ -1485,15 +1485,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "ReelFinish",
-                    "type": "Value",
-                    "id": "6b747485-3907-4b20-908f-7a24464a1650",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1549,17 +1540,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "ReelNorth",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "29e04c68-a0e1-48cf-b231-b0b5c019c465",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ReelFinish",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
