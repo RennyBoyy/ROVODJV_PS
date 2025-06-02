@@ -34,21 +34,19 @@ public class PlayerScript : MonoBehaviour
         UpdateAmmoUI();
         animator = GetComponent<Animator>();
 
-        // Assign keyboard to player 1
-        if (player1Input != null && Keyboard.current != null)
+        var gamepads = Gamepad.all;
+        if (player1Input != null && gamepads.Count > 0)
         {
-            player1Input.SwitchCurrentControlScheme(Keyboard.current);
+            player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
             player1Input.ActivateInput();
         }
 
-        // Assign first gamepad to player 2
-        if (player2Input != null && Gamepad.all.Count > 0)
+        if (player2Input != null && gamepads.Count > 1)
         {
-            player2Input.SwitchCurrentControlScheme(Gamepad.all[0]);
+            player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
             player2Input.ActivateInput();
         }
     }
-   
 
     private void Update()
     {

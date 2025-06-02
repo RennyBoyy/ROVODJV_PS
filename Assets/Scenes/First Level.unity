@@ -18528,7 +18528,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_DefaultActionMap
-      value: Player
+      value: Player2
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_DefaultControlScheme
@@ -18540,7 +18540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 39
+      value: 38
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_NeverAutoSwitchControlSchemes
@@ -18692,11 +18692,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.data[36].m_ActionId
-      value: 6b747485-3907-4b20-908f-7a24464a1650
+      value: e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.data[37].m_ActionId
-      value: e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603
+      value: f4ebcb98-196b-4d94-ad8a-64f3bf21148e
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.data[38].m_ActionId
@@ -18848,11 +18848,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.data[36].m_ActionName
-      value: FishingMap/ReelFinish
+      value: 'FruitGame/Move[/SwitchProControllerHID/leftStick/down,/DualShock4GamepadHID/leftStick/down,/XInputControllerWindows/leftStick/down,/SwitchProControllerHID/leftStick/up,/DualShock4GamepadHID/leftStick/up,/XInputControllerWindows/leftStick/up]'
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.data[37].m_ActionName
-      value: 'FruitGame/Move[/SwitchProControllerHID/leftStick/down,/DualShock4GamepadHID/leftStick/down,/XInputControllerWindows/leftStick/down,/SwitchProControllerHID/leftStick/up,/DualShock4GamepadHID/leftStick/up,/XInputControllerWindows/leftStick/up]'
+      value: 'FruitGame/Attack[/SwitchProControllerHID/buttonSouth,/DualShock4GamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth]'
       objectReference: {fileID: 0}
     - target: {fileID: 5969024863554859554, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_ActionEvents.Array.data[38].m_ActionName
