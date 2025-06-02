@@ -528,6 +528,13 @@ MonoBehaviour:
   - {fileID: 1063777344}
   - {fileID: 576356537}
   - {fileID: 2137934922}
+  canWave: 0
+  minSpawnInterval: 5
+  maxSpawnInterval: 10
+  spawnIntervalDecrease: 0.5
+  monstersPerWave: 1
+  maxMonstersPerWave: 10
+  difficultyIncreaseInterval: 15
 --- !u!1001 &37848815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2712,6 +2719,10 @@ PrefabInstance:
     - target: {fileID: 4129981874795477200, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: m_Name
       value: Apples (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
+      propertyPath: fillRate
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: ammoStages.Array.size
@@ -5103,6 +5114,13 @@ MonoBehaviour:
   - {fileID: 448326202}
   - {fileID: 419528264}
   - {fileID: 28245747}
+  canWave: 0
+  minSpawnInterval: 5
+  maxSpawnInterval: 10
+  spawnIntervalDecrease: 0.5
+  monstersPerWave: 1
+  maxMonstersPerWave: 10
+  difficultyIncreaseInterval: 15
 --- !u!1001 &574167104
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6956,7 +6974,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: fillRate
-      value: 0.2
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: ammoStages.Array.size
@@ -10331,6 +10349,10 @@ PrefabInstance:
     - target: {fileID: 4767613828368580092, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
+      propertyPath: fillRate
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: ammoStages.Array.size
@@ -17581,7 +17603,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: fillRate
-      value: 0.2
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5429518143279029951, guid: d1fdc12dfb0367242905798cfb7d5152, type: 3}
       propertyPath: ammoStages.Array.size

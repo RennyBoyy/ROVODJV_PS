@@ -35,12 +35,12 @@ public class TheifScript : MonoBehaviour
             StartCoroutine(WaveCoroutine(Random.Range(minSpawnInterval, maxSpawnInterval)));
         }
 
-        // Increase difficulty over time
+    
         if (gameManager.gameActive && Time.time >= nextDifficultyIncreaseTime)
         {
             minSpawnInterval = Mathf.Max(1f, minSpawnInterval - spawnIntervalDecrease);
             maxSpawnInterval = Mathf.Max(2f, maxSpawnInterval - spawnIntervalDecrease);
-            monstersPerWave = Mathf.Min(maxMonstersPerWave, monstersPerWave + 1);
+            
             nextDifficultyIncreaseTime = Time.time + difficultyIncreaseInterval;
         }
     }
@@ -49,9 +49,9 @@ public class TheifScript : MonoBehaviour
     {
         for (int i = 0; i < monstersPerWave; i++)
         {
-            int RandomSpawner = Random.Range(0, monsterSpawner.Length);
-            Instantiate(monsterPrefab, monsterSpawner[RandomSpawner].transform.position, transform.rotation);
-            Debug.Log("Monster SPanwed on", gameObject);
+            int randomSpawner = Random.Range(0, monsterSpawner.Length);
+            Instantiate(monsterPrefab, monsterSpawner[randomSpawner].transform.position, transform.rotation);
+            Debug.Log($"{gameObject.name} spawned a monster at {monsterSpawner[randomSpawner].name}");
         }
     }
 
