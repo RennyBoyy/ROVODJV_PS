@@ -109,9 +109,6 @@
             "m_Id": "cef4e6b123754b45a44d6a1bb2217a34"
         },
         {
-            "m_Id": "78bd0e41de564c53be2d5ea997aa13e2"
-        },
-        {
             "m_Id": "f7690f464de14853b5cc9530fedf2758"
         },
         {
@@ -2943,50 +2940,6 @@
 }
 
 {
-    "m_SGVersion": 1,
-    "m_Type": "UnityEditor.ShaderGraph.ColorNode",
-    "m_ObjectId": "78bd0e41de564c53be2d5ea997aa13e2",
-    "m_Group": {
-        "m_Id": ""
-    },
-    "m_Name": "Color",
-    "m_DrawState": {
-        "m_Expanded": true,
-        "m_Position": {
-            "serializedVersion": "2",
-            "x": -229.6000213623047,
-            "y": 951.2000122070313,
-            "width": 208.0,
-            "height": 126.39996337890625
-        }
-    },
-    "m_Slots": [
-        {
-            "m_Id": "8123606852aa4dc5b92377f9f8762150"
-        }
-    ],
-    "synonyms": [
-        "rgba"
-    ],
-    "m_Precision": 0,
-    "m_PreviewExpanded": true,
-    "m_DismissedVersion": 0,
-    "m_PreviewMode": 0,
-    "m_CustomColors": {
-        "m_SerializableColors": []
-    },
-    "m_Color": {
-        "color": {
-            "r": 0.5218725204467773,
-            "g": 0.8509519100189209,
-            "b": 0.9773584604263306,
-            "a": 0.0
-        },
-        "mode": 0
-    }
-}
-
-{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "7ca4a32f7019412ba566db1c81921bd1",
@@ -3183,31 +3136,6 @@
     },
     "m_Labels": [],
     "m_Space": 0
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
-    "m_ObjectId": "8123606852aa4dc5b92377f9f8762150",
-    "m_Id": 0,
-    "m_DisplayName": "Out",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "Out",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_Labels": []
 }
 
 {
@@ -3575,9 +3503,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1479.845703125,
-            "y": 990.24560546875,
-            "width": 208.0,
+            "x": 1423.1998291015625,
+            "y": 973.5999755859375,
+            "width": 208.0001220703125,
             "height": 301.5999755859375
         }
     },
