@@ -83,6 +83,9 @@ public class PlayerScript : MonoBehaviour
             if (animator != null)
                 animator.SetTrigger("Throw");
             shootInput = false;
+        }else
+        {
+            animator.ResetTrigger("Throw");
         }
     }
 
