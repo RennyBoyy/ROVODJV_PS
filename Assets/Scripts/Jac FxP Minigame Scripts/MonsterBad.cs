@@ -4,8 +4,8 @@ using TMPro;
 
 public class MonsterBad : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private int monsterHealth = 3;
+    [SerializeField] private float moveSpeed = 2.5f;
+    [SerializeField] private int monsterHealth = 2;
     [SerializeField] private GameManager_Fruity gameManager;
     [SerializeField] private float monsterEatingTime = 3f;
     private bool isEating = false;
@@ -39,6 +39,11 @@ public class MonsterBad : MonoBehaviour
                         {
                             Destroy(collider);
                         }
+                        if (targetLife.transform.childCount > 0)
+                        {
+                            Transform child = targetLife.transform.GetChild(0);
+                            Destroy(child.gameObject);
+                        }
                     }
 
 
@@ -57,7 +62,7 @@ public class MonsterBad : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Tomato"))
+        if (other.gameObject.CompareTag("Tomato"))  
         {
             Debug.Log("hit Tomato");
             monsterHealth--;
@@ -71,7 +76,12 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("LoseCon"))
         {
-            Debug.Log("You lose!");
+            
+            gameManager.Fruit_Remaining = 0;
+
+        }
+        else if (other.gameObject.CompareTag("LoseCon1"))
+        {
             gameManager.Fruit_Remaining = 0;
         }
     }

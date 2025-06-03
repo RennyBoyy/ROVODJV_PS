@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 3
   tags:
   - ObstacleSpawnder
+  - AppleBarrier
+  - Lives
+  - LoseCon
+  - LoseText
+  - Monster
+  - Tomato
+  - Continent
+  - LoseCon1
   layers:
   - Default
   - TransparentFX

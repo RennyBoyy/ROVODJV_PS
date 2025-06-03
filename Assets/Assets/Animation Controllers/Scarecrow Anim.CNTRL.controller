@@ -57,7 +57,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|MONCH
+  m_Name: Eat Animation
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -228,7 +228,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Hit
+  m_Name: Hit Animation
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -279,7 +279,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|MONCH loop
+  m_Name: Eat Loop
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

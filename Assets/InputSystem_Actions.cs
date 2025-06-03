@@ -198,7 +198,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
+                    ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1513,6 +1513,226 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""FishingMap"",
+            ""id"": ""16d3e515-32ee-4145-9ebd-e2fe4e9c1874"",
+            ""actions"": [
+                {
+                    ""name"": ""Cast"",
+                    ""type"": ""Value"",
+                    ""id"": ""f625f8d3-537e-44a5-a1bf-fbba63b58b0d"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Bite"",
+                    ""type"": ""Button"",
+                    ""id"": ""211d542f-9c77-4985-a430-84a8287d1169"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelSouth"",
+                    ""type"": ""Button"",
+                    ""id"": ""56b48ef7-8c9b-43c2-8620-33eb95d67770"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelEast"",
+                    ""type"": ""Button"",
+                    ""id"": ""275d44bd-9f28-4e8b-8ad1-544fdd8e89d5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelWest"",
+                    ""type"": ""Button"",
+                    ""id"": ""203d88e4-2b05-4ec5-b768-0847a4d6adf9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ReelNorth"",
+                    ""type"": ""Button"",
+                    ""id"": ""89826aed-65dd-4c14-a2cb-f5780becb71b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3f71260e-3289-46d2-b912-cd9b3a1019fc"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Bite"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0232574d-e71f-47db-b01c-024b8aa92087"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelSouth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5cbfdcda-e1ed-4dad-924e-2c80dc6f8d3a"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelEast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43bab959-888d-4761-b681-e6fa356fa058"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelWest"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aafa04f0-1f7f-4acb-9d40-373cf82be52b"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ReelNorth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""27f9b5db-7d60-46c6-a18e-1d48de137a9a"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cast"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Negative"",
+                    ""id"": ""3f5477f6-1e0f-4208-907f-d0271078716e"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Positive"",
+                    ""id"": ""a3c4d59d-d3c7-40f8-9812-7da89ef5dd54"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
+        },
+        {
+            ""name"": ""FruitGame"",
+            ""id"": ""ee7e9397-36c2-4e28-895b-088a8655f2fb"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""f4ebcb98-196b-4d94-ad8a-64f3bf21148e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""6f947374-092f-40f8-89c9-ccbd1366da30"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Negative"",
+                    ""id"": ""c1f0a79b-64f5-4848-a209-2372c23107b4"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Positive"",
+                    ""id"": ""3a33d6f2-2f47-4fbf-bc29-09a21cdb35cf"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""50970fe8-6af2-40ed-b57c-6eb50ea09916"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1575,6 +1795,50 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isOR"": false
                 }
             ]
+        },
+        {
+            ""name"": ""PS4_P1"",
+            ""bindingGroup"": ""PS4_P1"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""PS4_P2"",
+            ""bindingGroup"": ""PS4_P2"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Xbox1"",
+            ""bindingGroup"": ""Xbox1"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<XInputController>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Xbox2"",
+            ""bindingGroup"": ""Xbox2"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<XInputController>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
         }
     ]
 }");
@@ -1614,6 +1878,18 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // FishingMap
+        m_FishingMap = asset.FindActionMap("FishingMap", throwIfNotFound: true);
+        m_FishingMap_Cast = m_FishingMap.FindAction("Cast", throwIfNotFound: true);
+        m_FishingMap_Bite = m_FishingMap.FindAction("Bite", throwIfNotFound: true);
+        m_FishingMap_ReelSouth = m_FishingMap.FindAction("ReelSouth", throwIfNotFound: true);
+        m_FishingMap_ReelEast = m_FishingMap.FindAction("ReelEast", throwIfNotFound: true);
+        m_FishingMap_ReelWest = m_FishingMap.FindAction("ReelWest", throwIfNotFound: true);
+        m_FishingMap_ReelNorth = m_FishingMap.FindAction("ReelNorth", throwIfNotFound: true);
+        // FruitGame
+        m_FruitGame = asset.FindActionMap("FruitGame", throwIfNotFound: true);
+        m_FruitGame_Move = m_FruitGame.FindAction("Move", throwIfNotFound: true);
+        m_FruitGame_Attack = m_FruitGame.FindAction("Attack", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1621,6 +1897,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Player2.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player2.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_FishingMap.enabled, "This will cause a leak and performance issues, InputSystem_Actions.FishingMap.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_FruitGame.enabled, "This will cause a leak and performance issues, InputSystem_Actions.FruitGame.Disable() has not been called.");
     }
 
     /// <summary>
@@ -2277,6 +2555,264 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // FishingMap
+    private readonly InputActionMap m_FishingMap;
+    private List<IFishingMapActions> m_FishingMapActionsCallbackInterfaces = new List<IFishingMapActions>();
+    private readonly InputAction m_FishingMap_Cast;
+    private readonly InputAction m_FishingMap_Bite;
+    private readonly InputAction m_FishingMap_ReelSouth;
+    private readonly InputAction m_FishingMap_ReelEast;
+    private readonly InputAction m_FishingMap_ReelWest;
+    private readonly InputAction m_FishingMap_ReelNorth;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "FishingMap".
+    /// </summary>
+    public struct FishingMapActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public FishingMapActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/Cast".
+        /// </summary>
+        public InputAction @Cast => m_Wrapper.m_FishingMap_Cast;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/Bite".
+        /// </summary>
+        public InputAction @Bite => m_Wrapper.m_FishingMap_Bite;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelSouth".
+        /// </summary>
+        public InputAction @ReelSouth => m_Wrapper.m_FishingMap_ReelSouth;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelEast".
+        /// </summary>
+        public InputAction @ReelEast => m_Wrapper.m_FishingMap_ReelEast;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelWest".
+        /// </summary>
+        public InputAction @ReelWest => m_Wrapper.m_FishingMap_ReelWest;
+        /// <summary>
+        /// Provides access to the underlying input action "FishingMap/ReelNorth".
+        /// </summary>
+        public InputAction @ReelNorth => m_Wrapper.m_FishingMap_ReelNorth;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_FishingMap; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="FishingMapActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(FishingMapActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="FishingMapActions" />
+        public void AddCallbacks(IFishingMapActions instance)
+        {
+            if (instance == null || m_Wrapper.m_FishingMapActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_FishingMapActionsCallbackInterfaces.Add(instance);
+            @Cast.started += instance.OnCast;
+            @Cast.performed += instance.OnCast;
+            @Cast.canceled += instance.OnCast;
+            @Bite.started += instance.OnBite;
+            @Bite.performed += instance.OnBite;
+            @Bite.canceled += instance.OnBite;
+            @ReelSouth.started += instance.OnReelSouth;
+            @ReelSouth.performed += instance.OnReelSouth;
+            @ReelSouth.canceled += instance.OnReelSouth;
+            @ReelEast.started += instance.OnReelEast;
+            @ReelEast.performed += instance.OnReelEast;
+            @ReelEast.canceled += instance.OnReelEast;
+            @ReelWest.started += instance.OnReelWest;
+            @ReelWest.performed += instance.OnReelWest;
+            @ReelWest.canceled += instance.OnReelWest;
+            @ReelNorth.started += instance.OnReelNorth;
+            @ReelNorth.performed += instance.OnReelNorth;
+            @ReelNorth.canceled += instance.OnReelNorth;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="FishingMapActions" />
+        private void UnregisterCallbacks(IFishingMapActions instance)
+        {
+            @Cast.started -= instance.OnCast;
+            @Cast.performed -= instance.OnCast;
+            @Cast.canceled -= instance.OnCast;
+            @Bite.started -= instance.OnBite;
+            @Bite.performed -= instance.OnBite;
+            @Bite.canceled -= instance.OnBite;
+            @ReelSouth.started -= instance.OnReelSouth;
+            @ReelSouth.performed -= instance.OnReelSouth;
+            @ReelSouth.canceled -= instance.OnReelSouth;
+            @ReelEast.started -= instance.OnReelEast;
+            @ReelEast.performed -= instance.OnReelEast;
+            @ReelEast.canceled -= instance.OnReelEast;
+            @ReelWest.started -= instance.OnReelWest;
+            @ReelWest.performed -= instance.OnReelWest;
+            @ReelWest.canceled -= instance.OnReelWest;
+            @ReelNorth.started -= instance.OnReelNorth;
+            @ReelNorth.performed -= instance.OnReelNorth;
+            @ReelNorth.canceled -= instance.OnReelNorth;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="FishingMapActions.UnregisterCallbacks(IFishingMapActions)" />.
+        /// </summary>
+        /// <seealso cref="FishingMapActions.UnregisterCallbacks(IFishingMapActions)" />
+        public void RemoveCallbacks(IFishingMapActions instance)
+        {
+            if (m_Wrapper.m_FishingMapActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="FishingMapActions.AddCallbacks(IFishingMapActions)" />
+        /// <seealso cref="FishingMapActions.RemoveCallbacks(IFishingMapActions)" />
+        /// <seealso cref="FishingMapActions.UnregisterCallbacks(IFishingMapActions)" />
+        public void SetCallbacks(IFishingMapActions instance)
+        {
+            foreach (var item in m_Wrapper.m_FishingMapActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_FishingMapActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="FishingMapActions" /> instance referencing this action map.
+    /// </summary>
+    public FishingMapActions @FishingMap => new FishingMapActions(this);
+
+    // FruitGame
+    private readonly InputActionMap m_FruitGame;
+    private List<IFruitGameActions> m_FruitGameActionsCallbackInterfaces = new List<IFruitGameActions>();
+    private readonly InputAction m_FruitGame_Move;
+    private readonly InputAction m_FruitGame_Attack;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "FruitGame".
+    /// </summary>
+    public struct FruitGameActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public FruitGameActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "FruitGame/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_FruitGame_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "FruitGame/Attack".
+        /// </summary>
+        public InputAction @Attack => m_Wrapper.m_FruitGame_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_FruitGame; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="FruitGameActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(FruitGameActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="FruitGameActions" />
+        public void AddCallbacks(IFruitGameActions instance)
+        {
+            if (instance == null || m_Wrapper.m_FruitGameActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_FruitGameActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="FruitGameActions" />
+        private void UnregisterCallbacks(IFruitGameActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="FruitGameActions.UnregisterCallbacks(IFruitGameActions)" />.
+        /// </summary>
+        /// <seealso cref="FruitGameActions.UnregisterCallbacks(IFruitGameActions)" />
+        public void RemoveCallbacks(IFruitGameActions instance)
+        {
+            if (m_Wrapper.m_FruitGameActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="FruitGameActions.AddCallbacks(IFruitGameActions)" />
+        /// <seealso cref="FruitGameActions.RemoveCallbacks(IFruitGameActions)" />
+        /// <seealso cref="FruitGameActions.UnregisterCallbacks(IFruitGameActions)" />
+        public void SetCallbacks(IFruitGameActions instance)
+        {
+            foreach (var item in m_Wrapper.m_FruitGameActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_FruitGameActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="FruitGameActions" /> instance referencing this action map.
+    /// </summary>
+    public FruitGameActions @FruitGame => new FruitGameActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2340,6 +2876,58 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         {
             if (m_XRSchemeIndex == -1) m_XRSchemeIndex = asset.FindControlSchemeIndex("XR");
             return asset.controlSchemes[m_XRSchemeIndex];
+        }
+    }
+    private int m_PS4_P1SchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme PS4_P1Scheme
+    {
+        get
+        {
+            if (m_PS4_P1SchemeIndex == -1) m_PS4_P1SchemeIndex = asset.FindControlSchemeIndex("PS4_P1");
+            return asset.controlSchemes[m_PS4_P1SchemeIndex];
+        }
+    }
+    private int m_PS4_P2SchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme PS4_P2Scheme
+    {
+        get
+        {
+            if (m_PS4_P2SchemeIndex == -1) m_PS4_P2SchemeIndex = asset.FindControlSchemeIndex("PS4_P2");
+            return asset.controlSchemes[m_PS4_P2SchemeIndex];
+        }
+    }
+    private int m_Xbox1SchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme Xbox1Scheme
+    {
+        get
+        {
+            if (m_Xbox1SchemeIndex == -1) m_Xbox1SchemeIndex = asset.FindControlSchemeIndex("Xbox1");
+            return asset.controlSchemes[m_Xbox1SchemeIndex];
+        }
+    }
+    private int m_Xbox2SchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme Xbox2Scheme
+    {
+        get
+        {
+            if (m_Xbox2SchemeIndex == -1) m_Xbox2SchemeIndex = asset.FindControlSchemeIndex("Xbox2");
+            return asset.controlSchemes[m_Xbox2SchemeIndex];
         }
     }
     /// <summary>
@@ -2575,5 +3163,77 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "FishingMap" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="FishingMapActions.AddCallbacks(IFishingMapActions)" />
+    /// <seealso cref="FishingMapActions.RemoveCallbacks(IFishingMapActions)" />
+    public interface IFishingMapActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Cast" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCast(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Bite" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBite(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelSouth" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelSouth(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelEast" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelEast(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelWest" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelWest(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ReelNorth" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReelNorth(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "FruitGame" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="FruitGameActions.AddCallbacks(IFruitGameActions)" />
+    /// <seealso cref="FruitGameActions.RemoveCallbacks(IFruitGameActions)" />
+    public interface IFruitGameActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
