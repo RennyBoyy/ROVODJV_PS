@@ -91,8 +91,10 @@ public class PlayerScript : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        moveInput = ctx.ReadValue<Vector2>().y;
-        Debug.Log(ctx.ReadValue<Vector2>());
+        Vector2 input = ctx.ReadValue<Vector2>();
+        input.x = 0;
+        moveInput = input.y;
+        Debug.Log(input);
     }
 
     public void OnAttack(InputAction.CallbackContext ctx)

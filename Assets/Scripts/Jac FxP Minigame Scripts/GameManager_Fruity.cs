@@ -27,7 +27,7 @@ public class GameManager_Fruity : MonoBehaviour
 
         if (gameOverManager != null)
         {
-            gameOverManager.SetPlayerTargets(player1Transform, player2Transform);
+           // gameOverManager.SetPlayerTargets(player1Transform, player2Transform);
         }
     }
 
