@@ -121,8 +121,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.10841289
-  m_Center: {x: 0.000000011175871, y: 0, z: 0.000000014901161}
+  m_Radius: 0.49563384
+  m_Center: {x: 0, y: 0, z: 0.0074231625}
 --- !u!54 &-482216310313194721
 Rigidbody:
   m_ObjectHideFlags: 0
