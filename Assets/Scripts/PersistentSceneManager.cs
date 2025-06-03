@@ -15,16 +15,15 @@ public class PersistentSceneManager : MonoBehaviour
     [SerializeField] private string tutorialSceneName = "TutorialScene";
     [SerializeField]
     private string[] gameSceneNames = {
-        "",     
-        "FrutyLevel",   
-        "Level2Scene",   
-        "Level3Scene",   
-    };
+        "",
+        "First Level",
+        "MiniGameFish",    };
 
     private static PersistentSceneManager instance;
     private int selectedLevel = -1;
     private string targetGameScene = "";
     private bool isTransitioning = false;
+    private bool comingFromTutorial = false;
 
     public static PersistentSceneManager Instance
     {
@@ -53,6 +52,35 @@ public class PersistentSceneManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (IsGameScene(currentScene) && comingFromTutorial)
+        {
+            StartCoroutine(FadeInOnGameStart());
+        }
+    }
+
+    private bool IsGameScene(string sceneName)
+    {
+        foreach (string gameScene in gameSceneNames)
+        {
+            if (!string.IsNullOrEmpty(gameScene) && gameScene == sceneName)
+                return true;
+        }
+        return false;
+    }
+
+    private IEnumerator FadeInOnGameStart()
+    {
+        SetBlackImmediate();
+
+        yield return null;
+
+        yield return StartCoroutine(FadeIn());
+        comingFromTutorial = false;
     }
 
     private void InitializeTransitionCanvas()
@@ -150,6 +178,7 @@ public class PersistentSceneManager : MonoBehaviour
     private IEnumerator TransitionToGameScene()
     {
         isTransitioning = true;
+        comingFromTutorial = true;
 
         yield return StartCoroutine(FadeOut());
 
@@ -161,7 +190,11 @@ public class PersistentSceneManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.1f);
-        yield return StartCoroutine(FadeIn());
+
+        if (FindFirstObjectByType<GameIntroManager>() == null)
+        {
+            yield return StartCoroutine(FadeIn());
+        }
 
         isTransitioning = false;
     }
@@ -181,6 +214,7 @@ public class PersistentSceneManager : MonoBehaviour
 
         selectedLevel = -1;
         targetGameScene = "";
+        comingFromTutorial = false;
 
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(hubSceneName);
 

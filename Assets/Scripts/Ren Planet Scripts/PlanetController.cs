@@ -9,11 +9,11 @@ public class PlanetController : MonoBehaviour
     [SerializeField] private float playerRotationSpeed = 50f;
     [SerializeField] private float idleRotationSpeed = 10f;
     [SerializeField] private Vector3 idleRotationAxis = Vector3.up;
-    [SerializeField] private float rotationalInertia = 0.8f;              
+    [SerializeField] private float rotationalInertia = 0.8f;
     [Header("Original Rotation Correction")]
-    [SerializeField] private bool correctXRotation = true;     
-    [SerializeField] private float xCorrectionSpeed = 2f;        
-    private float originalXRotation;    
+    [SerializeField] private bool correctXRotation = true;
+    [SerializeField] private float xCorrectionSpeed = 2f;
+    private float originalXRotation;
 
     [Header("Bobbing Motion")]
     [SerializeField] private float bobSpeed = 1f;
@@ -22,17 +22,17 @@ public class PlanetController : MonoBehaviour
     private float _bobPhase;
 
     [Header("Selection Settings")]
-    [SerializeField] private float raycastDistance = 7f;        
-    [SerializeField] private float snapDuration = 0.5f;          
-    [SerializeField] private float snapCooldownDuration = 2f;      
+    [SerializeField] private float raycastDistance = 7f;
+    [SerializeField] private float snapDuration = 0.5f;
+    [SerializeField] private float snapCooldownDuration = 2f;
     [SerializeField] private float inactivityTimeout = 3f;
 
     [Header("Level Configuration")]
-    [SerializeField] private List<LevelData> levelData;     
+    [SerializeField] private List<LevelData> levelData;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource musicSource;    
-    [SerializeField] private AudioSource sfxSource;    
+    [SerializeField] private AudioSource musicSource;
+    [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip backgroundMusic;
     [SerializeField] private AudioClip hoverSound;
     [SerializeField] private AudioClip selectSound;
@@ -42,7 +42,7 @@ public class PlanetController : MonoBehaviour
     [Range(0f, 1f)][SerializeField] private float musicVolume = 0.7f;
     [Range(0f, 1f)][SerializeField] private float sfxVolume = 1f;
     [Range(0f, 1f)][SerializeField] private float ambientVolume = 0.5f;
-    [SerializeField] private float audioTransitionDuration = 1f;         
+    [SerializeField] private float audioTransitionDuration = 1f;
 
     [Header("Input Actions (via PlayerInput) - Optional")]
     public InputActionAsset actions;
@@ -55,36 +55,20 @@ public class PlanetController : MonoBehaviour
     public struct LevelData
     {
         [Header("Identification")]
-        public string levelName;       
+        public string levelName;
 
         [Header("Detection")]
-        public Transform selectingSpot;           
+        public Transform selectingSpot;
 
         [Header("Visual Effects (Future)")]
-        public Transform islandPrefab;        
+        public Transform islandPrefab;
 
         [Header("UI & Scene")]
-        public GameObject panel;      
-        public int levelNumber;         
+        public GameObject panel;
+        public int levelNumber;
 
         [Header("Audio")]
-        public AudioClip ambientSound;       
-    }
-
-    private void UpdateAudioVolumes()
-    {
-        if (sfxSource != null)
-            sfxSource.volume = sfxVolume;
-
-        if (musicSource != null && !_isTransitioningAudio && musicSource.isPlaying)
-        {
-            musicSource.volume = musicVolume;
-        }
-
-        if (_currentAmbientSource != null)
-        {
-            _currentAmbientSource.volume = ambientVolume;
-        }
+        public AudioClip ambientSound;
     }
 
     private enum PlanetState { Idle, Active, Focused }
@@ -105,6 +89,8 @@ public class PlanetController : MonoBehaviour
     private AudioSource _currentAmbientSource;
     private bool _isTransitioningAudio = false;
 
+    // Smooth rotation variables from old system
+    private Vector2 currentVelocity = Vector2.zero;
     private bool wasReceivingInput = false;
     private Transform _cam;
     private float _idleTimer;
@@ -164,7 +150,7 @@ public class PlanetController : MonoBehaviour
 
         originalXRotation = transform.eulerAngles.x;
 
-        if (musicSource != null) musicSource.volume = 0f;    
+        if (musicSource != null) musicSource.volume = 0f;
         if (sfxSource != null) sfxSource.volume = sfxVolume;
 
         StartCoroutine(StartBackgroundMusic());
@@ -310,8 +296,12 @@ public class PlanetController : MonoBehaviour
             EnterActiveState();
         }
 
-        float rotationX = input.x * playerRotationSpeed * Time.deltaTime;
-        float rotationY = -input.y * playerRotationSpeed * Time.deltaTime;
+        // Use smooth velocity system from old version
+        currentVelocity = input * playerRotationSpeed;
+
+        // Apply rotation with velocity
+        float rotationX = currentVelocity.x * Time.deltaTime;
+        float rotationY = -currentVelocity.y * Time.deltaTime;
 
         transform.Rotate(Vector3.up, rotationX, Space.World);
         transform.Rotate(_cam.right, rotationY, Space.World);
@@ -326,8 +316,27 @@ public class PlanetController : MonoBehaviour
             wasReceivingInput = false;
         }
 
+        // Apply inertia when no input
+        currentVelocity *= rotationalInertia;
+
+        // If velocity is very small, stop completely
+        if (currentVelocity.magnitude < 0.1f)
+        {
+            currentVelocity = Vector2.zero;
+        }
+
+        // Apply remaining velocity from inertia
+        if (currentVelocity.magnitude > 0)
+        {
+            float rotationX = currentVelocity.x * Time.deltaTime;
+            float rotationY = -currentVelocity.y * Time.deltaTime;
+
+            transform.Rotate(Vector3.up, rotationX, Space.World);
+            transform.Rotate(_cam.right, rotationY, Space.World);
+        }
+
         _idleTimer += Time.deltaTime;
-        if (_idleTimer < 0.5f)   
+        if (_idleTimer < 0.5f)
         {
             transform.position = _startPos;
             return;
@@ -377,6 +386,7 @@ public class PlanetController : MonoBehaviour
     {
         currentState = PlanetState.Idle;
         currentlyFocusedLevel = null;
+        currentVelocity = Vector2.zero; // Reset velocity when entering idle
     }
 
     private void CorrectXRotation()
@@ -426,6 +436,7 @@ public class PlanetController : MonoBehaviour
     {
         _bobPhase = 0f;
         transform.position = _startPos;
+        currentVelocity = Vector2.zero; // Stop all velocity when snapping
 
         LevelData? targetLevel = FindLevelDataBySelectingSpot(target);
         if (targetLevel == null)
@@ -515,6 +526,7 @@ public class PlanetController : MonoBehaviour
         _idleWeight = 1f;
         _bobPhase = 0f;
         transform.position = _startPos;
+        currentVelocity = Vector2.zero; // Reset velocity when closing panel
 
         currentState = PlanetState.Active;
         lastInputTime = Time.time;
@@ -538,6 +550,22 @@ public class PlanetController : MonoBehaviour
         }
     }
 
+    private void UpdateAudioVolumes()
+    {
+        if (sfxSource != null)
+            sfxSource.volume = sfxVolume;
+
+        if (musicSource != null && !_isTransitioningAudio && musicSource.isPlaying)
+        {
+            musicSource.volume = musicVolume;
+        }
+
+        if (_currentAmbientSource != null)
+        {
+            _currentAmbientSource.volume = ambientVolume;
+        }
+    }
+
     private IEnumerator TransitionToAmbientAudio(AudioClip ambientClip)
     {
         _isTransitioningAudio = true;
@@ -556,7 +584,7 @@ public class PlanetController : MonoBehaviour
             }
 
             musicSource.volume = 0f;
-            musicSource.Pause();        
+            musicSource.Pause();
         }
 
         if (_currentAmbientSource != null)
@@ -611,7 +639,7 @@ public class PlanetController : MonoBehaviour
         {
             if (!musicSource.isPlaying)
             {
-                musicSource.UnPause();       
+                musicSource.UnPause();
             }
 
             float elapsed = 0f;

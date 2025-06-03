@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.Hierarchy;
 using UnityEngine;
 
-public class AmmoPile : MonoBehaviour
+public class ApplePickup : MonoBehaviour
 {
     [Header("Ammo Pile Settings")]
     [SerializeField] private GameObject[] ammoStages;
@@ -33,12 +33,12 @@ public class AmmoPile : MonoBehaviour
                     break;
                 }
             }
-            yield return null; 
+            yield return null;
         }
 
         if (ammoStages == null || ammoStages.Length == 0)
         {
-            Debug.LogError("AmmoPile: No ammo stage prefabs assigned!");
+            Debug.LogError("ApplePickup: No ammo stage prefabs assigned!");
             yield break;
         }
 
@@ -50,7 +50,7 @@ public class AmmoPile : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"AmmoPile: Stage {i} is null!");
+                Debug.LogWarning($"ApplePickup: Stage {i} is null!");
             }
         }
 
@@ -63,7 +63,6 @@ public class AmmoPile : MonoBehaviour
     {
         if (!isGrowing || ammoStages.Length == 0) return;
 
-       
         fillAmount += fillRate * Time.deltaTime;
 
         int targetStage = Mathf.Min(Mathf.FloorToInt(fillAmount), ammoStages.Length - 1);
@@ -93,7 +92,8 @@ public class AmmoPile : MonoBehaviour
 
     private void CollectAmmo(PlayerScript playerScript)
     {
-        int ammoAmount = Mathf.RoundToInt((currentStage + 1) * (10.0f / ammoStages.Length));
+        // adjusted calculation for max 5 bullets instead of 10
+        int ammoAmount = Mathf.RoundToInt((currentStage + 1) * (5.0f / ammoStages.Length));
 
         if (playerScript != null && ammoAmount > 0)
         {
@@ -102,14 +102,11 @@ public class AmmoPile : MonoBehaviour
 
             if (ammoToGive > 0)
             {
-                playerScript.bullets += ammoToGive;
-                playerScript.UpdateAmmoUI();
+                // use the new reload method that plays sound
+                playerScript.ReloadAmmo(ammoToGive);
                 StartCoroutine(RespawnAmmoPile());
             }
-            else
-            {
-                StartCoroutine(Ammofull(playerScript));
-            }
+            // removed the "ammo full" text coroutine since we don't need it anymore
         }
     }
 
@@ -129,29 +126,5 @@ public class AmmoPile : MonoBehaviour
         fillAmount = 0f;
         currentStage = -1;
         isGrowing = true;
-    }
-
-    private IEnumerator Ammofull(PlayerScript playerScript)
-    {
-        if (playerScript.fullAmmoText != null)
-        {
-            playerScript.fullAmmoText.text = "You cannot carry more fruit";
-            playerScript.fullAmmoText.color = Color.red;
-            playerScript.fullAmmoText.gameObject.SetActive(true);
-
-            float fadeDuration = 3f;
-            float elapsed = 0f;
-            Color startColor = playerScript.fullAmmoText.color;
-            Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
-
-            while (elapsed < fadeDuration)
-            {
-                playerScript.fullAmmoText.color = Color.Lerp(startColor, endColor, elapsed / fadeDuration);
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-
-            playerScript.fullAmmoText.gameObject.SetActive(false);
-        }
     }
 }

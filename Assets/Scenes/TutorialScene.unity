@@ -969,6 +969,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tutorialPanels:
   - {fileID: 1033662239}
+  - {fileID: 1033662239}
   playerReadyTexts:
   - {fileID: 1737492976}
   - {fileID: 365660475}
@@ -977,6 +978,8 @@ MonoBehaviour:
   readyColor: {r: 0, g: 1, b: 0, a: 1}
   waitingColor: {r: 1, g: 1, b: 1, a: 1}
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  singleControllerDebug: 0
+  debugReadyKey: 332
 --- !u!4 &1940170251
 Transform:
   m_ObjectHideFlags: 0

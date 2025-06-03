@@ -2,18 +2,30 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private GameObject tomato;
     [SerializeField] private Transform[] lanePoints;
     [SerializeField] private Transform hand;
     [SerializeField] private string laneGroupName = "Collliders_Lives";
-    public PlayerInput player1Input; 
+    public PlayerInput player1Input;
     public PlayerInput player2Input;
-    public int maxBullets = 10;
-    public TextMeshProUGUI ammoText;
-    public TextMeshProUGUI fullAmmoText;
-    [SerializeField] private bool LeftOrRight;
+    public int maxBullets = 5;
+    public bool LeftOrRight;
+
+    private GameObject[] fruitUIObjects = new GameObject[5];
+    private Sprite emptyFruitSprite;
+    private Sprite[] originalSprites = new Sprite[5];
+    private Image[] fruitImages = new Image[5];     
+
+    public AudioSource jumpAudioSource;     
+    public AudioSource throwAudioSource;    
+    public AudioClip jumpSound;
+    public AudioClip throwSound;
+    public AudioClip reloadSound;
+    public AudioClip emptyThrowSound;         
 
     public int bullets;
     private int currentLane = 3;
@@ -31,6 +43,19 @@ public class PlayerScript : MonoBehaviour
     private void Start()
     {
         bullets = maxBullets;
+
+        for (int i = 0; i < fruitUIObjects.Length; i++)
+        {
+            if (fruitUIObjects[i] != null)
+            {
+                fruitImages[i] = fruitUIObjects[i].GetComponent<Image>();
+                if (fruitImages[i] != null)
+                {
+                    originalSprites[i] = fruitImages[i].sprite;
+                }
+            }
+        }
+
         UpdateAmmoUI();
         animator = GetComponent<Animator>();
 
@@ -84,6 +109,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane--;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(-1);
+                PlayJumpSound();
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -95,6 +121,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane++;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(1);
+                PlayJumpSound();
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -135,13 +162,12 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    // Called by animation event in throw animation
     public void Shoot()
     {
         if (bullets <= 0)
         {
             Debug.Log("Out of Ammo");
-            StartCoroutine(ShowOutOfAmmo());
+            PlayEmptyThrowSound();
         }
         else
         {
@@ -149,47 +175,56 @@ public class PlayerScript : MonoBehaviour
                 Instantiate(tomato, hand.transform.position, transform.rotation);
             bullets--;
             UpdateAmmoUI();
+            PlayThrowSound();
         }
     }
-
     public void UpdateAmmoUI()
     {
-        if (ammoText != null)
+        for (int i = 0; i < fruitImages.Length; i++)
         {
-            ammoText.text = $"Ammo: {bullets}/{maxBullets}";
-            ammoText.color = Color.black;
-            ammoText.gameObject.SetActive(true);
+            if (fruitImages[i] != null)
+            {
+                if (i < bullets)
+                {
+                    fruitImages[i].sprite = originalSprites[i];
+                }
+                else
+                {
+                    fruitImages[i].sprite = emptyFruitSprite;
+                }
+            }
         }
     }
 
-    private IEnumerator ShowOutOfAmmo()
+    private void PlayJumpSound()
     {
-        if (fullAmmoText != null)
+        if (jumpAudioSource != null && jumpSound != null)
         {
-            fullAmmoText.text = "Out of Ammo!";
-            fullAmmoText.color = Color.red;
-            fullAmmoText.gameObject.SetActive(true);
+            jumpAudioSource.PlayOneShot(jumpSound);
+        }
+    }
 
-            float fadeDuration = 3f;
-            float elapsed = 0f;
-            Color startColor = fullAmmoText.color;
-            Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+    private void PlayThrowSound()
+    {
+        if (throwAudioSource != null && throwSound != null)
+        {
+            throwAudioSource.PlayOneShot(throwSound);
+        }
+    }
 
-            if (fullAmmoText.rectTransform != null)
-            {
-                fullAmmoText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                fullAmmoText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                fullAmmoText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                fullAmmoText.rectTransform.anchoredPosition = Vector2.zero;
-            }
-            while (elapsed < fadeDuration)
-            {
-                fullAmmoText.color = Color.Lerp(startColor, endColor, elapsed / fadeDuration);
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
+    private void PlayEmptyThrowSound()
+    {
+        if (throwAudioSource != null && emptyThrowSound != null)
+        {
+            throwAudioSource.PlayOneShot(emptyThrowSound);
+        }
+    }
 
-            fullAmmoText.gameObject.SetActive(false);
+    private void PlayReloadSound()
+    {
+        if (throwAudioSource != null && reloadSound != null)
+        {
+            throwAudioSource.PlayOneShot(reloadSound);
         }
     }
 
@@ -206,22 +241,44 @@ public class PlayerScript : MonoBehaviour
         {
             if (playerInput.playerIndex == 0)
             {
-                //playerScript.laneGroupName = "Collliders_Lives";
-                playerScript.LeftOrRight = true; // Left player
+                playerScript.LeftOrRight = true;   
             }
             else if (playerInput.playerIndex == 1)
             {
-                //playerScript.laneGroupName = "Collliders_Lives (1)";
-                playerScript.LeftOrRight = false; // Right player
+                playerScript.LeftOrRight = false;   
             }
-            // ...and so on for more players
         }
     }
-    public void SetAmmoUI(TextMeshProUGUI ammo, TextMeshProUGUI empty)
+
+    public void SetAmmoUI(GameObject[] uiObjects, Sprite emptySprite)
     {
-        ammoText = ammo;
-        fullAmmoText = empty;
+        fruitUIObjects = uiObjects;
+        emptyFruitSprite = emptySprite;
+
+        for (int i = 0; i < fruitUIObjects.Length; i++)
+        {
+            if (fruitUIObjects[i] != null)
+            {
+                fruitImages[i] = fruitUIObjects[i].GetComponent<Image>();
+                if (fruitImages[i] != null)
+                {
+                    originalSprites[i] = fruitImages[i].sprite;
+                }
+            }
+        }
+        UpdateAmmoUI();
+    }
+
+    public void ReloadAmmo(int amount)
+    {
+        int spaceLeft = maxBullets - bullets;
+        int ammoToGive = Mathf.Min(amount, spaceLeft);
+
+        if (ammoToGive > 0)
+        {
+            bullets += ammoToGive;
+            UpdateAmmoUI();
+            PlayReloadSound();
+        }
     }
 }
-
-    
