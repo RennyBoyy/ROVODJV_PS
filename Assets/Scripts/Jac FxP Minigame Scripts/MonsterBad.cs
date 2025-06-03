@@ -39,6 +39,11 @@ public class MonsterBad : MonoBehaviour
                         {
                             Destroy(collider);
                         }
+                        if (targetLife.transform.childCount > 0)
+                        {
+                            Transform child = targetLife.transform.GetChild(0);
+                            Destroy(child.gameObject);
+                        }
                     }
 
 

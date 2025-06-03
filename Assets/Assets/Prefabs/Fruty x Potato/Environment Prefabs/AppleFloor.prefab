@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 326262a4b38f5114c82ee06f3052c2c6, type: 2}
     - target: {fileID: 919132149155446097, guid: 68f123d4ee5d9614681566fd74f56488, type: 3}
       propertyPath: m_Name
-      value: Apple
+      value: AppleFloor
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 68f123d4ee5d9614681566fd74f56488, type: 3}
       propertyPath: m_TagString

@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4620496171510612967
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25754
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.25754
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.25754
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.125503
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -9.970291
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 37.38001
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_Name
+      value: scarecrow enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_TagString
+      value: Monster
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -98223671425580352}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -316967238851368176}
+  m_SourcePrefab: {fileID: 100100000, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+--- !u!1 &5538905378751545014 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+  m_PrefabInstance: {fileID: 4620496171510612967}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &-98223671425580352
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5538905378751545014}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.1262962
+  m_Height: 6.955039
+  m_Direction: 1
+  m_Center: {x: -0.0000002314384, y: 2.97752, z: 0.62629616}
+--- !u!114 &-316967238851368176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5538905378751545014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b78fca9d598e0d640afb744fbdb146ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  monsterHealth: 1
+  gameManager: {fileID: 0}
+  monsterEatingTime: 3
