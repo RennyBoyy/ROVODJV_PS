@@ -11,6 +11,7 @@ public class MonsterBad : MonoBehaviour
     private bool isEating = false;
     private float eatingTimer = 0f;
     private GameObject targetLife;
+    public bool didplayer1lose = false; // true if player 1 lost, false if player 2 lost
 
     private void Start()
     {
@@ -76,13 +77,17 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("LoseCon"))
         {
-            
             gameManager.Fruit_Remaining = 0;
-
+            didplayer1lose = true;
+            if (gameManager != null)
+                gameManager.TriggerGameEndFromMonster(this);
         }
         else if (other.gameObject.CompareTag("LoseCon1"))
         {
             gameManager.Fruit_Remaining = 0;
+            didplayer1lose = false;
+            if (gameManager != null)
+                gameManager.TriggerGameEndFromMonster(this);
         }
     }
 }
