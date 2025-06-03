@@ -62,11 +62,7 @@ public class GameIntroManager : MonoBehaviour
 
         SetupCountdownUI();
 
-        PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
-        if (sceneManager != null)
-        {
-            sceneManager.SetBlackImmediate();
-        }
+        Debug.Log("GameIntroManager starting intro sequence");
 
         StartCoroutine(PlayFullIntroSequence());
     }
@@ -126,13 +122,11 @@ public class GameIntroManager : MonoBehaviour
     {
         if (introComplete) yield break;
 
-        PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
-        if (sceneManager != null)
-        {
-            sceneManager.FadeFromBlack();
-        }
+        // Don't try to control the PersistentSceneManager fade here
+        // Let it handle the initial fade-in, then proceed with intro
+        Debug.Log("GameIntroManager: Starting intro sequence");
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.8f); // Wait for PersistentSceneManager fade
 
         if (introTargets != null && introTargets.Length > 0)
         {
