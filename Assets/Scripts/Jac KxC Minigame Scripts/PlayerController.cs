@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        Debug.Log(ctx.ReadValue<Vector2>());
+        //Debug.Log(ctx.ReadValue<Vector2>());
         moveInput = ctx.ReadValue<Vector2>().x;
     }
     public void OnJump(InputAction.CallbackContext ctx)
