@@ -13,6 +13,10 @@ TagManager:
   - Tomato
   - Continent
   - LoseCon1
+  - Obstacle
+  - RoughTerrain
+  - Slope
+  - Wall
   layers:
   - Default
   - TransparentFX

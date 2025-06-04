@@ -1,34 +1,43 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    private float moveInput;
-
+    [Header("Physics Controllers")]
     [SerializeField] private float jumpForce = 30f;
-    private bool isGrounded = true;
-
+    [SerializeField] private bool isGrounded = true;
+    [SerializeField] private bool moving;
     [SerializeField] private Rigidbody m_Rigidbody;
+    private float moveInput;
     public float m_Thrust = 1.0f;
+    public float z_Thrust = 0.9f;
     public float maxSpeed = 100f;
     private bool jumpInput;
-    private bool moving;
 
     private void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        moving = true;
+        moving = false;
     }
-    private void Update()
+    private void FixedUpdate()
     {
+        m_Rigidbody.useGravity = true; // Always enable gravity
+
         HandleMovement();
         if (moving)
         {
-            m_Rigidbody.AddForce(new Vector3(0, -1f, 0.8f), ForceMode.Impulse);
+            // Apply a continuous forward force
+            m_Rigidbody.AddForce(new Vector3(0, 0, z_Thrust), ForceMode.Force);
+
+            // Clamp minimum forward speed
+            Vector3 velocity = m_Rigidbody.linearVelocity;
+            if (velocity.z < 2f)
+            {
+                velocity.z = 2f;
+                m_Rigidbody.linearVelocity = velocity;
+            }
         }
-        
 
         if (jumpInput && isGrounded)
         {
@@ -44,7 +53,6 @@ public class PlayerController : MonoBehaviour
     }
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        //Debug.Log(ctx.ReadValue<Vector2>());
         moveInput = ctx.ReadValue<Vector2>().x;
     }
     public void OnJump(InputAction.CallbackContext ctx)
@@ -65,9 +73,18 @@ public class PlayerController : MonoBehaviour
             Destroy(collision.gameObject);
             StartCoroutine(StopMoving());
         }
-        if (collision.gameObject.CompareTag("Respawn"))
+        if (collision.gameObject.CompareTag("RoughTerrain"))
         {
-            SceneManager.LoadScene("RenTest");
+            z_Thrust = 10f;
+        }
+        else if (collision.gameObject.CompareTag("Slope")) z_Thrust = 20f;
+
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Vector3 velocity = m_Rigidbody.linearVelocity;
+            velocity.x = 0; 
+            velocity.z *= 0.8f; 
+            m_Rigidbody.linearVelocity = velocity;
         }
     }
     private IEnumerator StopMoving()
