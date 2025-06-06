@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/JacobScene.unity
-    guid: 58d3ff13a46c4fb43a0f2d96e8fead47
-  - enabled: 1
     path: Assets/Scenes/BugabooPlanet.unity
     guid: f94203f2bc014f844b5494b8fd122f46
   - enabled: 1

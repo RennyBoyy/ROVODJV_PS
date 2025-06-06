@@ -24,11 +24,6 @@ public class GameManager_Fruity : MonoBehaviour
         {
             FindPlayerTransforms();
         }
-
-        if (gameOverManager != null)
-        {
-           // gameOverManager.SetPlayerTargets(player1Transform, player2Transform);
-        }
     }
 
     void FindPlayerTransforms()
@@ -67,7 +62,7 @@ public class GameManager_Fruity : MonoBehaviour
 
         if (gameOverManager != null)
         {
-            bool player1Lost = DetermineLosingPlayer(null); // Fallback to random if no MonsterBad instance is provided
+            bool player1Lost = DetermineLosingPlayer();
             gameOverManager.HandleGameEnd(player1Lost);
         }
         else
@@ -78,37 +73,9 @@ public class GameManager_Fruity : MonoBehaviour
         }
     }
 
-    // Optionally keep as fallback, or remove if not needed
-    private bool DetermineLosingPlayer(MonsterBad monster)
+    private bool DetermineLosingPlayer()
     {
-        if (monster != null)
-            return monster.didplayer1lose;
         return Random.Range(0, 2) == 0;
-    }
-
-    // Add this method to handle game end from a specific MonsterBad instance
-    public void TriggerGameEndFromMonster(MonsterBad monster)
-    {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        Debug.Log("[GameManager_Fruity] You lose! TriggerGameEndFromMonster called.");
-
-        bool player1Lost = DetermineLosingPlayer(monster);
-        Debug.Log($"[GameManager_Fruity] Calling HandleGameEnd. player1Lost={player1Lost}, monster={monster}");
-
-        if (gameOverManager != null)
-        {
-            Debug.Log("[GameManager_Fruity] gameOverManager is not null, calling HandleGameEnd.");
-            gameOverManager.HandleGameEnd(player1Lost);
-        }
-        else
-        {
-            Debug.LogWarning("[GameManager_Fruity] gameOverManager is null!");
-            if (loseText != null)
-                loseText.gameObject.SetActive(true);
-            StartCoroutine(LoadSceneAfterDelay());
-        }
     }
 
     private IEnumerator LoadSceneAfterDelay()
