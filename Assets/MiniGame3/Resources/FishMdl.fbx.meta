@@ -1,0 +1,172 @@
+fileFormatVersion: 2
+guid: 174385f0aad9d7045aa36bbe72194707
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_AnglerFish
+    second: {fileID: 2100000, guid: d849a3341a0bda244aa99d2875c8ea2d, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: AnglerFish2_M_AnglerFish_BaseColor
+    second: {fileID: 2800000, guid: 7b7ac4ea8a9918b478667a2d3576f291, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 100
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: FishMdl(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: angler
+      parentName: FishMdl(Clone)
+      position: {x: -0, y: 2.177, z: -0.004804336}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: AnglerFish_Main
+      parentName: FishMdl(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0, y: -0.7071068, z: 0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Angler_Hub001
+      parentName: FishMdl(Clone)
+      position: {x: 1.829781e-13, y: 2.0991633, z: -0.0000005828879}
+      rotation: {x: -0.000000047078494, y: -0.7071067, z: -0.00000004707848, w: 0.7071069}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Angler_Tail1
+      parentName: Angler_Hub001
+      position: {x: -0.6768968, y: 0, z: 0}
+      rotation: {x: 0.000000058017555, y: 0.000000029802322, z: -0.5306823, w: 0.84757084}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: Angler_Tail2
+      parentName: Angler_Tail1
+      position: {x: -0.7629957, y: -0.00000011920929, z: 2.842171e-14}
+      rotation: {x: 0.000000012896498, y: -0.000000028354005, z: -0.017999822, w: 0.999838}
+      scale: {x: 1, y: 1.0000001, z: 1.0000002}
+    - name: Angler_TopFin
+      parentName: Angler_Hub001
+      position: {x: -0.20713797, y: 0.77331567, z: -0.00000006913973}
+      rotation: {x: 0.0000000069158097, y: -0.00000008176513, z: -0.5735765, w: 0.819152}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: Angler_LeftFin
+      parentName: Angler_Hub001
+      position: {x: -0.24234009, y: -0.14933825, z: 0.59393317}
+      rotation: {x: -0.06370595, y: 0.5259295, z: 0.06810862, w: 0.84539986}
+      scale: {x: 0.99999994, y: 1, z: 1.0000002}
+    - name: Angler_RightFin
+      parentName: Angler_Hub001
+      position: {x: -0.24234009, y: -0.14933836, z: -0.59393305}
+      rotation: {x: 0.06370604, y: -0.5259296, z: 0.06810871, w: 0.8453998}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1.0000002}
+    - name: Angler_Jaw
+      parentName: Angler_Hub001
+      position: {x: 0.07436247, y: -0.8112509, z: 0.00000007253142}
+      rotation: {x: 0.0000000074174884, y: 0.000000011372521, z: 0.9659259, w: 0.25881892}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: Angler_Light
+      parentName: Angler_Hub001
+      position: {x: 1.5219347, y: 1.5171187, z: -0.00000013226708}
+      rotation: {x: 2.7665102e-15, y: -9.660259e-15, z: 0.8744562, w: 0.48510447}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 100
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
