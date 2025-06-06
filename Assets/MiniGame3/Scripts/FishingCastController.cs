@@ -12,89 +12,70 @@ public class FishingCastController : MonoBehaviour
     [Tooltip("Check this on the Player1 GameObject, leave unchecked on Player2")]
     [SerializeField] private bool isPlayerOne = false;
 
-    // Our core Inputs & Animator
+    // Core inputs & animator
     private InputAction _castAction;
     private Animator _animator;
     private bool _pulledDown = false;
+    private bool _isFishing = false;
 
-    // The cached lengths of "Cast", "ReelIn", and "FailedReel" clips/anim
+    // Cached animation lengths
     private float _castLength = 0f;
     private float _reelInLength = 0f;
     private float _failedReelLength = 0f;
 
-    // I use this to prevent recasting while fishing/QTE is in progress
-    private bool _isFishing = false;
+    // Shared UI (from GameConfigurator)
+    private TMP_Text failedBiteText;
+    private TMP_Text fishCaughtText;
+    private Sprite[] buttonIcons;
 
-    // Our fish-Bite prompt settings
-    [Header("Fish-Bite Settings")]
-    [Tooltip("Min seconds before fish bites.")]
-    [SerializeField] private float minBiteTime = 3f;
-    [Tooltip("Max seconds before fish bites.")]
-    [SerializeField] private float maxBiteTime = 5f;
-    [Tooltip("How long (seconds) the bite prompt stays up awaiting buttonSouth.")]
-    [SerializeField] private float bitePromptDuration = 0.5f;
-    [Tooltip("UI GameObject: displays \"Bite! Press X now\"")]
-    [SerializeField] private GameObject bitePromptUI = null;
-    [Tooltip("TextMeshProUGUI for showing \"Failed Bite\"")]
-    [SerializeField] private TMP_Text failedBiteText = null;
+    // Pick correct score?text for this player
+    private TMP_Text scoreTextForThisPlayer;
 
+    // Player?specific templates (from GameConfigurator)
+    private GameObject buttonSlotTemplateForThisPlayer;
+    private RectTransform qteUIParentForThisPlayer;
+
+    // QTE logic state
     private bool _waitingForBitePress = false;
     private float _bitePromptEndTime = 0f;
 
-    // QTE(Quick Timed Event) scrolling-note settings
-    [Header("QTE Scrolling-Note Settings")]
-    [Tooltip("The masked panel that holds scrolling notes.")]
-    [SerializeField] private RectTransform qteUIParent = null;
-    [Tooltip("Disabled template for each note/icon.")]
-    [SerializeField] private GameObject buttonSlotTemplate = null;
-    [Tooltip("Sprites for face-buttons: 0=Circle,1=Cross,2=Square,3=Triangle")]
-    [SerializeField] private Sprite[] buttonIcons = new Sprite[4];
-    [Tooltip("Pixels per second that notes scroll left.")]
-    [SerializeField] private float scrollSpeed = 300f;
-    [Tooltip("Sequence length for a small fish.")]
-    [SerializeField] private int smallFishSequenceLength = 3;
-    [Tooltip("Sequence length for a big fish.")]
-    [SerializeField] private int bigFishSequenceLength = 5;
+    private bool _qteActive = false;
+    private List<MovingNote> activeNotes = new List<MovingNote>();
+    private List<int> _currentSequence = new List<int>();
+    private List<float> _spawnTimes = new List<float>();
+    private int _spawnIndex = 0;
 
-    // The ssuccess window between x = 200 and x = 300 for players to correctly press btns in time
+    // Score tracking
+    private int _fishCount = 0;
+
+    // Indicate big or small fish for scoring
+    private bool _isCurrentFishBig = false;
+
+    // Timings (pulled from GameConfigurator)
+    private float minBiteTime;
+    private float maxBiteTime;
+    private float bitePromptDuration;
+    private float scrollSpeed;
+    private int smallFishSequenceLength;
+    private int bigFishSequenceLength;
+    private float fishCaughtDuration;
+    private float failedBiteDuration;
+
+    // Success window
     private const float successXMin = 200f;
     private const float successXMax = 300f;
 
-    //track whether QTE is active
-    private bool _qteActive = false;
-
-    //for tracking each moving note
+    // MovingNote helper
     private class MovingNote
     {
         public RectTransform rect;
         public int expectedButton;
         public bool hasBeenHit;
     }
-    private List<MovingNote> activeNotes = new List<MovingNote>();
-
-    // generated sequence of buttons and the times at which theyll spawn
-    private List<int> _currentSequence = new List<int>();
-    private List<float> _spawnTimes = new List<float>();
-    private int _spawnIndex = 0;
-
-    // score display
-    [Header("Score Settings")]
-    [Tooltip("TextMeshProUGUI showing fish caught.")]
-    [SerializeField] private TMP_Text scoreText = null;
-    private int _fishCount = 0;
-
-    // message durations and times
-    [Header("Message Durations")]
-    [Tooltip("How long (seconds) \"Fish Caught\" displays.")]
-    [SerializeField] private float fishCaughtDuration = 2f;
-    [Tooltip("How long (seconds) \"Failed Bite\" displays.")]
-    [SerializeField] private float failedBiteDuration = 1f;
-    [Tooltip("TextMeshProUGUI for showing \"Fish Caught\"")]
-    [SerializeField] private TMP_Text fishCaughtText = null;
 
     private void Awake()
     {
-        // gamepad setups
+        // — Gamepad setup —
         if (isPlayerOne && Gamepad.all.Count < 1)
         {
             Debug.Log("No controller for Player1");
@@ -116,7 +97,6 @@ public class FishingCastController : MonoBehaviour
 
         _castAction = pi.actions["Cast"];
 
-        // animator nd clip lengths
         _animator = GetComponent<Animator>();
         if (_animator == null)
         {
@@ -125,6 +105,7 @@ public class FishingCastController : MonoBehaviour
             return;
         }
 
+        // Cache animation clip lengths
         foreach (var clip in _animator.runtimeAnimatorController.animationClips)
         {
             if (clip.name == "Cast") _castLength = clip.length;
@@ -132,14 +113,61 @@ public class FishingCastController : MonoBehaviour
             if (clip.name == "FailedReel") _failedReelLength = clip.length;
         }
 
-        // UI setup
-        if (bitePromptUI != null) bitePromptUI.SetActive(false);
+        // — Pull in shared references & timings from GameConfigurator —
+        var cfg = GameConfigurator.Instance;
+        if (cfg == null)
+        {
+            Debug.LogError("FishingCastController requires a GameConfigurator in the scene.");
+            enabled = false;
+            return;
+        }
+
+        failedBiteText = cfg.failedBiteText;
+        fishCaughtText = cfg.fishCaughtText;
+        buttonIcons = cfg.buttonIcons;
+
+        // Choose the correct score?text for this player
+        scoreTextForThisPlayer = isPlayerOne
+                                 ? cfg.scoreP1Text
+                                 : cfg.scoreP2Text;
+
+        // Choose the correct button?slot template and QTE parent
+        buttonSlotTemplateForThisPlayer = isPlayerOne
+                                          ? cfg.buttonSlotTemplate_P1
+                                          : cfg.buttonSlotTemplate_P2;
+        qteUIParentForThisPlayer = isPlayerOne
+                                   ? cfg.qteUIParent_P1
+                                   : cfg.qteUIParent_P2;
+
+        // Pull in timings
+        minBiteTime = cfg.minBiteTime;
+        maxBiteTime = cfg.maxBiteTime;
+        bitePromptDuration = cfg.bitePromptDuration;
+        scrollSpeed = cfg.scrollSpeed;
+        smallFishSequenceLength = cfg.smallFishSequenceLength;
+        bigFishSequenceLength = cfg.bigFishSequenceLength;
+        fishCaughtDuration = cfg.fishCaughtDuration;
+        failedBiteDuration = cfg.failedBiteDuration;
+
+        // Hide shared UI initially
         if (failedBiteText != null) failedBiteText.gameObject.SetActive(false);
         if (fishCaughtText != null) fishCaughtText.gameObject.SetActive(false);
-        if (qteUIParent != null) qteUIParent.gameObject.SetActive(false);
-        if (buttonSlotTemplate != null) buttonSlotTemplate.SetActive(false);
 
-        if (scoreText != null) scoreText.text = _fishCount.ToString();
+        // Hide player?specific bite and QTE panels
+        if (isPlayerOne)
+        {
+            if (cfg.bitePromptUI_P1 != null) cfg.bitePromptUI_P1.SetActive(false);
+            if (cfg.qteUIParent_P1 != null) cfg.qteUIParent_P1.gameObject.SetActive(false);
+        }
+        else
+        {
+            if (cfg.bitePromptUI_P2 != null) cfg.bitePromptUI_P2.SetActive(false);
+            if (cfg.qteUIParent_P2 != null) cfg.qteUIParent_P2.gameObject.SetActive(false);
+        }
+
+        // Initialize this player’s score display
+        if (scoreTextForThisPlayer != null)
+            scoreTextForThisPlayer.text = _fishCount.ToString();
     }
 
     private void OnEnable()
@@ -154,6 +182,35 @@ public class FishingCastController : MonoBehaviour
             _castAction.performed -= OnCastPerformed;
     }
 
+    private void Update()
+    {
+        // Spawning QTE notes
+        if (_qteActive && _spawnIndex < _currentSequence.Count)
+        {
+            if (Time.time >= _spawnTimes[_spawnIndex])
+            {
+                SpawnSingleNote(_currentSequence[_spawnIndex]);
+                _spawnIndex++;
+            }
+        }
+
+        if (_qteActive)
+            UpdateMovingNotes();
+
+        // Handle the bite prompt input first, if awaiting
+        if (_waitingForBitePress)
+        {
+            HandleBitePromptInput();
+            return;
+        }
+
+        // If QTE is active, handle button presses
+        if (_qteActive)
+        {
+            HandleQTEInput();
+        }
+    }
+
     private void OnCastPerformed(InputAction.CallbackContext ctx)
     {
         if (_isFishing) return;
@@ -164,7 +221,7 @@ public class FishingCastController : MonoBehaviour
 
         float value = ctx.ReadValue<float>();
 
-        // pullback settip
+        // Pull-back setup
         if (!_pulledDown && value < -0.9f)
         {
             _pulledDown = true;
@@ -173,7 +230,7 @@ public class FishingCastController : MonoBehaviour
             return;
         }
 
-        // pushup and casting settup
+        // Push-up and casting
         if (_pulledDown && value > 0.9f)
         {
             _pulledDown = false;
@@ -192,6 +249,7 @@ public class FishingCastController : MonoBehaviour
         else
             yield return new WaitForSeconds(0.2f);
 
+        // Random delay until the fish bites
         float biteDelay = Random.Range(minBiteTime, maxBiteTime);
         yield return new WaitForSeconds(biteDelay);
 
@@ -203,36 +261,12 @@ public class FishingCastController : MonoBehaviour
         _waitingForBitePress = true;
         _bitePromptEndTime = Time.time + bitePromptDuration;
 
-        if (bitePromptUI != null) bitePromptUI.SetActive(true);
-        if (failedBiteText != null) failedBiteText.gameObject.SetActive(false);
+        // Show player?specific “Bite” prompt
+        GameConfigurator.Instance.ShowBitePrompt(isPlayerOne);
+        // Hide shared “Failed Bite” text
+        GameConfigurator.Instance.HideFailedBite();
 
         Debug.Log("Fish biting");
-    }
-
-    private void Update()
-    {
-        if (_qteActive && _spawnIndex < _currentSequence.Count)
-        {
-            if (Time.time >= _spawnTimes[_spawnIndex])
-            {
-                SpawnSingleNote(_currentSequence[_spawnIndex]);
-                _spawnIndex++;
-            }
-        }
-
-        if (_qteActive)
-            UpdateMovingNotes();
-
-        if (_waitingForBitePress)
-        {
-            HandleBitePromptInput();
-            return;
-        }
-
-        if (_qteActive)
-        {
-            HandleQTEInput();
-        }
     }
 
     private void HandleBitePromptInput()
@@ -243,7 +277,8 @@ public class FishingCastController : MonoBehaviour
         if (pad.buttonSouth.wasPressedThisFrame)
         {
             _waitingForBitePress = false;
-            if (bitePromptUI != null) bitePromptUI.SetActive(false);
+            // Hide player?specific “Bite” prompt
+            GameConfigurator.Instance.HideBitePrompt(isPlayerOne);
             Debug.Log("Bite confirmed");
             StartButtonSequence();
             return;
@@ -252,7 +287,7 @@ public class FishingCastController : MonoBehaviour
         if (Time.time >= _bitePromptEndTime)
         {
             _waitingForBitePress = false;
-            if (bitePromptUI != null) bitePromptUI.SetActive(false);
+            GameConfigurator.Instance.HideBitePrompt(isPlayerOne);
             StartCoroutine(ShowFailedBiteAfterDelay());
             Debug.Log("Bite missed");
         }
@@ -261,7 +296,8 @@ public class FishingCastController : MonoBehaviour
     private IEnumerator ShowFailedBiteAfterDelay()
     {
         yield return new WaitForSeconds(0.5f);
-        if (failedBiteText != null) failedBiteText.gameObject.SetActive(true);
+        GameConfigurator.Instance.ShowFailedBite();
+
         _animator.Play("FishingIdle", 0);
         _isFishing = false;
         StartCoroutine(HideFailedBiteAfterDelay());
@@ -270,7 +306,7 @@ public class FishingCastController : MonoBehaviour
     private IEnumerator HideFailedBiteAfterDelay()
     {
         yield return new WaitForSeconds(failedBiteDuration);
-        if (failedBiteText != null) failedBiteText.gameObject.SetActive(false);
+        GameConfigurator.Instance.HideFailedBite();
     }
 
     private void StartButtonSequence()
@@ -281,8 +317,9 @@ public class FishingCastController : MonoBehaviour
         _spawnTimes.Clear();
         _spawnIndex = 0;
 
-        bool isBigFish = Random.value < 0.5f;
-        int length = isBigFish ? bigFishSequenceLength : smallFishSequenceLength;
+        // Determine big or small fish, store for scoring
+        _isCurrentFishBig = (Random.value < 0.5f);
+        int length = _isCurrentFishBig ? bigFishSequenceLength : smallFishSequenceLength;
 
         float initialDelay = 0.2f;
         float spacing = 0.5f;
@@ -294,13 +331,15 @@ public class FishingCastController : MonoBehaviour
         }
 
         _animator.SetTrigger("PullBack");
-        if (qteUIParent != null) qteUIParent.gameObject.SetActive(true);
-        Debug.Log("QTE started");
+        GameConfigurator.Instance.ShowQTEUI(isPlayerOne);
+        Debug.Log("QTE started (BigFish=" + _isCurrentFishBig + ")");
     }
 
     private void SpawnSingleNote(int buttonIndex)
     {
-        GameObject go = Instantiate(buttonSlotTemplate, qteUIParent);
+        if (buttonSlotTemplateForThisPlayer == null || qteUIParentForThisPlayer == null) return;
+
+        GameObject go = Instantiate(buttonSlotTemplateForThisPlayer, qteUIParentForThisPlayer);
         go.SetActive(true);
 
         Image img = go.GetComponent<Image>();
@@ -330,6 +369,7 @@ public class FishingCastController : MonoBehaviour
             float x = note.rect.anchoredPosition.x;
             if (!note.hasBeenHit && x < successXMin)
             {
+                // Missed one ? fail immediately
                 activeNotes.RemoveAt(i);
                 Destroy(note.rect.gameObject);
                 OnQTEFailure();
@@ -344,10 +384,10 @@ public class FishingCastController : MonoBehaviour
         if (pad == null) return;
 
         int pressed = -1;
-        if (pad.buttonEast.wasPressedThisFrame) pressed = 0;
-        if (pad.buttonSouth.wasPressedThisFrame) pressed = 1;
-        if (pad.buttonWest.wasPressedThisFrame) pressed = 2;
-        if (pad.buttonNorth.wasPressedThisFrame) pressed = 3;
+        if (pad.buttonEast.wasPressedThisFrame) pressed = 0;   // Circle
+        if (pad.buttonSouth.wasPressedThisFrame) pressed = 1;  // Cross
+        if (pad.buttonWest.wasPressedThisFrame) pressed = 2;   // Square
+        if (pad.buttonNorth.wasPressedThisFrame) pressed = 3;  // Triangle
         if (pressed < 0) return;
 
         bool hitRegistered = false;
@@ -365,6 +405,7 @@ public class FishingCastController : MonoBehaviour
                     note.hasBeenHit = true;
                     Destroy(note.rect.gameObject);
                     activeNotes.RemoveAt(i);
+
                     if (activeNotes.Count == 0 && _spawnIndex >= _currentSequence.Count)
                         OnQTESuccess();
                 }
@@ -385,19 +426,21 @@ public class FishingCastController : MonoBehaviour
     private void OnQTESuccess()
     {
         _qteActive = false;
-        foreach (var note in activeNotes) Destroy(note.rect.gameObject);
+        foreach (var note in activeNotes)
+            Destroy(note.rect.gameObject);
         activeNotes.Clear();
-        if (qteUIParent != null) qteUIParent.gameObject.SetActive(false);
 
-        _fishCount++;
-        if (scoreText != null) scoreText.text = _fishCount.ToString();
-        Debug.Log("Fish caught: " + _fishCount);
+        GameConfigurator.Instance.HideQTEUI(isPlayerOne);
 
-        if (fishCaughtText != null)
-        {
-            fishCaughtText.gameObject.SetActive(true);
-            StartCoroutine(HideFishCaughtAfterDelay());
-        }
+        // Award points: big fish = 2, small fish = 1
+        _fishCount += _isCurrentFishBig ? 2 : 1;
+        if (scoreTextForThisPlayer != null)
+            scoreTextForThisPlayer.text = _fishCount.ToString();
+
+        Debug.Log($"{(isPlayerOne ? "P1" : "P2")} Fish caught: {_fishCount} (BigFish={_isCurrentFishBig})");
+
+        GameConfigurator.Instance.ShowFishCaught();
+        StartCoroutine(HideFishCaughtAfterDelay());
 
         _animator.SetTrigger("ReelIn");
         StartCoroutine(ResetAfterReel());
@@ -406,17 +449,19 @@ public class FishingCastController : MonoBehaviour
     private IEnumerator HideFishCaughtAfterDelay()
     {
         yield return new WaitForSeconds(fishCaughtDuration);
-        if (fishCaughtText != null) fishCaughtText.gameObject.SetActive(false);
+        GameConfigurator.Instance.HideFishCaught();
     }
 
     private void OnQTEFailure()
     {
         _qteActive = false;
-        foreach (var note in activeNotes) Destroy(note.rect.gameObject);
+        foreach (var note in activeNotes)
+            Destroy(note.rect.gameObject);
         activeNotes.Clear();
-        if (qteUIParent != null) qteUIParent.gameObject.SetActive(false);
 
-        if (failedBiteText != null) failedBiteText.gameObject.SetActive(true);
+        GameConfigurator.Instance.HideQTEUI(isPlayerOne);
+
+        GameConfigurator.Instance.ShowFailedBite();
         StartCoroutine(HideFailedBiteAfterDelay());
 
         _animator.SetTrigger("FailedReel");
