@@ -51,6 +51,7 @@ public class MonsterBad : MonoBehaviour
                 if (targetLife.transform.childCount > 0)
                 {
                     Destroy(targetLife.transform.GetChild(0).gameObject);
+                    _anim.SetBool("MonchTime", false);
                 }
 
                 // Reset eating state
@@ -102,6 +103,7 @@ public class MonsterBad : MonoBehaviour
             isEating = true;
             eatingTimer = 0f;
             targetLife = other.gameObject;
+            _anim.SetBool("MonchTime", true);
             Debug.Log("Monster found food, stopping to eat.");
         }
         else if (other.CompareTag("LoseCon"))
@@ -121,4 +123,5 @@ public class MonsterBad : MonoBehaviour
                 gameManager.TriggerGameEndFromMonster(this);
         }
     }
+    
 }
