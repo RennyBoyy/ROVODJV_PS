@@ -81,7 +81,7 @@ public class PlayerScript : MonoBehaviour
         HandleMovement();
         HandleLerpMovement();
 
-        if (shootInput)
+        if (shootInput && !insideReloadZone)
         {
             if (animator != null)
                 animator.SetTrigger("Throw");
