@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,6 +25,7 @@ public class GameManager_Fruity : MonoBehaviour
         {
             FindPlayerTransforms();
         }
+
     }
 
     void FindPlayerTransforms()
@@ -62,7 +64,7 @@ public class GameManager_Fruity : MonoBehaviour
 
         if (gameOverManager != null)
         {
-            bool player1Lost = DetermineLosingPlayer();
+            bool player1Lost = DetermineLosingPlayer(null); // Fallback to random if no MonsterBad instance is provided
             gameOverManager.HandleGameEnd(player1Lost);
         }
         else
@@ -73,8 +75,10 @@ public class GameManager_Fruity : MonoBehaviour
         }
     }
 
-    private bool DetermineLosingPlayer()
+    private bool DetermineLosingPlayer(MonsterBad monster)
     {
+        if (monster != null)
+            return monster.didplayer1lose;
         return Random.Range(0, 2) == 0;
     }
 
@@ -84,21 +88,29 @@ public class GameManager_Fruity : MonoBehaviour
         SceneManager.LoadScene("BugabooPlanet");
     }
 
-    public void TriggerGameEnd(bool player1Lost)
+    // Add this method to handle game end from a specific MonsterBad instance
+    public void TriggerGameEndFromMonster(MonsterBad monster)
     {
         if (gameEnded) return;
 
         gameEnded = true;
+        Debug.Log("[GameManager_Fruity] You lose! TriggerGameEndFromMonster called.");
+
+        bool player1Lost = DetermineLosingPlayer(monster);
+        Debug.Log($"[GameManager_Fruity] Calling HandleGameEnd. player1Lost={player1Lost}, monster={monster}");
 
         if (gameOverManager != null)
         {
+            Debug.Log("[GameManager_Fruity] gameOverManager is not null, calling HandleGameEnd.");
             gameOverManager.HandleGameEnd(player1Lost);
         }
         else
         {
+            Debug.LogWarning("[GameManager_Fruity] gameOverManager is null!");
             if (loseText != null)
                 loseText.gameObject.SetActive(true);
             StartCoroutine(LoadSceneAfterDelay());
         }
     }
+
 }

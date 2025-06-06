@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,17 +10,25 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private bool moving;
     [SerializeField] private Rigidbody m_Rigidbody;
+    [SerializeField] private Vector3 startPosition;
+
 
     [Header("Movement Settings")]
     [SerializeField] private float lateralThrust = 1.0f;    
     [SerializeField] private float baseForwardThrust = 0.9f;  
     [SerializeField] private float maxSpeed = 100f;
+    [SerializeField] private float jumpDuration = 0.7f;
 
     private float moveInput;
     private bool jumpInput;
     private bool onRoughGround = false;
     public bool didplayer1win;
     public int playerID;
+    private bool isJumping;
+    private float moveElapsed = 0f;
+    private Vector3 targetJumpPosition;
+
+
 
     private void Start()
     {
@@ -71,8 +80,29 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed && isGrounded)
         {
-            jumpInput = true;
+            isJumping = true;
+            HandleLerpMovement();
         }
+    }
+    private void HandleLerpMovement()
+    {
+        if (!isJumping && !isGrounded) return;
+
+        moveElapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(moveElapsed / jumpDuration);
+        transform.position = Vector3.Lerp(startPosition, targetJumpPosition, t);
+
+        if (t >= 1f)
+        {
+            isJumping = false;
+            transform.position = targetJumpPosition;
+        }
+    }
+    private void startLerpJump()
+    {
+        startPosition = transform.position;
+        moveElapsed = 0f;
+        isJumping = true;
     }
 
     private void OnCollisionEnter(Collision collision)
