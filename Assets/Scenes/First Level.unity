@@ -7996,7 +7996,7 @@ GameObject:
   - component: {fileID: 338140471}
   m_Layer: 0
   m_Name: Apple_Ammo
-  m_TagString: Untagged
+  m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30985,7 +30985,7 @@ GameObject:
   - component: {fileID: 661435502}
   m_Layer: 0
   m_Name: Apple_Ammo (3)
-  m_TagString: Untagged
+  m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40274,7 +40274,7 @@ GameObject:
   - component: {fileID: 996064828}
   m_Layer: 0
   m_Name: Apple_Ammo (1)
-  m_TagString: Untagged
+  m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49543,7 +49543,7 @@ GameObject:
   - component: {fileID: 1323389511}
   m_Layer: 0
   m_Name: Apple_Ammo (2)
-  m_TagString: Untagged
+  m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
