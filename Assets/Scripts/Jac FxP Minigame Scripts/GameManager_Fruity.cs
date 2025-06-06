@@ -24,11 +24,6 @@ public class GameManager_Fruity : MonoBehaviour
         {
             FindPlayerTransforms();
         }
-
-        if (gameOverManager != null)
-        {
-            gameOverManager.SetPlayerTargets(player1Transform, player2Transform);
-        }
     }
 
     void FindPlayerTransforms()
