@@ -34,9 +34,7 @@ public class MonsterBad : MonoBehaviour
 
     private void Update()
     {
-       
-
-        _anim.SetBool("IsEating", isEating);
+      
 
         // When eating, increment timer and destroy the life object once time is up
         if (isEating)
