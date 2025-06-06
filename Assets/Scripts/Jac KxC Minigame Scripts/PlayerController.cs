@@ -9,36 +9,45 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private bool moving;
     [SerializeField] private Rigidbody m_Rigidbody;
+
+    [Header("Movement Settings")]
+    [SerializeField] private float lateralThrust = 1.0f;    
+    [SerializeField] private float baseForwardThrust = 0.9f;  
+    [SerializeField] private float maxSpeed = 100f;
+
     private float moveInput;
-    public float m_Thrust = 1.0f;
-    public float z_Thrust = 0.9f;
-    public float maxSpeed = 100f;
     private bool jumpInput;
+    private bool onRoughGround = false;
+    public bool didplayer1win;
+    public int playerID;
 
     private void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        moving = false;
+        moving = true; 
     }
+
     private void FixedUpdate()
     {
-        m_Rigidbody.useGravity = true; // Always enable gravity
-
         HandleMovement();
+
         if (moving)
         {
-            // Apply a continuous forward force
-            m_Rigidbody.AddForce(new Vector3(0, 0, z_Thrust), ForceMode.Force);
-
-            // Clamp minimum forward speed
-            Vector3 velocity = m_Rigidbody.linearVelocity;
-            if (velocity.z < 2f)
-            {
-                velocity.z = 2f;
-                m_Rigidbody.linearVelocity = velocity;
-            }
+            m_Rigidbody.useGravity = true;
+            m_Rigidbody.AddForce(new Vector3(0, -0.8f, baseForwardThrust), ForceMode.Impulse);
+        }
+        else
+        {
+            m_Rigidbody.useGravity = false;
         }
 
+        // If on rough terrain, apply extra slowdown or rely on higher drag
+        if (onRoughGround)
+        {
+            m_Rigidbody.AddForce(Vector3.back * 2f, ForceMode.Acceleration);
+        }
+
+        // Jump logic
         if (jumpInput && isGrounded)
         {
             m_Rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -46,15 +55,18 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
+        // Clamp overall speed
         if (m_Rigidbody.linearVelocity.magnitude > maxSpeed)
         {
             m_Rigidbody.linearVelocity = m_Rigidbody.linearVelocity.normalized * maxSpeed;
         }
     }
+
     public void OnMove(InputAction.CallbackContext ctx)
     {
         moveInput = ctx.ReadValue<Vector2>().x;
     }
+
     public void OnJump(InputAction.CallbackContext ctx)
     {
         if (ctx.performed && isGrounded)
@@ -62,47 +74,77 @@ public class PlayerController : MonoBehaviour
             jumpInput = true;
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
+        // Ground check: only set isGrounded when hitting a mostly flat surface
         if (collision.contacts[0].normal.y > 0.5f)
         {
             isGrounded = true;
         }
+
+        // Obstacle: destroy it and stop movement temporarily
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             Destroy(collision.gameObject);
             StartCoroutine(StopMoving());
         }
+
+        // Rough terrain: enable the slowdown flag and increase drag
         if (collision.gameObject.CompareTag("RoughTerrain"))
         {
-            z_Thrust = 10f;
+            onRoughGround = true;
+            m_Rigidbody.linearDamping = 1.5f;
         }
-        else if (collision.gameObject.CompareTag("Slope")) z_Thrust = 20f;
-
-        if (collision.gameObject.CompareTag("Wall"))
+        // Slope: reset drag when back on normal slope
+        else if (collision.gameObject.CompareTag("Slope"))
         {
-            Vector3 velocity = m_Rigidbody.linearVelocity;
-            velocity.x = 0; 
-            velocity.z *= 0.8f; 
-            m_Rigidbody.linearVelocity = velocity;
+            onRoughGround = false;
+            m_Rigidbody.linearDamping = 0f;
         }
     }
-    private IEnumerator StopMoving()
+
+    private void OnCollisionExit(Collision collision)
     {
-        yield return new WaitForSeconds(2f);
+        if (collision.gameObject.CompareTag("RoughTerrain"))
+        {
+            onRoughGround = false;
+            m_Rigidbody.linearDamping = 0f;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        PlayerController pc = other.GetComponentInParent<PlayerController>();
+        if (pc == null)
+            return;
+        if (pc.playerID == 1)
+        {
+            Debug.Log("Player 1 hit the trigger.");
+            didplayer1win = true;
+        }
+        else if (pc.playerID == 2)
+        {
+            Debug.Log("Player 2 hit the trigger.");
+            didplayer1win = false;
+        }
     }
 
     private void HandleMovement()
     {
-       
         if (moveInput > 0.1f)
         {
-            m_Rigidbody.AddForce(new Vector3(m_Thrust, 0, 0), ForceMode.Impulse);
+            m_Rigidbody.AddForce(new Vector3(lateralThrust, 0, 0), ForceMode.Impulse);
         }
         else if (moveInput < -0.1f)
         {
-            m_Rigidbody.AddForce(new Vector3(-m_Thrust, 0, 0), ForceMode.Impulse);
+            m_Rigidbody.AddForce(new Vector3(-lateralThrust, 0, 0), ForceMode.Impulse);
         }
     }
-   
+
+    private IEnumerator StopMoving()
+    {
+        moving = false;
+        yield return new WaitForSeconds(2f);
+        moving = true;
+    }
 }
