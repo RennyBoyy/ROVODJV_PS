@@ -114,15 +114,15 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        PlayerController pc = other.GetComponentInParent<PlayerController>();
-        if (pc == null)
+        if (!other.CompareTag("LoseCon"))
             return;
-        if (pc.playerID == 1)
+
+        if (playerID == 1)
         {
             Debug.Log("Player 1 hit the trigger.");
             didplayer1win = true;
         }
-        else if (pc.playerID == 2)
+        else if (playerID == 2)
         {
             Debug.Log("Player 2 hit the trigger.");
             didplayer1win = false;
