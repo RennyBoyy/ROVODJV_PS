@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,69 +6,83 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Physics Controllers")]
-    [SerializeField] private float jumpForce = 30f;
+    [SerializeField] private float jumpForce = 30f;       // will be recalculated
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private bool moving;
     [SerializeField] private Rigidbody m_Rigidbody;
-    [SerializeField] private Vector3 startPosition;
-
 
     [Header("Movement Settings")]
-    [SerializeField] private float lateralThrust = 1.0f;    
-    [SerializeField] private float baseForwardThrust = 0.9f;  
+    [SerializeField] private float lateralThrust = 1.0f;
+    [SerializeField] private float baseForwardThrust = 0.9f;
     [SerializeField] private float maxSpeed = 100f;
-    [SerializeField] private float jumpDuration = 0.7f;
+    [SerializeField] private float gravityMultiplier = 2f;
+
+    [Header("Jump Settings")]
+    [SerializeField] private float jumpHeight = 2.5f;
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
+
+    [Header("Obstacle Slam")]
+    [SerializeField] private float obstacleSlamForce = 20f;
+
+    [Header("Rough Terrain")]
+    [SerializeField] private float roughDrag = 1.5f;
+
+    public bool didplayer1win;
+    public int playerID;
 
     private float moveInput;
     private bool jumpInput;
-    private bool onRoughGround = false;
-    public bool didplayer1win;
-    public int playerID;
-    private bool isJumping;
-    private float moveElapsed = 0f;
-    private Vector3 targetJumpPosition;
+    private bool onRoughGround;
+    private float coyoteCounter;
+    private float jumpBufferCounter;
 
-
-
-    private void Start()
+    void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        moving = true; 
+        moving = true;
+        float g = Mathf.Abs(Physics.gravity.y) * gravityMultiplier;
+        jumpForce = Mathf.Sqrt(2f * g * jumpHeight);
     }
 
-    private void FixedUpdate()
+    void Update()
     {
-        HandleMovement();
+        if (isGrounded) coyoteCounter = coyoteTime;
+        else coyoteCounter -= Time.deltaTime;
 
-        if (moving)
-        {
-            m_Rigidbody.useGravity = true;
-            m_Rigidbody.AddForce(new Vector3(0, -0.8f, baseForwardThrust), ForceMode.Impulse);
-        }
-        else
-        {
-            m_Rigidbody.useGravity = false;
-        }
+        if (jumpInput) jumpBufferCounter = jumpBufferTime;
+        jumpBufferCounter -= Time.deltaTime;
 
-        // If on rough terrain, apply extra slowdown or rely on higher drag
-        if (onRoughGround)
-        {
-            m_Rigidbody.AddForce(Vector3.back * 2f, ForceMode.Acceleration);
-        }
+        jumpInput = false;
+    }
 
-        // Jump logic
-        if (jumpInput && isGrounded)
+    void FixedUpdate()
+    {
+        if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            m_Rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            jumpInput = false;
+            Vector3 v = m_Rigidbody.linearVelocity;
+            v.y = jumpForce;
+            m_Rigidbody.linearVelocity = v;
+            jumpBufferCounter = 0f;
+            coyoteCounter = 0f;
             isGrounded = false;
         }
 
-        // Clamp overall speed
+        HandleMovement();
+        m_Rigidbody.useGravity = true;
+
+        if (!isGrounded)
+            m_Rigidbody.AddForce(Physics.gravity * (gravityMultiplier - 1f), ForceMode.Acceleration);
+
+        if (moving)
+            m_Rigidbody.AddForce(new Vector3(0, -0.8f, baseForwardThrust), ForceMode.Impulse);
+
+        m_Rigidbody.linearDamping = onRoughGround ? roughDrag : 0f;
+
         if (m_Rigidbody.linearVelocity.magnitude > maxSpeed)
-        {
             m_Rigidbody.linearVelocity = m_Rigidbody.linearVelocity.normalized * maxSpeed;
-        }
+
+        m_Rigidbody.angularVelocity *= 0.2f;
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -78,103 +92,56 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && isGrounded)
-        {
-            isJumping = true;
-            HandleLerpMovement();
-        }
+        if (ctx.performed)
+            jumpInput = true;
     }
-    private void HandleLerpMovement()
-    {
-        if (!isJumping && !isGrounded) return;
 
-        moveElapsed += Time.deltaTime;
-        float t = Mathf.Clamp01(moveElapsed / jumpDuration);
-        transform.position = Vector3.Lerp(startPosition, targetJumpPosition, t);
-
-        if (t >= 1f)
-        {
-            isJumping = false;
-            transform.position = targetJumpPosition;
-        }
-    }
-    private void startLerpJump()
+    private void HandleMovement()
     {
-        startPosition = transform.position;
-        moveElapsed = 0f;
-        isJumping = true;
+        if (moveInput > 0.1f) m_Rigidbody.AddForce(new Vector3(lateralThrust, 0, 0), ForceMode.Impulse);
+        if (moveInput < -0.1f) m_Rigidbody.AddForce(new Vector3(-lateralThrust, 0, 0), ForceMode.Impulse);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Ground check: only set isGrounded when hitting a mostly flat surface
         if (collision.contacts[0].normal.y > 0.5f)
-        {
             isGrounded = true;
-        }
 
-        // Obstacle: destroy it and stop movement temporarily
         if (collision.gameObject.CompareTag("Obstacle"))
         {
+            // one‐off slam down
+            m_Rigidbody.angularVelocity = Vector3.zero;
+            var v = m_Rigidbody.linearVelocity;
+            v.y = 0f;
+            m_Rigidbody.linearVelocity = v;
+            m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.Impulse);
+
             Destroy(collision.gameObject);
             StartCoroutine(StopMoving());
         }
 
-        // Rough terrain: enable the slowdown flag and increase drag
         if (collision.gameObject.CompareTag("RoughTerrain"))
-        {
             onRoughGround = true;
-            m_Rigidbody.linearDamping = 1.5f;
-        }
-        // Slope: reset drag when back on normal slope
         else if (collision.gameObject.CompareTag("Slope"))
-        {
             onRoughGround = false;
-            m_Rigidbody.linearDamping = 0f;
-        }
     }
 
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("RoughTerrain"))
-        {
             onRoughGround = false;
-            m_Rigidbody.linearDamping = 0f;
-        }
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!other.CompareTag("LoseCon"))
-            return;
-
-        if (playerID == 1)
-        {
-            Debug.Log("Player 1 hit the trigger.");
-            didplayer1win = true;
-        }
-        else if (playerID == 2)
-        {
-            Debug.Log("Player 2 hit the trigger.");
-            didplayer1win = false;
-        }
-    }
-
-    private void HandleMovement()
-    {
-        if (moveInput > 0.1f)
-        {
-            m_Rigidbody.AddForce(new Vector3(lateralThrust, 0, 0), ForceMode.Impulse);
-        }
-        else if (moveInput < -0.1f)
-        {
-            m_Rigidbody.AddForce(new Vector3(-lateralThrust, 0, 0), ForceMode.Impulse);
-        }
     }
 
     private IEnumerator StopMoving()
     {
         moving = false;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         moving = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("LoseCon")) return;
+        didplayer1win = (playerID == 1);
     }
 }
