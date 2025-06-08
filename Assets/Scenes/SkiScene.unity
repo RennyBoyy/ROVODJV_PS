@@ -811,12 +811,12 @@ MonoBehaviour:
   m_Rigidbody: {fileID: 0}
   lateralThrust: 1
   baseForwardThrust: 0.9
-  maxSpeed: 40
+  maxSpeed: 70
   gravityMultiplier: 2
   jumpHeight: 4
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  obstacleSlamForce: 20
+  obstacleSlamForce: 40
   roughDrag: 1.5
   didplayer1win: 0
   playerID: 0
@@ -3732,12 +3732,12 @@ MonoBehaviour:
   m_Rigidbody: {fileID: 0}
   lateralThrust: 1
   baseForwardThrust: 0.9
-  maxSpeed: 40
+  maxSpeed: 70
   gravityMultiplier: 2
   jumpHeight: 4
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  obstacleSlamForce: 20
+  obstacleSlamForce: 40
   roughDrag: 1.5
   didplayer1win: 0
   playerID: 0
