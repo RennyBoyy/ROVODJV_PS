@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -150009337949190703, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
       propertyPath: m_CastShadows
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -150009337949190703, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
       propertyPath: m_Materials.Array.size
@@ -146,10 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78fca9d598e0d640afb744fbdb146ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
   monsterHealth: 1
-  gameManager: {fileID: 0}
   monsterEatingTime: 3
+  gameManager: {fileID: 0}
   didplayer1lose: 0
 --- !u!54 &1097812257310710957
 Rigidbody:

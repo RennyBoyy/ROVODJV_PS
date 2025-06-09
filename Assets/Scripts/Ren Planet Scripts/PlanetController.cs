@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using System.Collections;
 
 public class PlanetController : MonoBehaviour
 {
@@ -10,6 +9,7 @@ public class PlanetController : MonoBehaviour
     [SerializeField] private float idleRotationSpeed = 10f;
     [SerializeField] private Vector3 idleRotationAxis = Vector3.up;
     [SerializeField] private float rotationalInertia = 0.8f;
+
     [Header("Original Rotation Correction")]
     [SerializeField] private bool correctXRotation = true;
     [SerializeField] private float xCorrectionSpeed = 2f;
@@ -26,23 +26,24 @@ public class PlanetController : MonoBehaviour
     [SerializeField] private float snapDuration = 0.5f;
     [SerializeField] private float snapCooldownDuration = 2f;
     [SerializeField] private float inactivityTimeout = 3f;
+    [SerializeField] private float inputLockDuration = 0.5f;
+
+    [Header("Snap Detection")]
+    [SerializeField] private float snapDetectionRadius = 2f;
+    [SerializeField] private float snapAngleThreshold = 30f;
+
+    [Header("Snap Smoothing")]
+    [SerializeField] private AnimationCurve snapCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    [SerializeField] private float snapStrength = 1f;
+    [SerializeField] private bool useSphericalSnapping = true;
+
+    [Header("Visual Effects")]
+    [SerializeField] private Material outlineMaterial;
+    [SerializeField] private string outlineShaderName = "Outline";
+    [SerializeField] private bool useOutlineEffect = true;
 
     [Header("Level Configuration")]
     [SerializeField] private List<LevelData> levelData;
-
-    [Header("Audio")]
-    [SerializeField] private AudioSource musicSource;
-    [SerializeField] private AudioSource sfxSource;
-    [SerializeField] private AudioClip backgroundMusic;
-    [SerializeField] private AudioClip hoverSound;
-    [SerializeField] private AudioClip selectSound;
-    [SerializeField] private float musicFadeInDuration = 2f;
-
-    [Header("Audio Volume Controls")]
-    [Range(0f, 1f)][SerializeField] private float musicVolume = 0.7f;
-    [Range(0f, 1f)][SerializeField] private float sfxVolume = 1f;
-    [Range(0f, 1f)][SerializeField] private float ambientVolume = 0.5f;
-    [SerializeField] private float audioTransitionDuration = 1f;
 
     [Header("Input Actions (via PlayerInput) - Optional")]
     public InputActionAsset actions;
@@ -60,8 +61,8 @@ public class PlanetController : MonoBehaviour
         [Header("Detection")]
         public Transform selectingSpot;
 
-        [Header("Visual Effects (Future)")]
-        public Transform islandPrefab;
+        [Header("Visual Effects")]
+        public GameObject islandGameObject;     
 
         [Header("UI & Scene")]
         public GameObject panel;
@@ -79,17 +80,18 @@ public class PlanetController : MonoBehaviour
     private Vector3 screenCenter;
     private bool _isSnapping = false;
     private bool _isFocused = false;
+    private bool _inputLocked = false;
     private float _snapCooldownTimer = 0f;
+    private float _inputLockTimer = 0f;
     private Quaternion _snapStartRot;
     private Quaternion _snapEndRot;
     private float _snapLerp;
     private string _snapTargetName;
     private GameObject _activePanel;
     private int _activeLevelNumber;
-    private AudioSource _currentAmbientSource;
-    private bool _isTransitioningAudio = false;
+    private GameObject _currentOutlinedIsland;
+    private Material[] _originalMaterials;
 
-    // Smooth rotation variables from old system
     private Vector2 currentVelocity = Vector2.zero;
     private bool wasReceivingInput = false;
     private Transform _cam;
@@ -150,11 +152,6 @@ public class PlanetController : MonoBehaviour
 
         originalXRotation = transform.eulerAngles.x;
 
-        if (musicSource != null) musicSource.volume = 0f;
-        if (sfxSource != null) sfxSource.volume = sfxVolume;
-
-        StartCoroutine(StartBackgroundMusic());
-
         ValidateLevelData();
     }
 
@@ -200,32 +197,15 @@ public class PlanetController : MonoBehaviour
         }
     }
 
-    private IEnumerator StartBackgroundMusic()
-    {
-        if (musicSource != null && backgroundMusic != null)
-        {
-            musicSource.clip = backgroundMusic;
-            musicSource.loop = true;
-            musicSource.volume = 0f;
-            musicSource.Play();
-
-            float elapsed = 0f;
-            while (elapsed < musicFadeInDuration)
-            {
-                elapsed += Time.deltaTime;
-                musicSource.volume = Mathf.Lerp(0f, musicVolume, elapsed / musicFadeInDuration);
-                yield return null;
-            }
-            musicSource.volume = musicVolume;
-        }
-    }
-
     private void Update()
     {
-        UpdateAudioVolumes();
-
         if (_snapCooldownTimer > 0f)
             _snapCooldownTimer -= Time.deltaTime;
+
+        if (_inputLockTimer > 0f)
+            _inputLockTimer -= Time.deltaTime;
+        else
+            _inputLocked = false;
 
         if (_isSnapping)
         {
@@ -235,28 +215,41 @@ public class PlanetController : MonoBehaviour
 
         if (_isFocused)
         {
-            Vector2 input = GetInputVector();
-            if (input.sqrMagnitude > 0.1f)
+            if (!_inputLocked)       
             {
-                ClosePanel();
-                _isFocused = false;
-                _snapCooldownTimer = snapCooldownDuration;
-                HandleMovement(input);
-            }
-            else if (GetConfirmInput())
-            {
-                SelectCurrentLevel();
+                Vector2 input = GetInputVector();
+                if (input.sqrMagnitude > 0.1f)
+                {
+                    ClosePanel();
+                    _isFocused = false;
+                    _snapCooldownTimer = snapCooldownDuration;
+                    HandleMovement(input);
+                }
+                else if (GetConfirmInput())
+                {
+                    SelectCurrentLevel();
+                }
             }
             return;
         }
 
-        Vector2 inputVector = GetInputVector();
-        if (inputVector.sqrMagnitude > 0.001f)
-            HandleMovement(inputVector);
-        else
-            ApplyIdleMotion();
+        if (currentState != PlanetState.Idle)
+        {
+            TryAutoSnap();
+        }
 
-        TryAutoSnap();
+        if (!_inputLocked)         
+        {
+            Vector2 inputVector = GetInputVector();
+            if (inputVector.sqrMagnitude > 0.001f)
+                HandleMovement(inputVector);
+            else
+                ApplyIdleMotion();
+        }
+        else
+        {
+            ApplyIdleMotion();
+        }
     }
 
     private Vector2 GetInputVector()
@@ -296,10 +289,8 @@ public class PlanetController : MonoBehaviour
             EnterActiveState();
         }
 
-        // Use smooth velocity system from old version
         currentVelocity = input * playerRotationSpeed;
 
-        // Apply rotation with velocity
         float rotationX = currentVelocity.x * Time.deltaTime;
         float rotationY = -currentVelocity.y * Time.deltaTime;
 
@@ -316,16 +307,13 @@ public class PlanetController : MonoBehaviour
             wasReceivingInput = false;
         }
 
-        // Apply inertia when no input
         currentVelocity *= rotationalInertia;
 
-        // If velocity is very small, stop completely
         if (currentVelocity.magnitude < 0.1f)
         {
             currentVelocity = Vector2.zero;
         }
 
-        // Apply remaining velocity from inertia
         if (currentVelocity.magnitude > 0)
         {
             float rotationX = currentVelocity.x * Time.deltaTime;
@@ -386,7 +374,7 @@ public class PlanetController : MonoBehaviour
     {
         currentState = PlanetState.Idle;
         currentlyFocusedLevel = null;
-        currentVelocity = Vector2.zero; // Reset velocity when entering idle
+        currentVelocity = Vector2.zero;      
     }
 
     private void CorrectXRotation()
@@ -423,12 +411,32 @@ public class PlanetController : MonoBehaviour
         if (_snapCooldownTimer > 0f || _isSnapping || _isFocused)
             return;
 
-        Ray ray = new Ray(_cam.position, _cam.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance) &&
-            hit.transform.CompareTag("Continent") &&
-            hit.transform.IsChildOf(transform))
+        Transform bestTarget = null;
+        float bestScore = float.MaxValue;
+
+        foreach (var level in levelData)
         {
-            BeginSnap(hit.transform);
+            if (level.selectingSpot == null) continue;
+
+            Vector3 toSpot = (level.selectingSpot.position - _cam.position).normalized;
+            float angle = Vector3.Angle(_cam.forward, toSpot);
+
+            if (angle <= snapAngleThreshold)
+            {
+                float distance = Vector3.Distance(_cam.position, level.selectingSpot.position);
+                float score = angle + (distance * 0.1f);      
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    bestTarget = level.selectingSpot;
+                }
+            }
+        }
+
+        if (bestTarget != null)
+        {
+            BeginSnap(bestTarget);
         }
     }
 
@@ -436,7 +444,7 @@ public class PlanetController : MonoBehaviour
     {
         _bobPhase = 0f;
         transform.position = _startPos;
-        currentVelocity = Vector2.zero; // Stop all velocity when snapping
+        currentVelocity = Vector2.zero;      
 
         LevelData? targetLevel = FindLevelDataBySelectingSpot(target);
         if (targetLevel == null)
@@ -447,17 +455,40 @@ public class PlanetController : MonoBehaviour
 
         _snapTargetName = targetLevel.Value.levelName;
         _isSnapping = true;
+        _inputLocked = true;     
         _snapLerp = 0f;
         _snapStartRot = transform.rotation;
 
-        Vector3 normal = (target.position - transform.position).normalized;
-        Vector3 toCam = (_cam.position - transform.position).normalized;
-        Quaternion align = Quaternion.FromToRotation(normal, toCam);
-        _snapEndRot = align * transform.rotation;
-
-        if (sfxSource != null && hoverSound != null)
+        if (useSphericalSnapping)
         {
-            sfxSource.PlayOneShot(hoverSound);
+            Vector3 targetWorldPos = target.position;
+            Vector3 planetCenter = transform.position;
+            Vector3 cameraPos = _cam.position;
+
+            Vector3 toCameraFromPlanet = (cameraPos - planetCenter).normalized;
+            Vector3 toTargetFromPlanet = (targetWorldPos - planetCenter).normalized;
+
+            Quaternion targetAlignment = Quaternion.FromToRotation(toTargetFromPlanet, toCameraFromPlanet);
+            _snapEndRot = targetAlignment * transform.rotation;
+        }
+        else
+        {
+            Vector3 normal = (target.position - transform.position).normalized;
+            Vector3 toCam = (_cam.position - transform.position).normalized;
+            Quaternion align = Quaternion.FromToRotation(normal, toCam);
+            _snapEndRot = align * transform.rotation;
+        }
+
+        _snapEndRot = Quaternion.Slerp(_snapStartRot, _snapEndRot, snapStrength);
+
+        if (useOutlineEffect && targetLevel.Value.islandGameObject != null)
+        {
+            ApplyOutlineToIsland(targetLevel.Value.islandGameObject);
+        }
+
+        if (PlanetGameConfigurator.Instance != null)
+        {
+            PlanetGameConfigurator.Instance.PlayHoverSound();
         }
     }
 
@@ -477,7 +508,8 @@ public class PlanetController : MonoBehaviour
     {
         _snapLerp += Time.deltaTime / snapDuration;
         float t = Mathf.Clamp01(_snapLerp);
-        float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+        float smoothT = snapCurve.Evaluate(t);
 
         transform.rotation = Quaternion.Slerp(_snapStartRot, _snapEndRot, smoothT);
         transform.position = _startPos;
@@ -486,6 +518,8 @@ public class PlanetController : MonoBehaviour
         {
             _isSnapping = false;
             _isFocused = true;
+            _inputLockTimer = inputLockDuration;       
+            _inputLocked = true;
             currentState = PlanetState.Focused;
             ShowPanelFor(_snapTargetName);
         }
@@ -501,9 +535,9 @@ public class PlanetController : MonoBehaviour
                 _activePanel = levelInfo.panel;
                 _activeLevelNumber = levelInfo.levelNumber;
 
-                if (levelInfo.ambientSound != null)
+                if (levelInfo.ambientSound != null && PlanetGameConfigurator.Instance != null)
                 {
-                    StartCoroutine(TransitionToAmbientAudio(levelInfo.ambientSound));
+                    PlanetGameConfigurator.Instance.TransitionToAmbientAudio(levelInfo.ambientSound);
                 }
                 return;
             }
@@ -519,14 +553,19 @@ public class PlanetController : MonoBehaviour
             _activePanel = null;
         }
 
-        StartCoroutine(TransitionBackToBackgroundMusic());
+        RemoveOutlineFromIsland();
+
+        if (PlanetGameConfigurator.Instance != null)
+        {
+            PlanetGameConfigurator.Instance.TransitionBackToBackgroundMusic();
+        }
 
         _idleTimer = 0f;
         _idleWeightVel = 0f;
         _idleWeight = 1f;
         _bobPhase = 0f;
         transform.position = _startPos;
-        currentVelocity = Vector2.zero; // Reset velocity when closing panel
+        currentVelocity = Vector2.zero;      
 
         currentState = PlanetState.Active;
         lastInputTime = Time.time;
@@ -534,9 +573,9 @@ public class PlanetController : MonoBehaviour
 
     private void SelectCurrentLevel()
     {
-        if (sfxSource != null && selectSound != null)
+        if (PlanetGameConfigurator.Instance != null)
         {
-            sfxSource.PlayOneShot(selectSound);
+            PlanetGameConfigurator.Instance.PlaySelectSound();
         }
 
         PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
@@ -550,110 +589,54 @@ public class PlanetController : MonoBehaviour
         }
     }
 
-    private void UpdateAudioVolumes()
+    private void ApplyOutlineToIsland(GameObject island)
     {
-        if (sfxSource != null)
-            sfxSource.volume = sfxVolume;
+        if (island == null || outlineMaterial == null) return;
 
-        if (musicSource != null && !_isTransitioningAudio && musicSource.isPlaying)
-        {
-            musicSource.volume = musicVolume;
-        }
+        RemoveOutlineFromIsland();
 
-        if (_currentAmbientSource != null)
+        _currentOutlinedIsland = island;
+
+        Renderer[] renderers = island.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return;
+
+        _originalMaterials = new Material[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
         {
-            _currentAmbientSource.volume = ambientVolume;
+            if (renderers[i] != null)
+            {
+                _originalMaterials[i] = renderers[i].material;
+
+                Material[] materials = new Material[renderers[i].materials.Length + 1];
+
+                for (int j = 0; j < renderers[i].materials.Length; j++)
+                {
+                    materials[j] = renderers[i].materials[j];
+                }
+
+                materials[materials.Length - 1] = outlineMaterial;
+
+                renderers[i].materials = materials;
+            }
         }
     }
 
-    private IEnumerator TransitionToAmbientAudio(AudioClip ambientClip)
+    private void RemoveOutlineFromIsland()
     {
-        _isTransitioningAudio = true;
+        if (_currentOutlinedIsland == null || _originalMaterials == null) return;
 
-        if (musicSource != null && musicSource.isPlaying)
+        Renderer[] renderers = _currentOutlinedIsland.GetComponentsInChildren<Renderer>();
+
+        for (int i = 0; i < renderers.Length && i < _originalMaterials.Length; i++)
         {
-            float startVolume = musicSource.volume;
-            float elapsed = 0f;
-
-            while (elapsed < audioTransitionDuration)
+            if (renderers[i] != null && _originalMaterials[i] != null)
             {
-                elapsed += Time.deltaTime;
-                float t = elapsed / audioTransitionDuration;
-                musicSource.volume = Mathf.Lerp(startVolume, 0f, t);
-                yield return null;
+                renderers[i].material = _originalMaterials[i];
             }
-
-            musicSource.volume = 0f;
-            musicSource.Pause();
         }
 
-        if (_currentAmbientSource != null)
-        {
-            _currentAmbientSource.Stop();
-            Destroy(_currentAmbientSource.gameObject);
-        }
-
-        GameObject ambientGO = new GameObject("LevelAmbient");
-        _currentAmbientSource = ambientGO.AddComponent<AudioSource>();
-        _currentAmbientSource.clip = ambientClip;
-        _currentAmbientSource.loop = true;
-        _currentAmbientSource.volume = 0f;
-        _currentAmbientSource.Play();
-
-        float ambientElapsed = 0f;
-        while (ambientElapsed < audioTransitionDuration)
-        {
-            ambientElapsed += Time.deltaTime;
-            float t = ambientElapsed / audioTransitionDuration;
-            _currentAmbientSource.volume = Mathf.Lerp(0f, ambientVolume, t);
-            yield return null;
-        }
-
-        _currentAmbientSource.volume = ambientVolume;
-        _isTransitioningAudio = false;
-    }
-
-    private IEnumerator TransitionBackToBackgroundMusic()
-    {
-        _isTransitioningAudio = true;
-
-        if (_currentAmbientSource != null)
-        {
-            float startVolume = _currentAmbientSource.volume;
-            float elapsed = 0f;
-
-            while (elapsed < audioTransitionDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / audioTransitionDuration;
-                _currentAmbientSource.volume = Mathf.Lerp(startVolume, 0f, t);
-                yield return null;
-            }
-
-            _currentAmbientSource.Stop();
-            Destroy(_currentAmbientSource.gameObject);
-            _currentAmbientSource = null;
-        }
-
-        if (musicSource != null)
-        {
-            if (!musicSource.isPlaying)
-            {
-                musicSource.UnPause();
-            }
-
-            float elapsed = 0f;
-            while (elapsed < audioTransitionDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / audioTransitionDuration;
-                musicSource.volume = Mathf.Lerp(0f, musicVolume, t);
-                yield return null;
-            }
-
-            musicSource.volume = musicVolume;
-        }
-
-        _isTransitioningAudio = false;
+        _currentOutlinedIsland = null;
+        _originalMaterials = null;
     }
 }

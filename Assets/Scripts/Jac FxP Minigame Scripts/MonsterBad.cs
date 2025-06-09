@@ -15,7 +15,7 @@ public class MonsterBad : MonoBehaviour
     private bool isEating = false;
     private float eatingTimer = 0f;
     private GameObject targetLife = null;
-    public bool didplayer1lose = false; 
+    public bool didplayer1lose = false;
 
     // Components
     private Animator _anim;
@@ -30,19 +30,20 @@ public class MonsterBad : MonoBehaviour
         // Find GameManager if not assigned in Inspector
         if (gameManager == null)
             gameManager = FindFirstObjectByType<GameManager_Fruity>();
+
+        // Play spawn sound when monster is created
+        FruityGameConfigurator.Instance?.PlayScarecrowSpawnSound();
     }
 
     private void Update()
     {
-      
-
         // When eating, increment timer and destroy the life object once time is up
         if (isEating)
         {
             eatingTimer += Time.deltaTime;
             if (eatingTimer >= monsterEatingTime && targetLife != null)
             {
-                // “Eat” the life: remove its collider & child visual
+                // "Eat" the life: remove its collider & child visual
                 var lifeCol = targetLife.GetComponent<Collider>();
                 if (lifeCol != null) Destroy(lifeCol);
 
@@ -50,6 +51,9 @@ public class MonsterBad : MonoBehaviour
                 {
                     Destroy(targetLife.transform.GetChild(0).gameObject);
                     _anim.SetBool("MonchTime", false);
+
+                    // Play sound when pumpkin is fully eaten
+                    FruityGameConfigurator.Instance?.PlayPumpkinEatenSound();
                 }
 
                 // Reset eating state
@@ -62,6 +66,8 @@ public class MonsterBad : MonoBehaviour
         // If health hits zero, destroy the monster
         if (monsterHealth <= 0)
         {
+            // Play death sound before destroying
+            FruityGameConfigurator.Instance?.PlayScarecrowDeathSound();
             Destroy(gameObject);
         }
     }
@@ -69,7 +75,7 @@ public class MonsterBad : MonoBehaviour
     // This is where root motion actually moves the Rigidbody
     private void OnAnimatorMove()
     {
-        // If we don’t have an Animator or Rigidbody, bail
+        // If we don't have an Animator or Rigidbody, bail
         if (_anim == null || _rb == null) return;
 
         if (!isEating)
@@ -103,10 +109,13 @@ public class MonsterBad : MonoBehaviour
             targetLife = other.gameObject;
             _anim.SetBool("MonchTime", true);
             Debug.Log("Monster found food, stopping to eat.");
+
+            // Play eating sound when starting to eat
+            FruityGameConfigurator.Instance?.PlayScarecrowEatingSound();
         }
         else if (other.CompareTag("LoseCon"))
         {
-            // Monster reached the “lose” trigger for player1
+            // Monster reached the "lose" trigger for player1
             gameManager.Fruit_Remaining = 0;
             didplayer1lose = true;
             if (gameManager != null)
@@ -114,12 +123,11 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.CompareTag("LoseCon1"))
         {
-            // Monster reached the “lose” trigger for player2
+            // Monster reached the "lose" trigger for player2
             gameManager.Fruit_Remaining = 0;
             didplayer1lose = false;
             if (gameManager != null)
                 gameManager.TriggerGameEndFromMonster(this);
         }
     }
-    
 }

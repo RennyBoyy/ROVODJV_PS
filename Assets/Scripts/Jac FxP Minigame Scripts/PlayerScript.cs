@@ -20,13 +20,6 @@ public class PlayerScript : MonoBehaviour
     private Sprite[] originalSprites = new Sprite[5];
     private Image[] fruitImages = new Image[5];
 
-    public AudioSource jumpAudioSource;
-    public AudioSource throwAudioSource;
-    public AudioClip jumpSound;
-    public AudioClip throwSound;
-    public AudioClip reloadSound;
-    public AudioClip emptyThrowSound;
-
     public int bullets;
     private int currentLane = 3;
     [SerializeField] private float laneMoveDuration = 0.7f;
@@ -41,7 +34,6 @@ public class PlayerScript : MonoBehaviour
     private bool canMove = true;
 
     private bool insideReloadZone = false;
-   
 
     private void Start()
     {
@@ -118,7 +110,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane--;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(-1);
-                PlayJumpSound();
+                FruityGameConfigurator.Instance?.PlayJumpSound(LeftOrRight);
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -130,7 +122,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane++;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(1);
-                PlayJumpSound();
+                FruityGameConfigurator.Instance?.PlayJumpSound(LeftOrRight);
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -182,7 +174,7 @@ public class PlayerScript : MonoBehaviour
         if (bullets <= 0)
         {
             Debug.Log("Out of Ammo");
-            PlayEmptyThrowSound();
+            FruityGameConfigurator.Instance?.PlayEmptyThrowSound(LeftOrRight);
         }
         else
         {
@@ -190,7 +182,7 @@ public class PlayerScript : MonoBehaviour
                 Instantiate(tomato, hand.transform.position, transform.rotation);
             bullets--;
             UpdateAmmoUI();
-            PlayThrowSound();
+            FruityGameConfigurator.Instance?.PlayThrowSound(LeftOrRight);
         }
     }
 
@@ -209,38 +201,6 @@ public class PlayerScript : MonoBehaviour
                     fruitImages[i].sprite = emptyFruitSprite;
                 }
             }
-        }
-    }
-
-    private void PlayJumpSound()
-    {
-        if (jumpAudioSource != null && jumpSound != null)
-        {
-            jumpAudioSource.PlayOneShot(jumpSound);
-        }
-    }
-
-    private void PlayThrowSound()
-    {
-        if (throwAudioSource != null && throwSound != null)
-        {
-            throwAudioSource.PlayOneShot(throwSound);
-        }
-    }
-
-    private void PlayEmptyThrowSound()
-    {
-        if (throwAudioSource != null && emptyThrowSound != null)
-        {
-            throwAudioSource.PlayOneShot(emptyThrowSound);
-        }
-    }
-
-    private void PlayReloadSound()
-    {
-        if (throwAudioSource != null && reloadSound != null)
-        {
-            throwAudioSource.PlayOneShot(reloadSound);
         }
     }
 
@@ -294,7 +254,7 @@ public class PlayerScript : MonoBehaviour
         {
             bullets += ammoToGive;
             UpdateAmmoUI();
-            PlayReloadSound();
+            FruityGameConfigurator.Instance?.PlayReloadSound(LeftOrRight);
         }
     }
 
