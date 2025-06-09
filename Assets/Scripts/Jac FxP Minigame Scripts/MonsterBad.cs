@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEditor.TerrainTools;
 
 public class MonsterBad : MonoBehaviour
 {
@@ -15,7 +16,8 @@ public class MonsterBad : MonoBehaviour
     private bool isEating = false;
     private float eatingTimer = 0f;
     private GameObject targetLife = null;
-    public bool didplayer1lose = false; 
+    public bool didplayer1lose = false;
+    public static bool isMoving = true;
 
     // Components
     private Animator _anim;
@@ -72,9 +74,8 @@ public class MonsterBad : MonoBehaviour
         // If we don’t have an Animator or Rigidbody, bail
         if (_anim == null || _rb == null) return;
 
-        if (!isEating)
+        if (!isEating && isMoving)
         {
-            Debug.Log("DeltaPosition = " + _anim.deltaPosition);
             Vector3 nextPosition = _rb.position + _anim.deltaPosition;
             _rb.MovePosition(nextPosition);
 

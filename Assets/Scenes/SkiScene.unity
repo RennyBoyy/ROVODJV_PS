@@ -2816,10 +2816,12 @@ MonoBehaviour:
   - {fileID: 2520010217456519080, guid: f3a601acf25c0984e87f2241daa0cca2, type: 3}
   - {fileID: 290481793004465874, guid: e03fad8cf1f33d749b9cc49fe1246849, type: 3}
   - {fileID: 2923626034617612692, guid: df99e75690b69c34f8fc514bc67b2c88, type: 3}
+  - {fileID: 1245569405555461803, guid: e0fa06fa9acdede46aeb7e230489f353, type: 3}
   laneOffsets:
   - -15
   - 0
   - 15
+  snowmanPrefab: {fileID: 1245569405555461803, guid: e0fa06fa9acdede46aeb7e230489f353, type: 3}
   numberOfRows: 60
 --- !u!1 &1413559362
 GameObject:

@@ -44,6 +44,13 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private string planetSceneName = "BugabooPlanet";
     [SerializeField] private float choiceExecutionDelay = 3f;
 
+    [Header("Podium Settings")]
+    [SerializeField] private Transform podiumWinnerSpot;
+    [SerializeField] private Transform podiumLoserSpot;
+    [SerializeField] private Transform podiumScarecrowSpot;
+    [SerializeField] private GameObject scarecrowPrefab;
+    private GameObject spawnedScarecrow;
+
     private Vector3 originalCameraPosition;
     private Quaternion originalCameraRotation;
     private InputAction[] confirmActions;
@@ -203,37 +210,60 @@ public class GameOverManager : MonoBehaviour
     {
         gameOverActive = true;
 
+        // Stop MonsterBad movement
+        MonsterBad.isMoving = false;
+
         PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
         foreach (var player in players)
+            if (player != null) player.enabled = false;
+
+        // Destroy all MonsterBad (scarecrow) enemies in the scene
+        foreach (var monster in FindObjectsByType<MonsterBad>(FindObjectsSortMode.None))
         {
-            if (player != null)
-                player.enabled = false;
-        }
-        Debug.Log("loss of game");
-        Transform targetPlayer = isPlayer1Loser ? player1Target : player2Target;
-        if (targetPlayer != null)
-        {
-            yield return StartCoroutine(PanToPlayer(targetPlayer));
-
-            Animator playerAnimator = targetPlayer.GetComponent<Animator>();
-            if (playerAnimator != null)
-            {
-                playerAnimator.Play("Lose Animation", 0, 0f);
-                Debug.Log($"Playing lose animation on {targetPlayer.name}");
-            }
-
-            yield return new WaitForSeconds(loseAnimationDuration);
-
-            if (playerAnimator != null)
-            {
-                playerAnimator.Play("Idle stance", 0, 0f);
-            }
+            Destroy(monster.gameObject);
         }
 
-            ShowGameOverUI();
+        // Assign winner and loser
+        Transform winner = isPlayer1Loser ? player2Target : player1Target;
+        Transform loser = isPlayer1Loser ? player1Target : player2Target;
+
+        // Move winner and loser to podium spots
+        if (winner != null && podiumWinnerSpot != null)
+            winner.position = podiumWinnerSpot.position;
+        if (loser != null && podiumLoserSpot != null)
+            loser.position = podiumLoserSpot.position;
+
+        // Place scarecrow on third spot
+        if (scarecrowPrefab != null && podiumScarecrowSpot != null)
+        {
+            if (spawnedScarecrow != null)
+                Destroy(spawnedScarecrow);
+            spawnedScarecrow = Instantiate(scarecrowPrefab, podiumScarecrowSpot.position, podiumScarecrowSpot.rotation);
+        }
+
+        // Pan camera to frame the podium
+        yield return StartCoroutine(PanToPodium());
+
+        // Play animations if needed
+        if (winner != null)
+        {
+            Animator winnerAnimator = winner.GetComponent<Animator>();
+            if (winnerAnimator != null)
+                winnerAnimator.Play("Idle stance", 0, 0f);
+        }
+        if (loser != null)
+        {
+            Animator loserAnimator = loser.GetComponent<Animator>();
+            if (loserAnimator != null)
+                loserAnimator.Play("Lose Animation", 0, 0f);
+        }
+
+        yield return new WaitForSeconds(loseAnimationDuration);
+
+        ShowGameOverUI();
     }
 
-    IEnumerator PanToPlayer(Transform target)
+    /*IEnumerator PanToPlayer(Transform target)
     {
         if (target == null || gameCamera == null) yield break;
 
@@ -262,6 +292,40 @@ public class GameOverManager : MonoBehaviour
 
         gameCamera.transform.position = cameraTargetPos;
         gameCamera.transform.rotation = targetRotation;
+    }*/
+
+    IEnumerator PanToPodium()
+    {
+        if (gameCamera == null || podiumWinnerSpot == null || podiumLoserSpot == null || podiumScarecrowSpot == null)
+            yield break;
+
+        // Calculate center point of the podium
+        Vector3 center = (podiumWinnerSpot.position + podiumLoserSpot.position + podiumScarecrowSpot.position) / 3f;
+
+        // Offset for camera position
+        Vector3 offset = Quaternion.Euler(30f, -60f, 0f) * new Vector3(0, 0, -zoomDistance * 1.5f) + Vector3.up * zoomHeight;
+        Vector3 cameraTargetPos = center + offset;
+
+        // Look at the center from the offset
+        Quaternion cameraTargetRot = Quaternion.LookRotation(center - cameraTargetPos);
+
+        Vector3 startPosition = gameCamera.transform.position;
+        Quaternion startRotation = gameCamera.transform.rotation;
+
+        float elapsed = 0f;
+        while (elapsed < 1f)
+        {
+            elapsed += Time.deltaTime * zoomSpeed;
+            float t = zoomCurve.Evaluate(elapsed);
+
+            gameCamera.transform.position = Vector3.Lerp(startPosition, cameraTargetPos, t);
+            gameCamera.transform.rotation = Quaternion.Lerp(startRotation, cameraTargetRot, t);
+
+            yield return null;
+        }
+
+        gameCamera.transform.position = cameraTargetPos;
+        gameCamera.transform.rotation = cameraTargetRot;
     }
 
     void ShowGameOverUI()
@@ -375,26 +439,30 @@ public class GameOverManager : MonoBehaviour
         if (timerText != null)
             timerText.gameObject.SetActive(false);
 
-        Debug.Log(replay ? "Both players ready - reloading scene" : "Going back to planet scene");
+        Debug.Log("Game Over - waiting for Main Menu button.");
 
-        yield return new WaitForSeconds(choiceExecutionDelay);
+        // No automatic scene change!
+        // Wait here until the player presses the Main Menu button.
+        yield break;
+    }
 
-        if (replay)
+    // Add this method to be called by your Main Menu button:
+    public void OnMainMenuButtonPressed()
+    {
+        PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
+        if (sceneManager != null)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            sceneManager.ReturnToHub(planetSceneName);
         }
         else
         {
-            PersistentSceneManager sceneManager = PersistentSceneManager.Instance;
-            if (sceneManager != null)
-            {
-                sceneManager.ReturnToHub(planetSceneName);
-            }
-            else
-            {
-                SceneManager.LoadScene(planetSceneName);
-            }
+            SceneManager.LoadScene(planetSceneName);
         }
+    }
+
+    public void OnReplayButtonPressed()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void HandleGameEnd(bool player1Lost)

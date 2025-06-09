@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
     private IEnumerator StopMoving()
     {
         moving = false;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         moving = true;
     }
 
