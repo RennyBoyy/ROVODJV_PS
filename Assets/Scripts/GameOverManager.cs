@@ -212,7 +212,11 @@ public class GameOverManager : MonoBehaviour
 
         // Stop MonsterBad movement
         MonsterBad.isMoving = false;
-
+        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
+        foreach (var thief in thieves)
+        {
+            thief.canWave = true;
+        }
         PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
         foreach (var player in players)
             if (player != null) player.enabled = false;
@@ -227,11 +231,15 @@ public class GameOverManager : MonoBehaviour
         Transform winner = isPlayer1Loser ? player2Target : player1Target;
         Transform loser = isPlayer1Loser ? player1Target : player2Target;
 
-        // Move winner and loser to podium spots
-        if (winner != null && podiumWinnerSpot != null)
-            winner.position = podiumWinnerSpot.position;
-        if (loser != null && podiumLoserSpot != null)
-            loser.position = podiumLoserSpot.position;
+        if (winner != null && podiumLoserSpot != null)
+            winner.position = podiumLoserSpot.position;
+        if (loser != null && podiumWinnerSpot != null)
+            loser.position = podiumWinnerSpot.position;
+
+        /*if (winner != null && gameCamera != null)
+            winner.LookAt(-gameCamera.transform.position, Vector3.up);
+        if (loser != null && gameCamera != null)
+            loser.LookAt(-gameCamera.transform.position, Vector3.up);*/
 
         // Place scarecrow on third spot
         if (scarecrowPrefab != null && podiumScarecrowSpot != null)

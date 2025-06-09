@@ -5467,7 +5467,6 @@ MonoBehaviour:
   - {fileID: 1063777344}
   - {fileID: 576356537}
   - {fileID: 2137934922}
-  canWave: 0
   minSpawnInterval: 5
   maxSpawnInterval: 10
   spawnIntervalDecrease: 2
@@ -25515,10 +25514,9 @@ MonoBehaviour:
   - {fileID: 448326202}
   - {fileID: 419528264}
   - {fileID: 28245747}
-  canWave: 0
   minSpawnInterval: 5
   maxSpawnInterval: 10
-  spawnIntervalDecrease: 2
+  spawnIntervalDecrease: 3
   monstersPerWave: 1
   maxMonstersPerWave: 10
   difficultyIncreaseInterval: 15
@@ -32307,7 +32305,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: time thing
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -47732,7 +47730,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Oooga booga
+  m_text: Winner!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -47741,8 +47739,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278247423
+  m_fontColor: {r: 1, g: 0.8759048, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

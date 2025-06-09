@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.282001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
       propertyPath: m_LocalPosition.y
@@ -146,10 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78fca9d598e0d640afb744fbdb146ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
   monsterHealth: 1
-  gameManager: {fileID: 0}
   monsterEatingTime: 3
+  gameManager: {fileID: 0}
   didplayer1lose: 0
 --- !u!54 &1097812257310710957
 Rigidbody:
