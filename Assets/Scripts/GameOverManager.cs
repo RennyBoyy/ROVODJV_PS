@@ -209,7 +209,7 @@ public class GameOverManager : MonoBehaviour
             if (player != null)
                 player.enabled = false;
         }
-
+        Debug.Log("loss of game");
         Transform targetPlayer = isPlayer1Loser ? player1Target : player2Target;
         if (targetPlayer != null)
         {
@@ -230,7 +230,7 @@ public class GameOverManager : MonoBehaviour
             }
         }
 
-        ShowGameOverUI();
+            ShowGameOverUI();
     }
 
     IEnumerator PanToPlayer(Transform target)

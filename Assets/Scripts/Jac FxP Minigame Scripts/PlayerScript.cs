@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,14 +18,14 @@ public class PlayerScript : MonoBehaviour
     private GameObject[] fruitUIObjects = new GameObject[5];
     private Sprite emptyFruitSprite;
     private Sprite[] originalSprites = new Sprite[5];
-    private Image[] fruitImages = new Image[5];     
+    private Image[] fruitImages = new Image[5];
 
-    public AudioSource jumpAudioSource;     
-    public AudioSource throwAudioSource;    
+    public AudioSource jumpAudioSource;
+    public AudioSource throwAudioSource;
     public AudioClip jumpSound;
     public AudioClip throwSound;
     public AudioClip reloadSound;
-    public AudioClip emptyThrowSound;         
+    public AudioClip emptyThrowSound;
 
     public int bullets;
     private int currentLane = 3;
@@ -39,6 +39,9 @@ public class PlayerScript : MonoBehaviour
     private float moveInput;
     private bool shootInput;
     private bool canMove = true;
+
+    private bool insideReloadZone = false;
+   
 
     private void Start()
     {
@@ -78,12 +81,13 @@ public class PlayerScript : MonoBehaviour
         HandleMovement();
         HandleLerpMovement();
 
-        if (shootInput)
+        if (shootInput && !insideReloadZone)
         {
             if (animator != null)
                 animator.SetTrigger("Throw");
             shootInput = false;
-        }else
+        }
+        else
         {
             animator.ResetTrigger("Throw");
         }
@@ -91,8 +95,10 @@ public class PlayerScript : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        moveInput = ctx.ReadValue<Vector2>().y;
-        Debug.Log(ctx.ReadValue<Vector2>());
+        Vector2 input = ctx.ReadValue<Vector2>();
+        input.x = 0;
+        moveInput = input.y;
+        Debug.Log(input);
     }
 
     public void OnAttack(InputAction.CallbackContext ctx)
@@ -167,6 +173,12 @@ public class PlayerScript : MonoBehaviour
 
     public void Shoot()
     {
+        if (insideReloadZone)
+        {
+            Debug.Log("Cannot throw while reloading.");
+            return;
+        }
+
         if (bullets <= 0)
         {
             Debug.Log("Out of Ammo");
@@ -181,6 +193,7 @@ public class PlayerScript : MonoBehaviour
             PlayThrowSound();
         }
     }
+
     public void UpdateAmmoUI()
     {
         for (int i = 0; i < fruitImages.Length; i++)
@@ -244,11 +257,11 @@ public class PlayerScript : MonoBehaviour
         {
             if (playerInput.playerIndex == 0)
             {
-                playerScript.LeftOrRight = true;   
+                playerScript.LeftOrRight = true;
             }
             else if (playerInput.playerIndex == 1)
             {
-                playerScript.LeftOrRight = false;   
+                playerScript.LeftOrRight = false;
             }
         }
     }
@@ -282,6 +295,24 @@ public class PlayerScript : MonoBehaviour
             bullets += ammoToGive;
             UpdateAmmoUI();
             PlayReloadSound();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Tomato"))
+        {
+            insideReloadZone = true;
+            Debug.Log("Entered reload zone – cannot throw now.");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Tomato"))
+        {
+            insideReloadZone = false;
+            Debug.Log("Exited reload zone – can throw again.");
         }
     }
 }

@@ -88,6 +88,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 65593193dc158e241ae911d52d32df7c, type: 2}
+    - target: {fileID: 5866666021909216657, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -146,6 +150,7 @@ MonoBehaviour:
   monsterHealth: 1
   gameManager: {fileID: 0}
   monsterEatingTime: 3
+  didplayer1lose: 0
 --- !u!54 &1097812257310710957
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -169,7 +174,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
