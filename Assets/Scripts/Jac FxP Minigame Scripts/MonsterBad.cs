@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using System.Collections;
 using TMPro;
 using UnityEditor.TerrainTools;
@@ -44,7 +44,7 @@ public class MonsterBad : MonoBehaviour
             eatingTimer += Time.deltaTime;
             if (eatingTimer >= monsterEatingTime && targetLife != null)
             {
-                // ìEatî the life: remove its collider & child visual
+                // ‚ÄúEat‚Äù the life: remove its collider & child visual
                 var lifeCol = targetLife.GetComponent<Collider>();
                 if (lifeCol != null) Destroy(lifeCol);
 
@@ -71,22 +71,32 @@ public class MonsterBad : MonoBehaviour
     // This is where root motion actually moves the Rigidbody
     private void OnAnimatorMove()
     {
-        // If we donít have an Animator or Rigidbody, bail
-        if (_anim == null || _rb == null) return;
+        if (_anim == null || _rb == null)
+            return;
 
+        // Grab this frame‚Äôs root-motion delta
+        Vector3 dp = _anim.deltaPosition;
+        Debug.Log($"Œîpos this frame: {dp.z:F3}");
+        var info = _anim.GetCurrentAnimatorClipInfo(0);
+        if (info.Length > 0)
+            Debug.Log("Playing clip: " + info[0].clip.name);
+
+
+        // Only apply it when we‚Äôre allowed to move
         if (!isEating && isMoving)
         {
-            Vector3 nextPosition = _rb.position + _anim.deltaPosition;
-            _rb.MovePosition(nextPosition);
-
-            Vector3 currentVel = _rb.linearVelocity;
-            _rb.linearVelocity = new Vector3(currentVel.x, currentVel.y, currentVel.z);
+            _rb.MovePosition(_rb.position + dp);
         }
         else
         {
-            _rb.linearVelocity = Vector3.zero;
+            // Cancel any horizontal drift
+            _rb.linearVelocity = new Vector3(0, _rb.linearVelocity.y, 0);
         }
     }
+
+
+
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -107,7 +117,7 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.CompareTag("LoseCon"))
         {
-            // Monster reached the ìloseî trigger for player1
+            // Monster reached the ‚Äúlose‚Äù trigger for player1
             gameManager.Fruit_Remaining = 0;
             didplayer1lose = true;
             if (gameManager != null)
@@ -115,7 +125,7 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.CompareTag("LoseCon1"))
         {
-            // Monster reached the ìloseî trigger for player2
+            // Monster reached the ‚Äúlose‚Äù trigger for player2
             gameManager.Fruit_Remaining = 0;
             didplayer1lose = false;
             if (gameManager != null)

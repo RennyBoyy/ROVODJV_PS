@@ -37,12 +37,16 @@ public class PlayerController : MonoBehaviour
     private float coyoteCounter;
     private float jumpBufferCounter;
 
+    private GameManager_Slope gameManagerSlope;
+
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
         moving = true;
         float g = Mathf.Abs(Physics.gravity.y) * gravityMultiplier;
         jumpForce = Mathf.Sqrt(2f * g * jumpHeight);
+
+        gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
     }
 
     void Update()
@@ -143,5 +147,14 @@ public class PlayerController : MonoBehaviour
     {
         if (!other.CompareTag("LoseCon")) return;
         didplayer1win = (playerID == 1);
+
+        moving = false;
+        m_Rigidbody.useGravity = false;
+        m_Rigidbody.linearVelocity = Vector3.zero;
+
+        if (gameManagerSlope != null)
+        {
+            gameManagerSlope.TriggerGameEndFromPlayer(this);
+        }
     }
 }

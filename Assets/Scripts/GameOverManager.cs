@@ -64,6 +64,9 @@ public class GameOverManager : MonoBehaviour
     private bool choiceMade = false;
 
     private static GameOverManager instance;
+    [SerializeField] private float cameraXOffset;
+    [SerializeField] private float cameraYOffset;
+
     public static GameOverManager Instance => instance;
 
     void Awake()
@@ -210,22 +213,7 @@ public class GameOverManager : MonoBehaviour
     {
         gameOverActive = true;
 
-        // Stop MonsterBad movement
-        MonsterBad.isMoving = false;
-        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
-        foreach (var thief in thieves)
-        {
-            thief.canWave = true;
-        }
-        PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
-        foreach (var player in players)
-            if (player != null) player.enabled = false;
-
-        // Destroy all MonsterBad (scarecrow) enemies in the scene
-        foreach (var monster in FindObjectsByType<MonsterBad>(FindObjectsSortMode.None))
-        {
-            Destroy(monster.gameObject);
-        }
+        
 
         // Assign winner and loser
         Transform winner = isPlayer1Loser ? player2Target : player1Target;
@@ -235,11 +223,20 @@ public class GameOverManager : MonoBehaviour
             winner.position = podiumLoserSpot.position;
         if (loser != null && podiumWinnerSpot != null)
             loser.position = podiumWinnerSpot.position;
+        // flat target so bear doesn’t tilt up/down
+        Vector3 camFlat = gameCamera.transform.position;
+        camFlat.y = winner.position.y;
 
-        /*if (winner != null && gameCamera != null)
-            winner.LookAt(-gameCamera.transform.position, Vector3.up);
-        if (loser != null && gameCamera != null)
-            loser.LookAt(-gameCamera.transform.position, Vector3.up);*/
+        // point +Z at camera…
+        winner.LookAt(camFlat, Vector3.up);
+        // …but your mesh’s “face” is actually on –Z, so flip it
+        winner.Rotate(0f, 200f, 0f, Space.Self);
+
+        Vector3 camFlatL = gameCamera.transform.position;
+        camFlatL.y = loser.position.y;
+        loser.LookAt(camFlatL, Vector3.up);
+        loser.Rotate(0f, 200f, 0f, Space.Self);
+
 
         // Place scarecrow on third spot
         if (scarecrowPrefab != null && podiumScarecrowSpot != null)
@@ -311,7 +308,7 @@ public class GameOverManager : MonoBehaviour
         Vector3 center = (podiumWinnerSpot.position + podiumLoserSpot.position + podiumScarecrowSpot.position) / 3f;
 
         // Offset for camera position
-        Vector3 offset = Quaternion.Euler(30f, -60f, 0f) * new Vector3(0, 0, -zoomDistance * 1.5f) + Vector3.up * zoomHeight;
+        Vector3 offset = Quaternion.Euler(cameraXOffset, cameraYOffset, 0f) * new Vector3(0, 0, -zoomDistance * 1.5f) + Vector3.up * zoomHeight;
         Vector3 cameraTargetPos = center + offset;
 
         // Look at the center from the offset
@@ -476,6 +473,7 @@ public class GameOverManager : MonoBehaviour
     public void HandleGameEnd(bool player1Lost)
     {
         TriggerGameOver(player1Lost);
+
     }
 
     public void SetPlayerTargets(Transform player1, Transform player2)

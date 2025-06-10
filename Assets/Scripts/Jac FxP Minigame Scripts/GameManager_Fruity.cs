@@ -111,6 +111,23 @@ public class GameManager_Fruity : MonoBehaviour
                 loseText.gameObject.SetActive(true);
             StartCoroutine(LoadSceneAfterDelay());
         }
+        // Stop MonsterBad movement
+        MonsterBad.isMoving = false;
+        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
+        foreach (var thief in thieves)
+        {
+            thief.StopAllCoroutines();
+            thief.enabled = false;
+        }
+        PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        foreach (var player in players)
+            if (player != null) player.enabled = false;
+
+        // Destroy all MonsterBad (scarecrow) enemies in the scene
+        foreach (var monsters in FindObjectsByType<MonsterBad>(FindObjectsSortMode.None))
+        {
+            Destroy(monsters.gameObject);
+        }
     }
 
 }

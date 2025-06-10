@@ -5438,7 +5438,7 @@ Transform:
   m_GameObject: {fileID: 34887615}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.0000028461216}
-  m_LocalPosition: {x: -10.028738, y: 0.47908974, z: 0.52126503}
+  m_LocalPosition: {x: -10.028738, y: 0.32, z: 0.52126503}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5467,6 +5467,7 @@ MonoBehaviour:
   - {fileID: 1063777344}
   - {fileID: 576356537}
   - {fileID: 2137934922}
+  canWave: 0
   minSpawnInterval: 5
   maxSpawnInterval: 10
   spawnIntervalDecrease: 2
@@ -25485,7 +25486,7 @@ Transform:
   m_GameObject: {fileID: 574023891}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8688297, y: 0.47908974, z: 1.4013004}
+  m_LocalPosition: {x: -0.8688297, y: 0.3199997, z: 1.4013004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -25514,6 +25515,7 @@ MonoBehaviour:
   - {fileID: 448326202}
   - {fileID: 419528264}
   - {fileID: 28245747}
+  canWave: 0
   minSpawnInterval: 5
   maxSpawnInterval: 10
   spawnIntervalDecrease: 3
@@ -47739,8 +47741,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278247423
-  m_fontColor: {r: 1, g: 0.8759048, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -53976,6 +53978,8 @@ MonoBehaviour:
   podiumLoserSpot: {fileID: 63421687}
   podiumScarecrowSpot: {fileID: 1949099562}
   scarecrowPrefab: {fileID: 1397963506}
+  cameraXOffset: 30
+  cameraYOffset: -60
 --- !u!1001 &1556380528
 PrefabInstance:
   m_ObjectHideFlags: 0
