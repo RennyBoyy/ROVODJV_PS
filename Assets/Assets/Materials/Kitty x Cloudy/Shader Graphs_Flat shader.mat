@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Shader Graphs_Flat shader
   m_Shader: {fileID: -6465566751694194690, guid: 8c7f253add6e3ed4aba8192ceaa7daaa, type: 3}
-  m_Parent: {fileID: 2100000, guid: 418faea6178f3774a92877d39869053f, type: 2}
+  m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -24,13 +24,38 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Emmision_texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2D:
         m_Texture: {fileID: 2800000, guid: 15e21c06c95321446b84964de535bd65, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _Highlight_brightness: 0.99
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _highlight: 0
+    - _lighting_cutoff: 0.3
+    - _shadow_brightness: 1
     m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Emmision_color: {r: 1, g: 1, b: 1, a: 1}
+    - _Highlight_Color: {r: 1, g: 1, b: 1, a: 0}
     - _Shadow_Color: {r: 0.68490565, g: 0.70638937, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
