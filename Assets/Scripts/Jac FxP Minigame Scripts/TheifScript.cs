@@ -52,6 +52,12 @@ public class TheifScript : MonoBehaviour
             int randomSpawner = Random.Range(0, monsterSpawner.Length);
             Instantiate(monsterPrefab, monsterSpawner[randomSpawner].transform.position, transform.rotation);
             Debug.Log($"{gameObject.name} spawned a monster at {monsterSpawner[randomSpawner].name}");
+
+            ParticleSystem ps = monsterSpawner[randomSpawner].GetComponent<ParticleSystem>();
+            if (ps == null)
+                ps = monsterSpawner[randomSpawner].GetComponentInChildren<ParticleSystem>();
+            if (ps != null)
+                ps.Play();
         }
     }
 

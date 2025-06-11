@@ -10,31 +10,31 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.262646
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.027999878
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3920288
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.9996192
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.027598128
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -42,7 +42,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 363.163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -332,12 +332,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   hand: {fileID: 6933373466357008629}
+  laneGroupName: Collider_Lives
+  player1Input: {fileID: 0}
+  player2Input: {fileID: 0}
   maxBullets: 10
-  ammoText: {fileID: 0}
-  fullAmmoText: {fileID: 0}
+  LeftOrRight: 0
+  jumpAudioSource: {fileID: 0}
+  throwAudioSource: {fileID: 0}
+  jumpSound: {fileID: 0}
+  throwSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  emptyThrowSound: {fileID: 0}
   bullets: 10
   laneMoveDuration: 0.25
-  laneGroupName: Collider_Lives
 --- !u!54 &7582992937665486648
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -571,6 +578,46 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b69ab67f-4df1-4e0b-9107-adf7b30687cb
+    m_ActionName: 'Player/Back[/Keyboard/b,/XInputControllerWindows/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a0252479-a5ec-4c2d-85dc-b4c8249d227d
+    m_ActionName: 'Player/Confirm[/Keyboard/space,/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f625f8d3-537e-44a5-a1bf-fbba63b58b0d
+    m_ActionName: 'FishingMap/Cast[/XInputControllerWindows/leftStick/down,/XInputControllerWindows/leftStick/up]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 211d542f-9c77-4985-a430-84a8287d1169
+    m_ActionName: 'FishingMap/Bite[/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 56b48ef7-8c9b-43c2-8620-33eb95d67770
+    m_ActionName: 'FishingMap/ReelSouth[/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 275d44bd-9f28-4e8b-8ad1-544fdd8e89d5
+    m_ActionName: 'FishingMap/ReelEast[/XInputControllerWindows/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 203d88e4-2b05-4ec5-b768-0847a4d6adf9
+    m_ActionName: 'FishingMap/ReelWest[/XInputControllerWindows/buttonWest]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 89826aed-65dd-4c14-a2cb-f5780becb71b
+    m_ActionName: 'FishingMap/ReelNorth[/XInputControllerWindows/buttonNorth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e49a2c3a-7ff1-4afc-9bb9-8b45bdc29603
+    m_ActionName: 'FruitGame/Move[/XInputControllerWindows/leftStick/down,/XInputControllerWindows/leftStick/up]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4ebcb98-196b-4d94-ad8a-64f3bf21148e
+    m_ActionName: 'FruitGame/Attack[/XInputControllerWindows/buttonSouth]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
