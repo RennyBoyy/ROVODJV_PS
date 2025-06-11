@@ -62,7 +62,7 @@ public class PlanetController : MonoBehaviour
         public Transform selectingSpot;
 
         [Header("Visual Effects")]
-        public GameObject islandGameObject;     
+        public GameObject islandGameObject;
 
         [Header("UI & Scene")]
         public GameObject panel;
@@ -215,7 +215,7 @@ public class PlanetController : MonoBehaviour
 
         if (_isFocused)
         {
-            if (!_inputLocked)       
+            if (!_inputLocked)
             {
                 Vector2 input = GetInputVector();
                 if (input.sqrMagnitude > 0.1f)
@@ -238,7 +238,7 @@ public class PlanetController : MonoBehaviour
             TryAutoSnap();
         }
 
-        if (!_inputLocked)         
+        if (!_inputLocked)
         {
             Vector2 inputVector = GetInputVector();
             if (inputVector.sqrMagnitude > 0.001f)
@@ -374,7 +374,7 @@ public class PlanetController : MonoBehaviour
     {
         currentState = PlanetState.Idle;
         currentlyFocusedLevel = null;
-        currentVelocity = Vector2.zero;      
+        currentVelocity = Vector2.zero;
     }
 
     private void CorrectXRotation()
@@ -424,7 +424,7 @@ public class PlanetController : MonoBehaviour
             if (angle <= snapAngleThreshold)
             {
                 float distance = Vector3.Distance(_cam.position, level.selectingSpot.position);
-                float score = angle + (distance * 0.1f);      
+                float score = angle + (distance * 0.1f);
 
                 if (score < bestScore)
                 {
@@ -444,7 +444,7 @@ public class PlanetController : MonoBehaviour
     {
         _bobPhase = 0f;
         transform.position = _startPos;
-        currentVelocity = Vector2.zero;      
+        currentVelocity = Vector2.zero;
 
         LevelData? targetLevel = FindLevelDataBySelectingSpot(target);
         if (targetLevel == null)
@@ -455,7 +455,7 @@ public class PlanetController : MonoBehaviour
 
         _snapTargetName = targetLevel.Value.levelName;
         _isSnapping = true;
-        _inputLocked = true;     
+        _inputLocked = true;
         _snapLerp = 0f;
         _snapStartRot = transform.rotation;
 
@@ -518,7 +518,7 @@ public class PlanetController : MonoBehaviour
         {
             _isSnapping = false;
             _isFocused = true;
-            _inputLockTimer = inputLockDuration;       
+            _inputLockTimer = inputLockDuration;
             _inputLocked = true;
             currentState = PlanetState.Focused;
             ShowPanelFor(_snapTargetName);
@@ -565,7 +565,7 @@ public class PlanetController : MonoBehaviour
         _idleWeight = 1f;
         _bobPhase = 0f;
         transform.position = _startPos;
-        currentVelocity = Vector2.zero;      
+        currentVelocity = Vector2.zero;
 
         currentState = PlanetState.Active;
         lastInputTime = Time.time;
