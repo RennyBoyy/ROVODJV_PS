@@ -1,47 +1,61 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class SkiSlopeScript : MonoBehaviour
+public class SkiSlopeSpawner : MonoBehaviour
 {
-    [SerializeField] private Transform[] spawnPoints;
+    [Header("Slope Points")]
+    [SerializeField] private Transform slopeStart;
+    [SerializeField] private Transform slopeEnd;
+
+    [Header("Obstacle Settings")]
     [SerializeField] private GameObject[] obstaclePrefabs;
     [SerializeField] private float[] laneOffsets = new float[] { -2f, 0f, 2f };
-    //[SerializeField] private float spawnInterval = 2f;
+
+    [SerializeField] private GameObject snowmanPrefab;
+
+    [Header("Spawn Configuration")]
+    [SerializeField] private int numberOfRows = 10;
 
     private void Start()
     {
-        SpawnObstacles();
-       // StartCoroutine(SpawnObstaclesRoutine());
+        if (slopeStart == null || slopeEnd == null)
+        {
+            Debug.LogError("SkiSlopeSpawner: Assign both slopeStart and slopeEnd Transforms in the inspector.");
+            return;
+        }
+        SpawnAllRows();
     }
 
-    /*private IEnumerator SpawnObstaclesRoutine()
+    private void SpawnAllRows()
     {
-        while (true)
-        {
-            SpawnObstacles();
-            yield return new WaitForSeconds(spawnInterval);
-        }
-    }*/
-    /*fix jumping, 
-     * connect to main scene
-     * 2 player setup
-     collision deleting object and slower speed increse overall
-    */
-    private void SpawnObstacles()
-    {
-        foreach (var floor in spawnPoints)
-        {
-            List<int> laneIndices = new List<int> { 0, 1, 2 };
-            // Pick 2 unique lanes
-            for (int i = 0; i < 2; i++)
-            {
-                int idx = Random.Range(0, laneIndices.Count);
-                int laneIdx = laneIndices[idx];
-                laneIndices.RemoveAt(idx);
+        Vector3 dir = (slopeEnd.position - slopeStart.position).normalized;
+        float totalDist = Vector3.Distance(slopeStart.position, slopeEnd.position);
+        float spacing = totalDist / (numberOfRows + 1);
 
-                Vector3 spawnPos = floor.position + new Vector3(laneOffsets[laneIdx], 0, 0);
-                GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
+        for (int row = 1; row <= numberOfRows; row++)
+        {
+            Vector3 basePos = slopeStart.position + dir * (spacing * row);
+
+            // Pick a random obstacle prefab for this row
+            GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
+
+            // If it's the snowman, only spawn it in the center lane and skip the rest
+            if (prefab == snowmanPrefab)
+            {
+                Vector3 spawnPos = basePos + new Vector3(laneOffsets[1], 0f, 0f); // center lane
+                Instantiate(prefab, spawnPos, Quaternion.identity);
+                continue; // Skip to next row
+            }
+
+            // Otherwise, pick two lanes out of three, leave one lane empty
+            List<int> lanes = new List<int> { 0, 1, 2 };
+            for (int pick = 0; pick < 2; pick++)
+            {
+                int randIndex = Random.Range(0, lanes.Count);
+                int laneID = lanes[randIndex];
+                lanes.RemoveAt(randIndex);
+
+                Vector3 spawnPos = basePos + new Vector3(laneOffsets[laneID], 0f, 0f);
                 Instantiate(prefab, spawnPos, Quaternion.identity);
             }
         }

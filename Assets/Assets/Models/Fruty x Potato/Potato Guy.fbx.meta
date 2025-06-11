@@ -3,7 +3,12 @@ guid: dcaf21e5bc86cfd499a45686a64f8a52
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Potato_guy.001
+    second: {fileID: 2100000, guid: 4363073e2dcc68c4ebd10f934fa53fda, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

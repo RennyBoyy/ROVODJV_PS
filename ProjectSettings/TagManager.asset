@@ -13,11 +13,16 @@ TagManager:
   - Tomato
   - Continent
   - LoseCon1
+  - Obstacle
+  - RoughTerrain
+  - Slope
+  - Wall
+  - SnowManHead
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Floor
   - Water
   - UI
   - 
