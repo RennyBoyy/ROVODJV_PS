@@ -32,12 +32,13 @@ public class MonsterBad : MonoBehaviour
         // Find GameManager if not assigned in Inspector
         if (gameManager == null)
             gameManager = FindFirstObjectByType<GameManager_Fruity>();
+
+        // Play spawn sound when monster is created
+        FruityGameConfigurator.Instance?.PlayScarecrowSpawnSound();
     }
 
     private void Update()
     {
-      
-
         // When eating, increment timer and destroy the life object once time is up
         if (isEating)
         {
@@ -52,6 +53,9 @@ public class MonsterBad : MonoBehaviour
                 {
                     Destroy(targetLife.transform.GetChild(0).gameObject);
                     _anim.SetBool("MonchTime", false);
+
+                    // Play sound when pumpkin is fully eaten
+                    FruityGameConfigurator.Instance?.PlayPumpkinEatenSound();
                 }
 
                 // Reset eating state
@@ -64,6 +68,8 @@ public class MonsterBad : MonoBehaviour
         // If health hits zero, destroy the monster
         if (monsterHealth <= 0)
         {
+            // Play death sound before destroying
+            FruityGameConfigurator.Instance?.PlayScarecrowDeathSound();
             Destroy(gameObject);
         }
     }
@@ -114,6 +120,9 @@ public class MonsterBad : MonoBehaviour
             targetLife = other.gameObject;
             _anim.SetBool("MonchTime", true);
             Debug.Log("Monster found food, stopping to eat.");
+
+            // Play eating sound when starting to eat
+            FruityGameConfigurator.Instance?.PlayScarecrowEatingSound();
         }
         else if (other.CompareTag("LoseCon"))
         {
@@ -132,5 +141,4 @@ public class MonsterBad : MonoBehaviour
                 gameManager.TriggerGameEndFromMonster(this);
         }
     }
-    
 }

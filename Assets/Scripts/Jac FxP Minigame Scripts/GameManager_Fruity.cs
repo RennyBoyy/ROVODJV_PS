@@ -62,6 +62,8 @@ public class GameManager_Fruity : MonoBehaviour
         gameEnded = true;
         Debug.Log("You lose!");
 
+        FruityGameConfigurator.Instance?.PlayLoseSound();
+
         if (gameOverManager != null)
         {
             bool player1Lost = DetermineLosingPlayer(null); // Fallback to random if no MonsterBad instance is provided
