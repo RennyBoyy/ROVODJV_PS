@@ -39,6 +39,11 @@ public class MonsterBad : MonoBehaviour
                         {
                             Destroy(collider);
                         }
+                        if (targetLife.transform.childCount > 0)
+                        {
+                            Transform child = targetLife.transform.GetChild(0);
+                            Destroy(child.gameObject);
+                        }
                     }
 
 
@@ -71,7 +76,12 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("LoseCon"))
         {
-            Debug.Log("You lose!");
+            
+            gameManager.Fruit_Remaining = 0;
+
+        }
+        else if (other.gameObject.CompareTag("LoseCon1"))
+        {
             gameManager.Fruit_Remaining = 0;
         }
     }

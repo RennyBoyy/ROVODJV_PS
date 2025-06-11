@@ -7,15 +7,16 @@ public class GameIntroManager : MonoBehaviour
 {
     [Header("Camera")]
     [SerializeField] private Camera gameCamera;
-    [SerializeField] private Transform gameplayPosition;          
+    [SerializeField] private Transform gameplayPosition;
 
     [Header("Character Introduction")]
-    [SerializeField] private Transform[] introTargets;        
+    [SerializeField] private Transform[] introTargets;
     [SerializeField] private float zoomSpeed = 2f;
     [SerializeField] private float holdDuration = 1.5f;
-    [SerializeField] private float zoomDistance = 3f;
+    [SerializeField] private float zoomDistance = 5f;
     [SerializeField] private float zoomHeight = 1f;
     [SerializeField] private AnimationCurve zoomCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private float animationWaitTime = 2f;
 
     [Header("Countdown")]
     [SerializeField] private GameObject countdownCanvas;
@@ -43,6 +44,7 @@ public class GameIntroManager : MonoBehaviour
     private RectTransform countdownRectTransform;
     private Vector3 originalCountdownScale;
     private bool introComplete = false;
+    private PlayerScript[] playerScripts;
 
     void Start()
     {
@@ -55,7 +57,12 @@ public class GameIntroManager : MonoBehaviour
             originalCameraRotation = gameCamera.transform.rotation;
         }
 
+        playerScripts = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        DisablePlayerInput();
+
         SetupCountdownUI();
+
+        Debug.Log("GameIntroManager starting intro sequence");
 
         StartCoroutine(PlayFullIntroSequence());
     }
@@ -115,7 +122,11 @@ public class GameIntroManager : MonoBehaviour
     {
         if (introComplete) yield break;
 
-        yield return new WaitForSeconds(0.5f);
+        // Don't try to control the PersistentSceneManager fade here
+        // Let it handle the initial fade-in, then proceed with intro
+        Debug.Log("GameIntroManager: Starting intro sequence");
+
+        yield return new WaitForSeconds(0.8f); // Wait for PersistentSceneManager fade
 
         if (introTargets != null && introTargets.Length > 0)
         {
@@ -129,6 +140,9 @@ public class GameIntroManager : MonoBehaviour
             }
         }
 
+        Debug.Log("Camera animation complete - enabling player input for countdown");
+        EnablePlayerInput();
+
         yield return StartCoroutine(PlayCountdown());
 
         EnableGameplay();
@@ -141,9 +155,10 @@ public class GameIntroManager : MonoBehaviour
         if (target == null || gameCamera == null) yield break;
 
         Vector3 targetPosition = target.position;
-        Vector3 cameraTargetPos = targetPosition +
-                                 (Vector3.back * zoomDistance) +
-                                 (Vector3.up * zoomHeight);
+
+        Vector3 characterForward = target.forward;
+        Vector3 cameraOffset = (-characterForward * zoomDistance) + (Vector3.up * zoomHeight);
+        Vector3 cameraTargetPos = targetPosition + cameraOffset;
 
         Vector3 directionToTarget = (targetPosition - cameraTargetPos).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
@@ -166,7 +181,26 @@ public class GameIntroManager : MonoBehaviour
         gameCamera.transform.position = cameraTargetPos;
         gameCamera.transform.rotation = targetRotation;
 
-        yield return new WaitForSeconds(holdDuration);
+        yield return new WaitForSeconds(0.5f);
+
+        Animator characterAnimator = target.GetComponent<Animator>();
+        if (characterAnimator != null)
+        {
+            characterAnimator.Play("Lose Animation", 0, 0f);
+            Debug.Log($"Force playing Lose Animation on {target.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"No Animator component found on {target.name}");
+        }
+
+        yield return new WaitForSeconds(animationWaitTime + holdDuration);
+
+        if (characterAnimator != null)
+        {
+            characterAnimator.Play("Idle stance", 0, 0f);
+            Debug.Log($"Force playing Idle stance on {target.name}");
+        }
     }
 
     IEnumerator ReturnToGameplayView()
@@ -289,6 +323,30 @@ public class GameIntroManager : MonoBehaviour
         }
     }
 
+    void DisablePlayerInput()
+    {
+        Debug.Log("Disabling player input during camera animation");
+        foreach (var player in playerScripts)
+        {
+            if (player != null)
+            {
+                player.enabled = false;
+            }
+        }
+    }
+
+    void EnablePlayerInput()
+    {
+        Debug.Log("Enabling player input for countdown phase");
+        foreach (var player in playerScripts)
+        {
+            if (player != null)
+            {
+                player.enabled = true;
+            }
+        }
+    }
+
     void EnableGameplay()
     {
         GameManager_Fruity gameManager = FindFirstObjectByType<GameManager_Fruity>();
@@ -297,21 +355,12 @@ public class GameIntroManager : MonoBehaviour
             gameManager.gameActive = true;
         }
 
-        PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
-        foreach (var player in players)
-        {
-            player.enabled = true;
-        }
+        EnablePlayerInput();
 
-        TheifScript thief = FindFirstObjectByType<TheifScript>();
-        if (thief != null)
+        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
+        foreach (var thief in thieves)
         {
-            thief.enabled = true;
-            var canWaveField = typeof(TheifScript).GetField("canWave", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (canWaveField != null)
-            {
-                canWaveField.SetValue(thief, true);
-            }
+            thief.canWave = true;
         }
 
         Debug.Log("Gameplay enabled!");

@@ -12,6 +12,7 @@ TagManager:
   - Monster
   - Tomato
   - Continent
+  - LoseCon1
   layers:
   - Default
   - TransparentFX

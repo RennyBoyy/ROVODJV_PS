@@ -15,16 +15,15 @@ public class PersistentSceneManager : MonoBehaviour
     [SerializeField] private string tutorialSceneName = "TutorialScene";
     [SerializeField]
     private string[] gameSceneNames = {
-        "",     
-        "FrutyLevel",   
-        "Level2Scene",   
-        "Level3Scene",   
-    };
+        "",
+        "First Level",
+        "MiniGameFish",    };
 
     private static PersistentSceneManager instance;
     private int selectedLevel = -1;
     private string targetGameScene = "";
     private bool isTransitioning = false;
+    private bool comingFromTutorial = false;
 
     public static PersistentSceneManager Instance
     {
@@ -53,6 +52,44 @@ public class PersistentSceneManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (IsGameScene(currentScene) && comingFromTutorial)
+        {
+            StartCoroutine(FadeInOnGameStart());
+        }
+    }
+
+    private bool IsGameScene(string sceneName)
+    {
+        foreach (string gameScene in gameSceneNames)
+        {
+            if (!string.IsNullOrEmpty(gameScene) && gameScene == sceneName)
+                return true;
+        }
+        return false;
+    }
+
+    private IEnumerator FadeInOnGameStart()
+    {
+        SetBlackImmediate();
+
+        yield return null;
+
+        GameIntroManager introManager = FindFirstObjectByType<GameIntroManager>();
+        if (introManager != null)
+        {
+            Debug.Log("GameIntroManager found - letting it handle the fade-in");
+        }
+        else
+        {
+            yield return StartCoroutine(FadeIn());
+        }
+
+        comingFromTutorial = false;
     }
 
     private void InitializeTransitionCanvas()
@@ -150,6 +187,7 @@ public class PersistentSceneManager : MonoBehaviour
     private IEnumerator TransitionToGameScene()
     {
         isTransitioning = true;
+        comingFromTutorial = true;
 
         yield return StartCoroutine(FadeOut());
 
@@ -161,7 +199,22 @@ public class PersistentSceneManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.1f);
-        yield return StartCoroutine(FadeIn());
+
+        SetBlackImmediate();
+
+        GameIntroManager introManager = FindFirstObjectByType<GameIntroManager>();
+        if (introManager != null)
+        {
+            Debug.Log("GameIntroManager found - waiting for it to be ready, then fading from black");
+            yield return new WaitForSeconds(0.3f);
+
+            yield return StartCoroutine(FadeIn());
+        }
+        else
+        {
+            Debug.Log("No GameIntroManager found - fading in normally");
+            yield return StartCoroutine(FadeIn());
+        }
 
         isTransitioning = false;
     }
@@ -181,6 +234,7 @@ public class PersistentSceneManager : MonoBehaviour
 
         selectedLevel = -1;
         targetGameScene = "";
+        comingFromTutorial = false;
 
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(hubSceneName);
 
@@ -218,6 +272,7 @@ public class PersistentSceneManager : MonoBehaviour
             Color c = fadeImage.color;
             c.a = 1f;
             fadeImage.color = c;
+            Debug.Log("Screen set to black immediately");
         }
     }
 
@@ -228,6 +283,7 @@ public class PersistentSceneManager : MonoBehaviour
             Color c = fadeImage.color;
             c.a = 0f;
             fadeImage.color = c;
+            Debug.Log("Screen set to transparent immediately");
         }
     }
 
@@ -240,6 +296,7 @@ public class PersistentSceneManager : MonoBehaviour
     {
         if (fadeImage == null) yield break;
 
+        Debug.Log("Starting fade to black");
         float elapsed = 0f;
         Color startColor = fadeImage.color;
         Color endColor = new Color(startColor.r, startColor.g, startColor.b, 1f);
@@ -253,12 +310,14 @@ public class PersistentSceneManager : MonoBehaviour
         }
 
         fadeImage.color = endColor;
+        Debug.Log("Fade to black complete");
     }
 
     private IEnumerator FadeIn()
     {
         if (fadeImage == null) yield break;
 
+        Debug.Log("Starting fade from black");
         float elapsed = 0f;
         Color startColor = fadeImage.color;
         Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
@@ -272,5 +331,6 @@ public class PersistentSceneManager : MonoBehaviour
         }
 
         fadeImage.color = endColor;
+        Debug.Log("Fade from black complete");
     }
 }
