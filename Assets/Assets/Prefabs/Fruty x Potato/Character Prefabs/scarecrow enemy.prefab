@@ -60,6 +60,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -150009337949190703, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -150009337949190703, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 38ad8347904f52f4f9e4630a8acf9ccd, type: 2}
+    - target: {fileID: -150009337949190703, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
     - target: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
       propertyPath: m_Name
       value: scarecrow enemy
@@ -81,6 +93,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
       insertIndex: -1
       addedObject: {fileID: -804574015567915458}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1364336854342872871}
   m_SourcePrefab: {fileID: 100100000, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
 --- !u!1 &5538905378751545014 stripped
 GameObject:
@@ -122,10 +137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78fca9d598e0d640afb744fbdb146ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
   monsterHealth: 1
-  gameManager: {fileID: 0}
   monsterEatingTime: 3
+  gameManager: {fileID: 0}
+  didplayer1lose: 0
 --- !u!54 &-804574015567915458
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -153,3 +168,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!95 &1364336854342872871
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5538905378751545014}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: ee076649f87bf8740a4cec65f2e4a795, type: 3}
+  m_Controller: {fileID: 9100000, guid: 65593193dc158e241ae911d52d32df7c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
