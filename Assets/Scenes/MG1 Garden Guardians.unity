@@ -6783,7 +6783,7 @@ GameObject:
   m_Component:
   - component: {fileID: 168956841}
   m_Layer: 0
-  m_Name: MovementSpotsPotato
+  m_Name: Lanes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7968,7 +7968,7 @@ GameObject:
   - component: {fileID: 274104207}
   - component: {fileID: 274104208}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Pumpkin2
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8651,7 +8651,7 @@ GameObject:
   - component: {fileID: 338140472}
   - component: {fileID: 338140471}
   m_Layer: 0
-  m_Name: Apple_Ammo
+  m_Name: Ammo TOP
   m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8666,7 +8666,7 @@ Transform:
   m_GameObject: {fileID: 338140469}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.0000028461216}
-  m_LocalPosition: {x: 14.674, y: -0.36200047, z: -0.7260547}
+  m_LocalPosition: {x: 16.5, y: 0, z: -1.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19985,7 +19985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 452602348}
   m_Layer: 0
-  m_Name: MovementPotato
+  m_Name: Lanes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20004,12 +20004,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1323389510}
+  - {fileID: 661435501}
   - {fileID: 1821924897}
   - {fileID: 2058011414}
   - {fileID: 2052081102}
   - {fileID: 1491459639}
-  - {fileID: 661435501}
+  - {fileID: 1323389510}
   m_Father: {fileID: 1462863377}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &454138333
@@ -25223,7 +25223,7 @@ GameObject:
   - component: {fileID: 473645366}
   - component: {fileID: 473645367}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Pumpkin1
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25316,7 +25316,7 @@ GameObject:
   - component: {fileID: 479131756}
   - component: {fileID: 479131757}
   m_Layer: 0
-  m_Name: GameObject (5)
+  m_Name: Lane2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25761,7 +25761,7 @@ GameObject:
   m_Component:
   - component: {fileID: 547121697}
   m_Layer: 0
-  m_Name: Collliders_Lives
+  m_Name: Lane Lives
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31896,7 +31896,7 @@ GameObject:
   - component: {fileID: 661435503}
   - component: {fileID: 661435502}
   m_Layer: 0
-  m_Name: Apple_Ammo (3)
+  m_Name: Ammo TOP
   m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31911,7 +31911,7 @@ Transform:
   m_GameObject: {fileID: 661435500}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.32999992, y: -0.36200047, z: -0.84000015}
+  m_LocalPosition: {x: -0.43, y: -0.36200047, z: -0.84000015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -39449,7 +39449,7 @@ GameObject:
   m_Component:
   - component: {fileID: 848105856}
   m_Layer: 0
-  m_Name: Potato
+  m_Name: P2 POTATO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40890,7 +40890,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dcaf21e5bc86cfd499a45686a64f8a52, type: 3}
       propertyPath: m_Name
-      value: Potato Guy
+      value: Potato
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dcaf21e5bc86cfd499a45686a64f8a52, type: 3}
       propertyPath: m_TagString
@@ -41739,7 +41739,7 @@ GameObject:
   - component: {fileID: 996064829}
   - component: {fileID: 996064828}
   m_Layer: 0
-  m_Name: Apple_Ammo (1)
+  m_Name: Ammo BOT
   m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41754,7 +41754,7 @@ Transform:
   m_GameObject: {fileID: 996064826}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.0000028461216}
-  m_LocalPosition: {x: 0.31800047, y: -0.36200047, z: -0.7299975}
+  m_LocalPosition: {x: 0.3, y: 0, z: -1.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -50123,7 +50123,7 @@ GameObject:
   - component: {fileID: 1227540627}
   - component: {fileID: 1227540628}
   m_Layer: 0
-  m_Name: GameObject (3)
+  m_Name: Pumpkin4
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51484,7 +51484,7 @@ GameObject:
   - component: {fileID: 1323389512}
   - component: {fileID: 1323389511}
   m_Layer: 0
-  m_Name: Apple_Ammo (2)
+  m_Name: Ammo BOT
   m_TagString: Tomato
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51499,7 +51499,7 @@ Transform:
   m_GameObject: {fileID: 1323389509}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.460001, y: -0.36200047, z: -0.87000084}
+  m_LocalPosition: {x: 15.9, y: -0.36200047, z: -1.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -52511,7 +52511,7 @@ GameObject:
   - component: {fileID: 1406716623}
   - component: {fileID: 1406716624}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Pumpkin1
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52824,7 +52824,7 @@ GameObject:
   - component: {fileID: 1411397593}
   - component: {fileID: 1411397594}
   m_Layer: 0
-  m_Name: GameObject (6)
+  m_Name: Lane3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52939,7 +52939,7 @@ GameObject:
   - component: {fileID: 1415373699}
   - component: {fileID: 1415373700}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Pumpkin2
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53130,7 +53130,7 @@ GameObject:
   - component: {fileID: 1450426705}
   - component: {fileID: 1450426706}
   m_Layer: 0
-  m_Name: GameObject (2)
+  m_Name: Pumpkin3
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53184,7 +53184,7 @@ GameObject:
   - component: {fileID: 1454709181}
   - component: {fileID: 1454709182}
   m_Layer: 0
-  m_Name: GameObject (3)
+  m_Name: Pumpkin4
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53402,7 +53402,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1462863377}
   m_Layer: 0
-  m_Name: Fruity(Bear)
+  m_Name: P1 FRUTY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53697,7 +53697,7 @@ GameObject:
   - component: {fileID: 1491459639}
   - component: {fileID: 1491459640}
   m_Layer: 0
-  m_Name: GameObject (7)
+  m_Name: Lane4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54516,7 +54516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8743286924543334575, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_Name
-      value: bear_Prefab
+      value: Fruty
       objectReference: {fileID: 0}
     - target: {fileID: 8743286924543334575, guid: b1f618c3a18ac104a81582ec8445f7b9, type: 3}
       propertyPath: m_IsActive
@@ -55227,7 +55227,7 @@ GameObject:
   - component: {fileID: 1564552669}
   - component: {fileID: 1564552670}
   m_Layer: 0
-  m_Name: GameObject (2)
+  m_Name: Pumpkin3
   m_TagString: Lives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55417,7 +55417,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1582485420}
   m_Layer: 0
-  m_Name: Collliders_Lives (1)
+  m_Name: Lane Lives
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55493,7 +55493,7 @@ GameObject:
   - component: {fileID: 1592706404}
   - component: {fileID: 1592706405}
   m_Layer: 0
-  m_Name: GameObject (4)
+  m_Name: Lane1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56997,7 +56997,7 @@ GameObject:
   - component: {fileID: 1682059144}
   - component: {fileID: 1682059145}
   m_Layer: 0
-  m_Name: LoseConFruity
+  m_Name: LoseConFruty
   m_TagString: LoseCon1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57634,7 +57634,7 @@ GameObject:
   - component: {fileID: 1762172703}
   - component: {fileID: 1762172704}
   m_Layer: 0
-  m_Name: GameObject (7)
+  m_Name: Lane4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58925,7 +58925,7 @@ GameObject:
   - component: {fileID: 1821924897}
   - component: {fileID: 1821924898}
   m_Layer: 0
-  m_Name: GameObject (4)
+  m_Name: Lane1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61260,7 +61260,7 @@ GameObject:
   - component: {fileID: 2052081102}
   - component: {fileID: 2052081103}
   m_Layer: 0
-  m_Name: GameObject (6)
+  m_Name: Lane3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61375,7 +61375,7 @@ GameObject:
   - component: {fileID: 2058011414}
   - component: {fileID: 2058011415}
   m_Layer: 0
-  m_Name: GameObject (5)
+  m_Name: Lane2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
