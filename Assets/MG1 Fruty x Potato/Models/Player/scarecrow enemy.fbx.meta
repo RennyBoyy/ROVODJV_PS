@@ -22,7 +22,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -31,25 +31,25 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armature|Walk (1)
-      takeName: Armature|Walk
+      name: Armature|Hit
+      takeName: Armature|Hit
       internalID: -5578746458225771231
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 50
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 1
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 1
+      keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -196,72 +196,7 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton:
-    - name: scarecrow enemy(Clone)
-      parentName: 
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Hat
-      parentName: scarecrow enemy(Clone)
-      position: {x: -0, y: 5.5090227, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Armature
-      parentName: scarecrow enemy(Clone)
-      position: {x: -0, y: -0.09093046, z: -1.0293278}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Base
-      parentName: Armature
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0.8763236, y: -0, z: -0, w: 0.48172283}
-      scale: {x: 1, y: 0.99999994, z: 1}
-    - name: Pole
-      parentName: Base
-      position: {x: -0, y: 1.0547276, z: -0.12155629}
-      rotation: {x: 0.00000010067798, y: 0.86723137, z: -0.49790537, w: -0.00000015993716}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Body
-      parentName: Pole
-      position: {x: -1.4210855e-14, y: 2.0721943, z: 0.000000029802322}
-      rotation: {x: 0.008869975, y: 8.924416e-12, z: 0.0000000031555056, w: 0.99996066}
-      scale: {x: 1, y: 1.0000001, z: 1}
-    - name: Pumpkin
-      parentName: Body
-      position: {x: 6.0722386e-15, y: 2.2908168, z: 0.00000011175871}
-      rotation: {x: 0.0041639255, y: 1.4176904e-14, z: 0.0000000016214926, w: 0.99999136}
-      scale: {x: 1, y: 0.99999994, z: 0.99999994}
-    - name: Hat
-      parentName: Pumpkin
-      position: {x: 2.0087903e-14, y: 1.0988979, z: -0.000000078231096}
-      rotation: {x: -0.021516584, y: 1.451672e-12, z: -0.0000000087780645, w: 0.9997685}
-      scale: {x: 1, y: 0.99999994, z: 0.99999994}
-    - name: Hat_end
-      parentName: Hat
-      position: {x: -0, y: 0.7784424, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Hand.L
-      parentName: Body
-      position: {x: 1.0586417, y: 1.7752714, z: -0.008067668}
-      rotation: {x: 0.0000950704, y: -0.00000018037653, z: -0.70405275, w: 0.7101477}
-      scale: {x: 0.9999999, y: 0.99999994, z: 1}
-    - name: Hand.L_end
-      parentName: Hand.L
-      position: {x: -0, y: 1.0427202, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Hand.R
-      parentName: Body
-      position: {x: -1.0586417, y: 1.7752714, z: -0.008068374}
-      rotation: {x: 0.00009479623, y: -0.00000009617413, z: 0.70405275, w: 0.7101477}
-      scale: {x: 0.9999999, y: 0.99999994, z: 1}
-    - name: Hand.R_end
-      parentName: Hand.R
-      position: {x: -0, y: 1.0427202, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
+    skeleton: []
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -270,9 +205,9 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: Base
+    rootMotionBoneName: Armature
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
