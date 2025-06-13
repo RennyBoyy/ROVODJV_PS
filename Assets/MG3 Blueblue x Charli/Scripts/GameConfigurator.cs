@@ -20,9 +20,23 @@ public class GameConfigurator : MonoBehaviour
     [SerializeField] public Sprite[] buttonIcons;
 
     [Header("Audio Clips & Settings")]
+    [Tooltip("Background Music")]
     [SerializeField] public AudioClip backgroundMusic;
-    [SerializeField] public AudioClip clickSFX;
+    [Tooltip("SFX for cast action")]
+    [SerializeField] public AudioClip castSFX;
+    [Tooltip("SFX for bite prompt")]
+    [SerializeField] public AudioClip biteSFX;
+    [Tooltip("SFX for each QTE button press")]
+    [SerializeField] public AudioClip sequenceSFX;
+    [Tooltip("SFX for successful catch")]
+    [SerializeField] public AudioClip successSFX;
+    [Tooltip("SFX for reel-in animation")]
+    [SerializeField] public AudioClip reelInSFX;
+    [Tooltip("SFX for failed bite")]
+    [SerializeField] public AudioClip failedBiteSFX;
+    [Tooltip("SFX for UI transitions / button clicks")]
     [SerializeField] public AudioClip transitionSFX;
+    [Tooltip("EndGame Music")]
     [SerializeField] public AudioClip endGameMusic;
 
     [Header("Fade & Transition Timings")]
@@ -43,10 +57,9 @@ public class GameConfigurator : MonoBehaviour
     [SerializeField] public float failedBiteDuration = 1f;
 
     [Header("Speed Increase Settings")]
-    [Tooltip("How much to bump scroll-speed each time a QTE sequence starts (0–15)")]
+    [Tooltip("How much to bump scroll up speed each time a QTE sequence starts (0–15)")]
     [Range(0f, 15f)]
     [SerializeField] public float speedIncreasePerSequence = 5f;
-
     private const float baseScrollSpeed = 300f;
 
     [Header("Fish Point Values")]
@@ -59,25 +72,17 @@ public class GameConfigurator : MonoBehaviour
     [SerializeField] public float fishModelActiveTime = 2f;
 
     [Header("Fish Spawn Transforms")]
-    [Tooltip("Spawn point for any fish, Player 1")]
     [SerializeField] public Transform fishSpawn_P1;
-    [Tooltip("Spawn point for any fish, Player 2")]
     [SerializeField] public Transform fishSpawn_P2;
 
     [Header("Fish Move End Transforms")]
-    [Tooltip("Where a small fish moves TO, Player 1")]
     [SerializeField] public Transform smallFishMoveEnd_P1;
-    [Tooltip("Where a big fish moves TO, Player 1")]
     [SerializeField] public Transform bigFishMoveEnd_P1;
-    [Tooltip("Where a small fish moves TO, Player 2")]
     [SerializeField] public Transform smallFishMoveEnd_P2;
-    [Tooltip("Where a big fish moves TO, Player 2")]
     [SerializeField] public Transform bigFishMoveEnd_P2;
 
     [Header("Fish Move Settings")]
-    [Tooltip("Time to move fish from spawn to end (seconds)")]
     [SerializeField] public float fishMoveDuration = 1f;
-    [Tooltip("Time to spin fish on arrival (seconds)")]
     [SerializeField] public float fishMoveHoldTime = 0.5f;
 
     [Header("Player 1 UI")]
@@ -104,13 +109,17 @@ public class GameConfigurator : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern
+        // Singleton
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else { Destroy(gameObject); return; }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         // Audio setup
         _musicSource = gameObject.AddComponent<AudioSource>();
@@ -127,8 +136,10 @@ public class GameConfigurator : MonoBehaviour
         _remainingTime = startTime;
         _timerRunning = false;
 
-        if (skipStartAndEndScreens) StartCoroutine(CloseStartAndOpenHUD());
-        else ShowStartScreen();
+        if (skipStartAndEndScreens)
+            StartCoroutine(CloseStartAndOpenHUD());
+        else
+            ShowStartScreen();
     }
 
     private void HideAllUI()
@@ -148,6 +159,12 @@ public class GameConfigurator : MonoBehaviour
         buttonSlotTemplate_P2?.SetActive(false);
     }
 
+    public void PlaySFX(AudioClip clip)
+    {
+        if (clip == null) return;
+        _sfxSource.PlayOneShot(clip);
+    }
+
     public void ShowStartScreen()
     {
         StartCoroutine(FadeInPanel(startScreenPanel, screenFadeDuration));
@@ -157,7 +174,7 @@ public class GameConfigurator : MonoBehaviour
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(() =>
             {
-                PlaySFX(clickSFX);
+                PlaySFX(transitionSFX);
                 StartCoroutine(CloseStartAndOpenHUD());
             });
         }
@@ -169,15 +186,20 @@ public class GameConfigurator : MonoBehaviour
         StartCoroutine(DoEndScreenSequence());
     }
 
-    public void PlaySFX(AudioClip clip)
+    public void ShowBitePrompt(bool p1)
     {
-        if (clip == null) return;
-        _sfxSource.PlayOneShot(clip);
+        (p1 ? bitePromptUI_P1 : bitePromptUI_P2)?.SetActive(true);
+        PlaySFX(biteSFX);
     }
 
-    public void ShowBitePrompt(bool p1) => (p1 ? bitePromptUI_P1 : bitePromptUI_P2)?.SetActive(true);
     public void HideBitePrompt(bool p1) => (p1 ? bitePromptUI_P1 : bitePromptUI_P2)?.SetActive(false);
-    public void ShowFailedBite(bool p1) => (p1 ? failedBiteText_P1 : failedBiteText_P2)?.gameObject.SetActive(true);
+
+    public void ShowFailedBite(bool p1)
+    {
+        (p1 ? failedBiteText_P1 : failedBiteText_P2)?.gameObject.SetActive(true);
+        PlaySFX(failedBiteSFX);
+    }
+
     public void HideFailedBite(bool p1) => (p1 ? failedBiteText_P1 : failedBiteText_P2)?.gameObject.SetActive(false);
     public void ShowFishCaught(bool p1) => (p1 ? fishCaughtText_P1 : fishCaughtText_P2)?.gameObject.SetActive(true);
     public void HideFishCaught(bool p1) => (p1 ? fishCaughtText_P1 : fishCaughtText_P2)?.gameObject.SetActive(false);
@@ -187,62 +209,36 @@ public class GameConfigurator : MonoBehaviour
     public float GetScrollSpeed(int sequenceCount)
         => baseScrollSpeed + speedIncreasePerSequence * sequenceCount;
 
-    public void ShowFishModel(bool isBig, bool p1)
-        => StartCoroutine(FishModelRoutine(isBig, p1));
-
-    private IEnumerator FishModelRoutine(bool isBig, bool p1)
-    {
-        var list = isBig ? bigFishModels : smallFishModels;
-        var spawn = p1 ? fishSpawn_P1 : fishSpawn_P2;
-        if (list == null || list.Count == 0 || spawn == null) yield break;
-
-        var prefab = list[Random.Range(0, list.Count)];
-        if (prefab == null) yield break;
-
-        var inst = Instantiate(prefab, spawn.position, spawn.rotation);
-        yield return new WaitForSeconds(fishModelActiveTime);
-        Destroy(inst);
-    }
-
     public void ShowFishMove(bool isBig, bool p1)
         => StartCoroutine(FishMoveRoutine(isBig, p1));
 
     private IEnumerator FishMoveRoutine(bool isBig, bool p1)
     {
         var list = isBig ? bigFishModels : smallFishModels;
-        var spawnT = p1 ? fishSpawn_P1 : fishSpawn_P2;
+        var spawn = p1 ? fishSpawn_P1 : fishSpawn_P2;
         var endT = isBig
-                       ? (p1 ? bigFishMoveEnd_P1 : bigFishMoveEnd_P2)
-                       : (p1 ? smallFishMoveEnd_P1 : smallFishMoveEnd_P2);
-        if (list == null || list.Count == 0 || spawnT == null || endT == null) yield break;
+                     ? (p1 ? bigFishMoveEnd_P1 : bigFishMoveEnd_P2)
+                     : (p1 ? smallFishMoveEnd_P1 : smallFishMoveEnd_P2);
+        if (list == null || list.Count == 0 || spawn == null || endT == null) yield break;
 
         var prefab = list[Random.Range(0, list.Count)];
-        if (prefab == null) yield break;
-
-        // Instantiate with start rotation Y = 180°
-        var inst = Instantiate(prefab, spawnT.position, Quaternion.Euler(0f, 180f, 0f));
-
-        // Move from spawn to end
+        var inst = Instantiate(prefab, spawn.position, Quaternion.Euler(0f, 180f, 0f));
         float t = 0f;
         while (t < fishMoveDuration)
         {
-            inst.transform.position = Vector3.Lerp(spawnT.position, endT.position, t / fishMoveDuration);
+            inst.transform.position = Vector3.Lerp(spawn.position, endT.position, t / fishMoveDuration);
             t += Time.deltaTime;
             yield return null;
         }
         inst.transform.position = endT.position;
 
-        // Spin 360° around Y over fishMoveHoldTime (from 180° to 540°, end at equivalent 180°)
-        float spinT = 0f;
-        while (spinT < fishMoveHoldTime)
+        float spin = 0f;
+        while (spin < fishMoveHoldTime)
         {
-            float angle = 180f + 360f * (spinT / fishMoveHoldTime);
-            inst.transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            spinT += Time.deltaTime;
+            inst.transform.rotation = Quaternion.Euler(0f, 180f + 360f * (spin / fishMoveHoldTime), 0f);
+            spin += Time.deltaTime;
             yield return null;
         }
-
-        yield return new WaitForSeconds(0.1f);
         Destroy(inst);
     }
 
@@ -253,20 +249,13 @@ public class GameConfigurator : MonoBehaviour
         while (_timerRunning && _remainingTime > 0f)
         {
             _remainingTime -= Time.deltaTime;
-            UpdateTimerDisplay();
+            int m = Mathf.FloorToInt(_remainingTime / 60f);
+            int s = Mathf.FloorToInt(_remainingTime % 60f);
+            timerText.text = $"{m:00}:{s:00}";
             yield return null;
         }
-        _remainingTime = 0f;
-        UpdateTimerDisplay();
+        timerText.text = "00:00";
         OnTimerExpired();
-    }
-
-    private void UpdateTimerDisplay()
-    {
-        if (timerText == null) return;
-        int m = Mathf.FloorToInt(_remainingTime / 60f);
-        int s = Mathf.FloorToInt(_remainingTime % 60f);
-        timerText.text = $"{m:00}:{s:00}";
     }
 
     private void OnTimerExpired()
@@ -300,13 +289,14 @@ public class GameConfigurator : MonoBehaviour
         {
             endScreenPanel.SetActive(true);
             yield return FadeInPanel(endScreenPanel, screenFadeDuration);
+
             var retry = endScreenPanel.transform.Find("RetryButton")?.GetComponent<Button>();
             if (retry != null)
             {
                 retry.onClick.RemoveAllListeners();
                 retry.onClick.AddListener(() =>
                 {
-                    PlaySFX(clickSFX);
+                    PlaySFX(transitionSFX);
                     Time.timeScale = 1f;
                     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 });
@@ -317,7 +307,7 @@ public class GameConfigurator : MonoBehaviour
                 quit.onClick.RemoveAllListeners();
                 quit.onClick.AddListener(() =>
                 {
-                    PlaySFX(clickSFX);
+                    PlaySFX(transitionSFX);
                     Application.Quit();
                 });
             }

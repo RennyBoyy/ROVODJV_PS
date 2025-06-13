@@ -1,3 +1,4 @@
+// FishingCastController.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,31 +22,24 @@ public class FishingCastController : MonoBehaviour
     private float _reelInLength = 0f;
     private float _failedReelLength = 0f;
 
-    // QTE UI & icons
     private Sprite[] buttonIcons;
     private TMP_Text scoreText;
     private GameObject buttonSlotTemplate;
     private RectTransform qteUIParent;
 
-    // Bite prompt state
     private bool _waitingForBite = false;
     private float _biteEndTime = 0f;
 
-    // QTE sequence state
     private bool _qteActive = false;
     private List<MovingNote> activeNotes = new List<MovingNote>();
     private List<int> _sequence = new List<int>();
     private List<float> _spawnTimes = new List<float>();
     private int _spawnIndex = 0;
 
-    // Difficulty scaling
     private int _sequenceCount = 0;
-
-    // Score & fish type
     private int _fishCount = 0;
     private bool _currentBig = false;
 
-    // Configured timings
     private float minBiteTime;
     private float maxBiteTime;
     private float bitePromptDuration;
@@ -54,7 +48,6 @@ public class FishingCastController : MonoBehaviour
     private float fishCaughtDuration;
     private float failedBiteDuration;
 
-    // QTE hit window
     private const float successMin = 200f;
     private const float successMax = 300f;
 
@@ -81,7 +74,6 @@ public class FishingCastController : MonoBehaviour
 
         _castAction = pi.actions["Cast"];
         _animator = GetComponent<Animator>();
-        if (_animator == null) { Debug.LogError("Animator missing"); enabled = false; return; }
         foreach (var clip in _animator.runtimeAnimatorController.animationClips)
         {
             if (clip.name == "Cast") _castLength = clip.length;
@@ -93,22 +85,28 @@ public class FishingCastController : MonoBehaviour
     private void Start()
     {
         if (GameConfigurator.Instance == null)
-            StartCoroutine(InitializeDelayed());
+            StartCoroutine(InitDelay());
         else
-            InitializeFromConfigurator();
+            InitFromConfigurator();
     }
 
-    private IEnumerator InitializeDelayed()
+    private IEnumerator InitDelay()
     {
         yield return null;
         yield return null;
-        if (GameConfigurator.Instance == null) { enabled = false; yield break; }
-        InitializeFromConfigurator();
+        if (GameConfigurator.Instance == null)
+        {
+            Debug.LogError("GameConfigurator not found");
+            enabled = false;
+            yield break;
+        }
+        InitFromConfigurator();
     }
 
-    private void InitializeFromConfigurator()
+    private void InitFromConfigurator()
     {
         var cfg = GameConfigurator.Instance;
+
         buttonIcons = cfg.buttonIcons;
         scoreText = isPlayerOne ? cfg.scoreP1Text : cfg.scoreP2Text;
         buttonSlotTemplate = isPlayerOne ? cfg.buttonSlotTemplate_P1 : cfg.buttonSlotTemplate_P2;
@@ -139,25 +137,25 @@ public class FishingCastController : MonoBehaviour
 
     private void Update()
     {
-        // Spawn notes at scheduled times
+        // Spawn any pending QTE notes
         if (_qteActive && _spawnIndex < _sequence.Count && Time.time >= _spawnTimes[_spawnIndex])
         {
             SpawnNote(_sequence[_spawnIndex]);
             _spawnIndex++;
         }
 
-        // Move notes each frame
+        // Move active notes
         if (_qteActive)
             MoveNotes();
 
-        // Handle bite prompt first
+        // Handle bite?prompt input first
         if (_waitingForBite)
         {
             HandleBitePromptInput();
             return;
         }
 
-        // Then handle QTE button input
+        // Then QTE input
         if (_qteActive)
             HandleQTEInput();
     }
@@ -168,17 +166,19 @@ public class FishingCastController : MonoBehaviour
         var scheme = GetComponent<PlayerInput>().currentControlScheme;
         if (isPlayerOne ? scheme != "PS4_P1" : scheme != "PS4_P2") return;
 
-        float value = ctx.ReadValue<float>();
-        if (!_pulledDown && value < -0.9f)
+        float v = ctx.ReadValue<float>();
+        if (!_pulledDown && v < -0.9f)
         {
             _pulledDown = true;
             _animator.SetTrigger("PullBack");
             return;
         }
-        if (_pulledDown && value > 0.9f)
+        if (_pulledDown && v > 0.9f)
         {
             _pulledDown = false;
             _animator.SetTrigger("Cast");
+            // play cast SFX
+            GameConfigurator.Instance.PlaySFX(GameConfigurator.Instance.castSFX);
             _isFishing = true;
             StartCoroutine(WaitForCastAndBite());
         }
@@ -196,7 +196,6 @@ public class FishingCastController : MonoBehaviour
         _waitingForBite = true;
         _biteEndTime = Time.time + bitePromptDuration;
         GameConfigurator.Instance.ShowBitePrompt(isPlayerOne);
-        GameConfigurator.Instance.HideFailedBite(isPlayerOne);
     }
 
     private void HandleBitePromptInput()
@@ -206,6 +205,7 @@ public class FishingCastController : MonoBehaviour
 
         if (pad.buttonSouth.wasPressedThisFrame)
         {
+            // successful bite press ? go into QTE
             _waitingForBite = false;
             GameConfigurator.Instance.HideBitePrompt(isPlayerOne);
             StartSequence();
@@ -214,20 +214,21 @@ public class FishingCastController : MonoBehaviour
 
         if (Time.time >= _biteEndTime)
         {
+            // missed the bite: show failed, wait, then restart bite?timer
             _waitingForBite = false;
             GameConfigurator.Instance.HideBitePrompt(isPlayerOne);
-            StartCoroutine(ShowFailedBite());
+            StartCoroutine(RestartBiteTimer());
         }
     }
 
-    private IEnumerator ShowFailedBite()
+    private IEnumerator RestartBiteTimer()
     {
-        yield return new WaitForSeconds(0.5f);
+        // show failed
         GameConfigurator.Instance.ShowFailedBite(isPlayerOne);
-        _animator.Play("FishingIdle", 0);
-        _isFishing = false;
         yield return new WaitForSeconds(failedBiteDuration);
         GameConfigurator.Instance.HideFailedBite(isPlayerOne);
+        // immediately start waiting for the next bite
+        StartCoroutine(WaitForCastAndBite());
     }
 
     private void StartSequence()
@@ -240,9 +241,9 @@ public class FishingCastController : MonoBehaviour
         _spawnIndex = 0;
 
         _currentBig = Random.value < 0.5f;
-        int length = _currentBig ? bigSeqLen : smallSeqLen;
+        int len = _currentBig ? bigSeqLen : smallSeqLen;
         float now = Time.time, delay = 0.2f, spacing = 0.5f;
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < len; i++)
         {
             _sequence.Add(Random.Range(0, buttonIcons.Length));
             _spawnTimes.Add(now + delay + i * spacing);
@@ -255,13 +256,17 @@ public class FishingCastController : MonoBehaviour
     private void SpawnNote(int buttonIndex)
     {
         if (buttonSlotTemplate == null || qteUIParent == null) return;
+
         var go = Instantiate(buttonSlotTemplate, qteUIParent);
         go.SetActive(true);
+
         var img = go.GetComponent<Image>();
         img.sprite = buttonIcons[buttonIndex];
         img.color = Color.white;
+
         var rt = go.GetComponent<RectTransform>();
         rt.localPosition = new Vector3(500f, 0f, 0f);
+
         activeNotes.Add(new MovingNote { rect = rt, expected = buttonIndex, hit = false });
     }
 
@@ -299,6 +304,7 @@ public class FishingCastController : MonoBehaviour
         {
             var note = activeNotes[i];
             if (note.hit) continue;
+
             float x = note.rect.anchoredPosition.x;
             if (x >= successMin && x <= successMax)
             {
@@ -306,6 +312,7 @@ public class FishingCastController : MonoBehaviour
                 if (pressed == note.expected)
                 {
                     note.hit = true;
+                    GameConfigurator.Instance.PlaySFX(GameConfigurator.Instance.sequenceSFX);
                     Destroy(note.rect.gameObject);
                     activeNotes.RemoveAt(i);
                     if (activeNotes.Count == 0 && _spawnIndex >= _sequence.Count)
@@ -325,20 +332,25 @@ public class FishingCastController : MonoBehaviour
     private void OnQTESuccess()
     {
         _qteActive = false;
-        foreach (var note in activeNotes) Destroy(note.rect.gameObject);
+        foreach (var note in activeNotes)
+            Destroy(note.rect.gameObject);
         activeNotes.Clear();
+
         GameConfigurator.Instance.HideQTEUI(isPlayerOne);
 
-        int points = _currentBig
+        _fishCount += _currentBig
             ? GameConfigurator.Instance.bigFishPoints
             : GameConfigurator.Instance.smallFishPoints;
-        _fishCount += points;
         scoreText.text = _fishCount.ToString();
+
+        // play success + reel-in together
+        var cfg = GameConfigurator.Instance;
+        cfg.PlaySFX(cfg.successSFX);
+        cfg.PlaySFX(cfg.reelInSFX);
 
         GameConfigurator.Instance.ShowFishCaught(isPlayerOne);
         StartCoroutine(HideFishCaught());
 
-        // **spawn and animate fish immediately**
         GameConfigurator.Instance.ShowFishMove(_currentBig, isPlayerOne);
 
         _animator.SetTrigger("ReelIn");
@@ -354,7 +366,8 @@ public class FishingCastController : MonoBehaviour
     private void OnQTEFailure()
     {
         _qteActive = false;
-        foreach (var note in activeNotes) Destroy(note.rect.gameObject);
+        foreach (var note in activeNotes)
+            Destroy(note.rect.gameObject);
         activeNotes.Clear();
 
         GameConfigurator.Instance.HideQTEUI(isPlayerOne);
@@ -378,6 +391,4 @@ public class FishingCastController : MonoBehaviour
         _animator.Play("FishingIdle", 0);
         _isFishing = false;
     }
-
-    private IEnumerator PostReelRoutine() { yield break; }
 }
