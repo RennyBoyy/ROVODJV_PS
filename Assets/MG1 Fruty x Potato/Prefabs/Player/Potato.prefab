@@ -254,7 +254,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dcaf21e5bc86cfd499a45686a64f8a52, type: 3}
       propertyPath: m_Name
-      value: Potato Guy
+      value: Potato
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dcaf21e5bc86cfd499a45686a64f8a52, type: 3}
       propertyPath: m_TagString
@@ -559,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42094cdcb2d894942b770998ef8fe900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tomato: {fileID: 7557888044053601718, guid: 52135e9df133ad242bd14bcd3b5b27da, type: 3}
+  tomato: {fileID: 823499528131681664, guid: 19bf6a6985e657442b1e1ac945165712, type: 3}
   lanePoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -573,12 +573,6 @@ MonoBehaviour:
   player2Input: {fileID: 1354610889435777798}
   maxBullets: 5
   LeftOrRight: 0
-  jumpAudioSource: {fileID: 0}
-  throwAudioSource: {fileID: 0}
-  jumpSound: {fileID: 0}
-  throwSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  emptyThrowSound: {fileID: 0}
   bullets: 5
   laneMoveDuration: 0.25
 --- !u!114 &1354610889435777798

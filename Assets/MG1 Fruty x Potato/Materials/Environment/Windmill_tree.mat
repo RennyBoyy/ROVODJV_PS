@@ -24,8 +24,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Emmision_texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2D:
-        m_Texture: {fileID: 2800000, guid: 56f834915856ebb4680fcf5987f1d810, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5e2990dafbdc92c47a03f468b20beab0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -50,6 +54,7 @@ Material:
     - _shadow_brightness: 0.21
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Emmision_color: {r: 1, g: 1, b: 1, a: 1}
     - _Highlight_Color: {r: 1, g: 1, b: 1, a: 0}
     - _Shadow_Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
