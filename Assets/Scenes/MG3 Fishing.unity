@@ -1237,7 +1237,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &576388105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1987,11 +1987,11 @@ MonoBehaviour:
   minBiteTime: 3
   maxBiteTime: 5
   bitePromptDuration: 0.3
-  smallFishSequenceLength: 3
-  bigFishSequenceLength: 5
-  fishCaughtDuration: 1
-  failedBiteDuration: 1
-  speedIncreasePerSequence: 12
+  smallFishSequenceLength: 10
+  bigFishSequenceLength: 10
+  fishCaughtDuration: 0.5
+  failedBiteDuration: 0.3
+  speedIncreasePerSequence: 15
   smallFishPoints: 1
   bigFishPoints: 2
   smallFishModels:
