@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< Updated upstream:Assets/Assets/Models/Kitty x Cloudy/Kity.fbx.meta
 guid: 516b1cdffc0d38d469a430ff3c6f5c7b
-=======
-guid: ee6af394a65d66e408963a08ed0db272
->>>>>>> Stashed changes:Assets/Assets/Models/Kitty x Cloudy/Kity model.fbx.meta
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -307,8 +303,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
