@@ -81,9 +81,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2729681757197072439}
     m_Modifications:
+    - target: {fileID: 1153801712265127938, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
+      propertyPath: m_TagString
+      value: Snowmen
+      objectReference: {fileID: 0}
     - target: {fileID: 3450775017272899211, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_TagString
-      value: SnowManHead
+      value: Snowmen
       objectReference: {fileID: 0}
     - target: {fileID: 4519966903469626858, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_Name
@@ -95,7 +99,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6435426537319971921, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_TagString
-      value: SnowManHead
+      value: Snowmen
       objectReference: {fileID: 0}
     - target: {fileID: 7163372254512393685, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_LocalScale.x
@@ -196,9 +200,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2729681757197072439}
     m_Modifications:
+    - target: {fileID: 1153801712265127938, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
+      propertyPath: m_TagString
+      value: Snowmen
+      objectReference: {fileID: 0}
     - target: {fileID: 3450775017272899211, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_TagString
-      value: SnowManHead
+      value: Snowmen
       objectReference: {fileID: 0}
     - target: {fileID: 4519966903469626858, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_Name
@@ -210,7 +218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6435426537319971921, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_TagString
-      value: SnowManHead
+      value: Snowmen
       objectReference: {fileID: 0}
     - target: {fileID: 7163372254512393685, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_LocalScale.x
@@ -311,9 +319,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2729681757197072439}
     m_Modifications:
+    - target: {fileID: 1153801712265127938, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
+      propertyPath: m_TagString
+      value: Snowmen
+      objectReference: {fileID: 0}
     - target: {fileID: 3450775017272899211, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_TagString
-      value: SnowManHead
+      value: Snowmen
       objectReference: {fileID: 0}
     - target: {fileID: 4519966903469626858, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_Name
@@ -325,7 +337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6435426537319971921, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_TagString
-      value: SnowManHead
+      value: Snowmen
       objectReference: {fileID: 0}
     - target: {fileID: 7163372254512393685, guid: 0ffdd23f1eb928d4bb1a97847aedcf94, type: 3}
       propertyPath: m_LocalScale.x
