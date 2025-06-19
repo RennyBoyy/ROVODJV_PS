@@ -3,20 +3,36 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
+[System.Serializable]
+public class FlythroughPoint
+{
+    public Transform point;
+    public AnimationCurve easing = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    public bool isIntroTarget = false;
+    public GameObject overlayUI;
+    public float pauseDuration = 1.5f;
+    public float driftSpeed = 0.5f;
+    public Vector3 driftDirection = Vector3.right;
+}
+
 public class GameIntroManager : MonoBehaviour
 {
     [Header("Camera")]
     [SerializeField] private Camera gameCamera;
     [SerializeField] private Transform gameplayPosition;
-
-    [Header("Character Introduction")]
-    [SerializeField] private Transform[] introTargets;
     [SerializeField] private float zoomSpeed = 2f;
-    [SerializeField] private float holdDuration = 1.5f;
-    [SerializeField] private float zoomDistance = 5f;
-    [SerializeField] private float zoomHeight = 1f;
     [SerializeField] private AnimationCurve zoomCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-    [SerializeField] private float animationWaitTime = 2f;
+
+    [Header("Cinematic Path (Flythrough)")]
+    [SerializeField] private FlythroughPoint[] flythroughPoints;
+    [SerializeField] private float flySpeed = 1f;
+
+    [Header("UI Splash Overlays")]
+    [SerializeField] private GameObject frutyNameUI;
+    [SerializeField] private GameObject potatoNameUI;
+    [SerializeField] private GameObject vsSplashUI;
+    [SerializeField] private Transform vsSplashPoint;
+    [SerializeField] private float splashDisplayDuration = 1.5f;
 
     [Header("Countdown")]
     [SerializeField] private GameObject countdownCanvas;
@@ -41,6 +57,7 @@ public class GameIntroManager : MonoBehaviour
     private bool introComplete = false;
     private PlayerScript[] playerScripts;
 
+
     void Start()
     {
         if (gameCamera == null)
@@ -62,6 +79,153 @@ public class GameIntroManager : MonoBehaviour
         StartCoroutine(PlayFullIntroSequence());
     }
 
+    IEnumerator FlyThroughCameraPath()
+    {
+        if (flythroughPoints == null || flythroughPoints.Length < 4) yield break;
+
+        gameCamera.transform.position = flythroughPoints[0].point.position;
+        gameCamera.transform.rotation = flythroughPoints[0].point.rotation;
+
+        for (int i = 1; i < flythroughPoints.Length - 2; i++)
+        {
+            Transform p0 = flythroughPoints[i - 1].point;
+            Transform p1 = flythroughPoints[i].point;
+            Transform p2 = flythroughPoints[i + 1].point;
+            Transform p3 = flythroughPoints[i + 2].point;
+
+            FlythroughPoint next = flythroughPoints[i + 1];
+            float segmentDistance = Vector3.Distance(p1.position, p2.position);
+            float duration = segmentDistance / flySpeed;
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float easedT = next.easing.Evaluate(t);
+
+                Vector3 curvedPos = CatmullRom(p0.position, p1.position, p2.position, p3.position, easedT);
+                Quaternion rot = Quaternion.Lerp(p1.rotation, p2.rotation, easedT);
+
+                gameCamera.transform.position = curvedPos;
+                gameCamera.transform.rotation = rot;
+
+                yield return null;
+            }
+
+            if (next.isIntroTarget)
+            {
+                if (next.overlayUI != null) next.overlayUI.SetActive(true);
+
+                float pauseElapsed = 0f;
+                while (pauseElapsed < next.pauseDuration)
+                {
+                    pauseElapsed += Time.deltaTime;
+                    gameCamera.transform.position += next.driftDirection * next.driftSpeed * Time.deltaTime;
+                    yield return null;
+                }
+
+                if (next.overlayUI != null) next.overlayUI.SetActive(false);
+            }
+            else
+            {
+                yield return new WaitForSeconds(next.pauseDuration);
+            }
+        }
+
+        // Final segment (straight lerp)
+        FlythroughPoint lastPoint = flythroughPoints[flythroughPoints.Length - 1];
+        FlythroughPoint penultimatePoint = flythroughPoints[flythroughPoints.Length - 2];
+
+        float lastSegmentDistance = Vector3.Distance(penultimatePoint.point.position, lastPoint.point.position);
+        float lastSegmentDuration = lastSegmentDistance / flySpeed;
+        float finalElapsed = 0f;
+        while (finalElapsed < lastSegmentDuration)
+        {
+            finalElapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(finalElapsed / lastSegmentDuration);
+            float easedT = lastPoint.easing.Evaluate(t);
+
+            gameCamera.transform.position = Vector3.Lerp(penultimatePoint.point.position, lastPoint.point.position, easedT);
+            gameCamera.transform.rotation = Quaternion.Lerp(penultimatePoint.point.rotation, lastPoint.point.rotation, easedT);
+
+            yield return null;
+        }
+
+        if (lastPoint.isIntroTarget)
+        {
+            if (lastPoint.overlayUI != null) lastPoint.overlayUI.SetActive(true);
+
+            float pauseElapsed = 0f;
+            while (pauseElapsed < lastPoint.pauseDuration)
+            {
+                pauseElapsed += Time.deltaTime;
+                gameCamera.transform.position += lastPoint.driftDirection * lastPoint.driftSpeed * Time.deltaTime;
+                yield return null;
+            }
+
+            if (lastPoint.overlayUI != null) lastPoint.overlayUI.SetActive(false);
+        }
+    }
+
+    Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        return 0.5f * (
+            (2f * p1) +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t
+        );
+    }
+
+    public IEnumerator PlayFullIntroSequence()
+    {
+        if (introComplete) yield break;
+
+        DisablePlayerInput();
+        yield return new WaitForSeconds(0.8f);
+
+        yield return StartCoroutine(FlyThroughCameraPath());
+        yield return StartCoroutine(ReturnToGameplayView());
+
+        EnablePlayerInput();
+        yield return StartCoroutine(PlayCountdown());
+
+        EnableGameplay();
+        introComplete = true;
+    }
+
+
+    // Smoothly transitions the camera back to the gameplay position
+    IEnumerator ReturnToGameplayView()
+    {
+        if (gameCamera == null) yield break;
+
+        Vector3 startPosition = gameCamera.transform.position;
+        Quaternion startRotation = gameCamera.transform.rotation;
+
+        Vector3 targetPosition = gameplayPosition != null ? gameplayPosition.position : originalCameraPosition;
+        Quaternion targetRotation = gameplayPosition != null ? gameplayPosition.rotation : originalCameraRotation;
+
+        float elapsed = 0f;
+        while (elapsed < 1f)
+        {
+            elapsed += Time.deltaTime * zoomSpeed;
+            float t = zoomCurve.Evaluate(elapsed);
+
+            gameCamera.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            gameCamera.transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
+
+            yield return null;
+        }
+
+        gameCamera.transform.position = targetPosition;
+        gameCamera.transform.rotation = targetRotation;
+
+        yield return new WaitForSeconds(0.3f);
+    }
+
+    // Prepares countdown UI or generates one if missing
     void SetupCountdownUI()
     {
         if (countdownCanvas == null)
@@ -79,6 +243,7 @@ public class GameIntroManager : MonoBehaviour
             countdownCanvas.SetActive(false);
     }
 
+    // Dynamically creates a simple TMP countdown canvas overlay
     void CreateCountdownUI()
     {
         GameObject canvasGO = new GameObject("CountdownCanvas");
@@ -113,122 +278,7 @@ public class GameIntroManager : MonoBehaviour
         originalCountdownScale = textRect.localScale;
     }
 
-    public IEnumerator PlayFullIntroSequence()
-    {
-        if (introComplete) yield break;
-
-        // Don't try to control the PersistentSceneManager fade here
-        // Let it handle the initial fade-in, then proceed with intro
-        Debug.Log("GameIntroManager: Starting intro sequence");
-
-        yield return new WaitForSeconds(0.8f); // Wait for PersistentSceneManager fade
-
-        if (introTargets != null && introTargets.Length > 0)
-        {
-            for (int i = 0; i < introTargets.Length; i++)
-            {
-                if (introTargets[i] != null)
-                {
-                    yield return StartCoroutine(IntroduceTarget(introTargets[i]));
-                    yield return StartCoroutine(ReturnToGameplayView());
-                }
-            }
-        }
-
-        Debug.Log("Camera animation complete - enabling player input for countdown");
-        EnablePlayerInput();
-
-        yield return StartCoroutine(PlayCountdown());
-
-        EnableGameplay();
-
-        introComplete = true;
-    }
-
-    IEnumerator IntroduceTarget(Transform target)
-    {
-        if (target == null || gameCamera == null) yield break;
-
-        Vector3 targetPosition = target.position;
-
-        Vector3 characterForward = target.forward;
-        Vector3 cameraOffset = (-characterForward * zoomDistance) + (Vector3.up * zoomHeight);
-        Vector3 cameraTargetPos = targetPosition + cameraOffset;
-
-        Vector3 directionToTarget = (targetPosition - cameraTargetPos).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-        Vector3 startPosition = gameCamera.transform.position;
-        Quaternion startRotation = gameCamera.transform.rotation;
-
-        float elapsed = 0f;
-        while (elapsed < 1f)
-        {
-            elapsed += Time.deltaTime * zoomSpeed;
-            float t = zoomCurve.Evaluate(elapsed);
-
-            gameCamera.transform.position = Vector3.Lerp(startPosition, cameraTargetPos, t);
-            gameCamera.transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
-
-            yield return null;
-        }
-
-        gameCamera.transform.position = cameraTargetPos;
-        gameCamera.transform.rotation = targetRotation;
-
-        yield return new WaitForSeconds(0.5f);
-
-        Animator characterAnimator = target.GetComponent<Animator>();
-        if (characterAnimator != null)
-        {
-            characterAnimator.Play("Lose Animation", 0, 0f);
-            Debug.Log($"Force playing Lose Animation on {target.name}");
-
-            // Play character intro sound using FruityGameConfigurator
-            FruityGameConfigurator.Instance?.PlayCharacterIntroSound();
-        }
-        else
-        {
-            Debug.LogWarning($"No Animator component found on {target.name}");
-        }
-
-        yield return new WaitForSeconds(animationWaitTime + holdDuration);
-
-        if (characterAnimator != null)
-        {
-            characterAnimator.Play("Idle stance", 0, 0f);
-            Debug.Log($"Force playing Idle stance on {target.name}");
-        }
-    }
-
-    IEnumerator ReturnToGameplayView()
-    {
-        if (gameCamera == null) yield break;
-
-        Vector3 startPosition = gameCamera.transform.position;
-        Quaternion startRotation = gameCamera.transform.rotation;
-
-        Vector3 targetPosition = gameplayPosition != null ? gameplayPosition.position : originalCameraPosition;
-        Quaternion targetRotation = gameplayPosition != null ? gameplayPosition.rotation : originalCameraRotation;
-
-        float elapsed = 0f;
-        while (elapsed < 1f)
-        {
-            elapsed += Time.deltaTime * zoomSpeed;
-            float t = zoomCurve.Evaluate(elapsed);
-
-            gameCamera.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
-            gameCamera.transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
-
-            yield return null;
-        }
-
-        gameCamera.transform.position = targetPosition;
-        gameCamera.transform.rotation = targetRotation;
-
-        yield return new WaitForSeconds(0.3f);
-    }
-
+    // Displays countdown numbers and "GO!" with animations and sound
     IEnumerator PlayCountdown()
     {
         if (countdownCanvas != null)
@@ -245,6 +295,7 @@ public class GameIntroManager : MonoBehaviour
             countdownCanvas.SetActive(false);
     }
 
+    // Handles one countdown number (3, 2, 1)
     IEnumerator DisplayCountdownNumber(int number)
     {
         if (countdownText == null) yield break;
@@ -256,12 +307,12 @@ public class GameIntroManager : MonoBehaviour
                            Color.white;
         countdownText.color = targetColor;
 
-        // Play countdown number sound using FruityGameConfigurator
         FruityGameConfigurator.Instance?.PlayCountdownNumberSound();
 
         yield return StartCoroutine(AnimateCountdownElement(countdownDuration));
     }
 
+    // Handles the final "GO!" splash
     IEnumerator DisplayGo()
     {
         if (countdownText == null) yield break;
@@ -269,12 +320,12 @@ public class GameIntroManager : MonoBehaviour
         countdownText.text = goText;
         countdownText.color = goColor;
 
-        // Play countdown GO sound using FruityGameConfigurator
         FruityGameConfigurator.Instance?.PlayCountdownGoSound();
 
         yield return StartCoroutine(AnimateCountdownElement(goDuration));
     }
 
+    // Applies scaling/fading animation to countdown text
     IEnumerator AnimateCountdownElement(float duration)
     {
         if (countdownRectTransform == null) yield break;
@@ -301,6 +352,7 @@ public class GameIntroManager : MonoBehaviour
         countdownRectTransform.localScale = originalCountdownScale;
     }
 
+    // Blocks player movement during intro
     void DisablePlayerInput()
     {
         Debug.Log("Disabling player input during camera animation");
@@ -313,6 +365,7 @@ public class GameIntroManager : MonoBehaviour
         }
     }
 
+    // Re-enables movement before countdown
     void EnablePlayerInput()
     {
         Debug.Log("Enabling player input for countdown phase");
@@ -325,6 +378,7 @@ public class GameIntroManager : MonoBehaviour
         }
     }
 
+    // Marks gameplay as active and lets players/thieves start moving
     void EnableGameplay()
     {
         GameManager_Fruity gameManager = FindFirstObjectByType<GameManager_Fruity>();
@@ -344,10 +398,7 @@ public class GameIntroManager : MonoBehaviour
         Debug.Log("Gameplay enabled!");
     }
 
-    public void SetIntroTargets(Transform[] targets)
-    {
-        introTargets = targets;
-    }
+   
 
     public void SetGameplayPosition(Transform position)
     {
