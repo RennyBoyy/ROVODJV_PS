@@ -23,12 +23,15 @@ public class FruityGameConfigurator : MonoBehaviour
     [Header("Background Music")]
     [SerializeField] private AudioClip backgroundMusic;
 
-    [Header("Ambient Sounds")]
-    [SerializeField] private AudioClip[] birdChirpingSounds;
-    [SerializeField] private AudioClip[] windmillCreakingSounds;
-    [SerializeField] private AudioClip[] windSounds;
-    [SerializeField] private float minAmbientInterval = 5f;
-    [SerializeField] private float maxAmbientInterval = 15f;
+    [Header("Ambient Sounds (Looped)")]
+    [SerializeField] private AudioClip birdChirpingSound;
+    [SerializeField] private AudioClip windmillCreakingSound;
+    [SerializeField] private AudioClip windSound;
+
+    [Header("Intro & Countdown Sounds")]
+    [SerializeField] private AudioClip characterIntroSound;
+    [SerializeField] private AudioClip countdownNumberSound;
+    [SerializeField] private AudioClip countdownGoSound;
 
     [Header("Player 1 Audio Sources")]
     [SerializeField] private AudioSource player1MovementSource;
@@ -49,7 +52,9 @@ public class FruityGameConfigurator : MonoBehaviour
     [Header("Shared Audio Sources")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource gameSFXSource;
-    [SerializeField] private AudioSource ambientSource;
+    [SerializeField] private AudioSource birdAmbientSource;
+    [SerializeField] private AudioSource windmillAmbientSource;
+    [SerializeField] private AudioSource windAmbientSource;
 
     [Header("Audio Settings")]
     [SerializeField] private float musicVolume = 0.7f;
@@ -81,7 +86,10 @@ public class FruityGameConfigurator : MonoBehaviour
     {
         if (musicSource == null) musicSource = gameObject.AddComponent<AudioSource>();
         if (gameSFXSource == null) gameSFXSource = gameObject.AddComponent<AudioSource>();
-        if (ambientSource == null) ambientSource = gameObject.AddComponent<AudioSource>();
+
+        if (birdAmbientSource == null) birdAmbientSource = gameObject.AddComponent<AudioSource>();
+        if (windmillAmbientSource == null) windmillAmbientSource = gameObject.AddComponent<AudioSource>();
+        if (windAmbientSource == null) windAmbientSource = gameObject.AddComponent<AudioSource>();
 
         if (player1MovementSource == null) player1MovementSource = gameObject.AddComponent<AudioSource>();
         if (player1ThrowingSource == null) player1ThrowingSource = gameObject.AddComponent<AudioSource>();
@@ -98,7 +106,10 @@ public class FruityGameConfigurator : MonoBehaviour
 
         ConfigureAudioSource(musicSource, musicVolume, true);
         ConfigureAudioSource(gameSFXSource, sfxVolume, false);
-        ConfigureAudioSource(ambientSource, ambientVolume, false);
+
+        ConfigureAudioSource(birdAmbientSource, ambientVolume, true);
+        ConfigureAudioSource(windmillAmbientSource, ambientVolume, true);
+        ConfigureAudioSource(windAmbientSource, ambientVolume, true);
 
         ConfigureAudioSource(player1MovementSource, sfxVolume, false);
         ConfigureAudioSource(player1ThrowingSource, sfxVolume, false);
@@ -204,7 +215,7 @@ public class FruityGameConfigurator : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Skipping {clip.name}, as both audio sources for ts sound are busy");
+        Debug.Log($"Skipping {clip.name}, as both audio sources for this sound are busy");
     }
 
     public void PlayLoseSound()
@@ -220,6 +231,30 @@ public class FruityGameConfigurator : MonoBehaviour
         if (clip != null && gameSFXSource != null)
         {
             gameSFXSource.PlayOneShot(clip);
+        }
+    }
+
+    public void PlayCharacterIntroSound()
+    {
+        if (characterIntroSound != null && gameSFXSource != null)
+        {
+            gameSFXSource.PlayOneShot(characterIntroSound);
+        }
+    }
+
+    public void PlayCountdownNumberSound()
+    {
+        if (countdownNumberSound != null && gameSFXSource != null)
+        {
+            gameSFXSource.PlayOneShot(countdownNumberSound);
+        }
+    }
+
+    public void PlayCountdownGoSound()
+    {
+        if (countdownGoSound != null && gameSFXSource != null)
+        {
+            gameSFXSource.PlayOneShot(countdownGoSound);
         }
     }
 
@@ -252,10 +287,9 @@ public class FruityGameConfigurator : MonoBehaviour
     public void SetAmbientVolume(float volume)
     {
         ambientVolume = Mathf.Clamp01(volume);
-        if (ambientSource != null)
-        {
-            ambientSource.volume = ambientVolume;
-        }
+        if (birdAmbientSource != null) birdAmbientSource.volume = ambientVolume;
+        if (windmillAmbientSource != null) windmillAmbientSource.volume = ambientVolume;
+        if (windAmbientSource != null) windAmbientSource.volume = ambientVolume;
     }
 
     public void StopMusic()
@@ -293,70 +327,66 @@ public class FruityGameConfigurator : MonoBehaviour
 
     private void StartAmbientSounds()
     {
-        StartCoroutine(PlayAmbientSounds());
+        PlayBirdChirping();
+        PlayWindmillCreaking();
+        PlayWindSound();
     }
 
-    private IEnumerator PlayAmbientSounds()
+    public void PlayBirdChirping()
     {
-        while (true)
+        if (birdChirpingSound != null && birdAmbientSource != null)
         {
-            float waitTime = Random.Range(minAmbientInterval, maxAmbientInterval);
-            yield return new WaitForSeconds(waitTime);
-
-            PlayRandomAmbientSound();
+            birdAmbientSource.clip = birdChirpingSound;
+            birdAmbientSource.Play();
         }
     }
 
-    private void PlayRandomAmbientSound()
+    public void PlayWindmillCreaking()
     {
-        System.Collections.Generic.List<AudioClip> allAmbientSounds = new System.Collections.Generic.List<AudioClip>();
-
-        if (birdChirpingSounds != null)
-            allAmbientSounds.AddRange(birdChirpingSounds);
-        if (windmillCreakingSounds != null)
-            allAmbientSounds.AddRange(windmillCreakingSounds);
-        if (windSounds != null)
-            allAmbientSounds.AddRange(windSounds);
-
-        if (allAmbientSounds.Count > 0)
+        if (windmillCreakingSound != null && windmillAmbientSource != null)
         {
-            AudioClip randomClip = allAmbientSounds[Random.Range(0, allAmbientSounds.Count)];
-            PlayAmbientSound(randomClip);
+            windmillAmbientSource.clip = windmillCreakingSound;
+            windmillAmbientSource.Play();
         }
     }
 
-    private void PlayAmbientSound(AudioClip clip)
+    public void PlayWindSound()
     {
-        if (clip != null && ambientSource != null)
+        if (windSound != null && windAmbientSource != null)
         {
-            ambientSource.PlayOneShot(clip);
+            windAmbientSource.clip = windSound;
+            windAmbientSource.Play();
         }
     }
 
-    public void PlayRandomBirdChirping()
+    public void StopBirdChirping()
     {
-        if (birdChirpingSounds != null && birdChirpingSounds.Length > 0)
+        if (birdAmbientSource != null)
         {
-            AudioClip randomBird = birdChirpingSounds[Random.Range(0, birdChirpingSounds.Length)];
-            PlayAmbientSound(randomBird);
+            birdAmbientSource.Stop();
         }
     }
 
-    public void PlayRandomWindmillCreaking()
+    public void StopWindmillCreaking()
     {
-        if (windmillCreakingSounds != null && windmillCreakingSounds.Length > 0)
+        if (windmillAmbientSource != null)
         {
-            AudioClip randomCreaking = windmillCreakingSounds[Random.Range(0, windmillCreakingSounds.Length)];
-            PlayAmbientSound(randomCreaking);
+            windmillAmbientSource.Stop();
         }
     }
 
-    public void PlayRandomWindSound()
+    public void StopWindSound()
     {
-        if (windSounds != null && windSounds.Length > 0)
+        if (windAmbientSource != null)
         {
-            AudioClip randomWind = windSounds[Random.Range(0, windSounds.Length)];
-            PlayAmbientSound(randomWind);
+            windAmbientSource.Stop();
         }
+    }
+
+    public void StopAllAmbientSounds()
+    {
+        StopBirdChirping();
+        StopWindmillCreaking();
+        StopWindSound();
     }
 }

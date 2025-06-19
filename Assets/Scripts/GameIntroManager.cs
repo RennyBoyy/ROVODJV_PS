@@ -34,11 +34,6 @@ public class GameIntroManager : MonoBehaviour
     [SerializeField] private Color[] countdownColors = { Color.red, Color.yellow, Color.green };
     [SerializeField] private Color goColor = Color.white;
 
-    [Header("Audio")]
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip countdownSound;
-    [SerializeField] private AudioClip goSound;
-
     private Vector3 originalCameraPosition;
     private Quaternion originalCameraRotation;
     private RectTransform countdownRectTransform;
@@ -188,6 +183,9 @@ public class GameIntroManager : MonoBehaviour
         {
             characterAnimator.Play("Lose Animation", 0, 0f);
             Debug.Log($"Force playing Lose Animation on {target.name}");
+
+            // Play character intro sound using FruityGameConfigurator
+            FruityGameConfigurator.Instance?.PlayCharacterIntroSound();
         }
         else
         {
@@ -258,7 +256,8 @@ public class GameIntroManager : MonoBehaviour
                            Color.white;
         countdownText.color = targetColor;
 
-        PlayCountdownSound();
+        // Play countdown number sound using FruityGameConfigurator
+        FruityGameConfigurator.Instance?.PlayCountdownNumberSound();
 
         yield return StartCoroutine(AnimateCountdownElement(countdownDuration));
     }
@@ -270,7 +269,8 @@ public class GameIntroManager : MonoBehaviour
         countdownText.text = goText;
         countdownText.color = goColor;
 
-        PlayGoSound();
+        // Play countdown GO sound using FruityGameConfigurator
+        FruityGameConfigurator.Instance?.PlayCountdownGoSound();
 
         yield return StartCoroutine(AnimateCountdownElement(goDuration));
     }
@@ -299,28 +299,6 @@ public class GameIntroManager : MonoBehaviour
         }
 
         countdownRectTransform.localScale = originalCountdownScale;
-    }
-
-    void PlayCountdownSound()
-    {
-        if (audioSource != null && countdownSound != null)
-        {
-            audioSource.PlayOneShot(countdownSound);
-        }
-    }
-
-    void PlayGoSound()
-    {
-        if (audioSource != null && goSound != null)
-        {
-            audioSource.PlayOneShot(goSound);
-        }
-        else if (audioSource != null && countdownSound != null)
-        {
-            audioSource.pitch = 1.2f;
-            audioSource.PlayOneShot(countdownSound);
-            audioSource.pitch = 1f;
-        }
     }
 
     void DisablePlayerInput()
