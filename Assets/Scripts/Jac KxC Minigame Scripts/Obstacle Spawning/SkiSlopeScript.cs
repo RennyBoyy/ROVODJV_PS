@@ -6,7 +6,6 @@ public class ObstacleRow
 {
     [Tooltip("pattern for the row e.g. 1,0,2, where 0 is an empty field. always")]
     public string pattern = "0,0,0";
-
     public string rowName = "";
 
     public int[] GetLanePattern()
@@ -30,9 +29,34 @@ public class ObstacleRow
                 result[i] = 0;
             }
         }
-
         return result;
     }
+}
+
+[System.Serializable]
+public class SpecialObstacle
+{
+    [Header("Basic Info")]
+    public string name = "Cave Archway";
+    public GameObject structurePrefab;    
+    public GameObject triggerPrefab;      
+
+    [Header("Positioning")]
+    public Vector3 structureOffset = new Vector3(0, 0, -10);     
+    public Vector3 triggerOffset = new Vector3(0, 0, -5);         
+
+    [Header("Falling Spikes")]
+    public GameObject spikePrefab;
+    public int numberOfSpikes = 5;
+    public float spikeSpawnHeight = 10f;
+    public float spikeSpawnInterval = 0.3f;     
+    public float spikeFallSpeed = 15f;
+
+    [Header("Lane Targeting")]
+    [Tooltip("Which lanes can spikes fall on? (0=left, 1=center, 2=right)")]
+    public int[] targetLanes = { 0, 1, 2 };
+    [Tooltip("How many lanes to target per activation")]
+    public int lanesPerActivation = 2;
 }
 
 public class SkiSlopeScript : MonoBehaviour
@@ -44,34 +68,24 @@ public class SkiSlopeScript : MonoBehaviour
     [Header("Lane Configuration")]
     [SerializeField] private float[] laneOffsets = new float[] { -2f, 0f, 2f };
 
-    [Header("Obstacle Prefabs & Shit")]
-    [Tooltip("please keep index 0 for empty space only")]
-    [SerializeField] private GameObject[] obstaclePrefabs;
-
-    [Header("Positioning")]
-    [SerializeField] private bool autoAdjustHeight = true;
-    [Tooltip("Additional Y offset from calculated ground position")]
-    [SerializeField] private float groundOffset = 0f;
-    [Tooltip("Use raycast to find ground (more accurate)")]
-    [SerializeField] private bool useRaycastGrounding = false;
-    [SerializeField] private LayerMask groundLayerMask = -1;
-    [Tooltip("Auto-adjust for pivot point in center of object")]
-    [SerializeField] private bool compensateForCenterPivot = true;
-
     [Header("Slope Rotation")]
-    [SerializeField] private bool autoDetectSlopeAngle = true;
-    [Tooltip("Manual slope angle in degrees (X rotation)")]
-    [SerializeField] private float manualSlopeAngle = 0f;
     [Tooltip("GameObject with the slope surface (for auto-detection)")]
     [SerializeField] private GameObject slopeObject;
 
-    [Header("Premade Row Patterns")]
+    [Header("Normal Obstacle Prefabs")]
+    [Tooltip("please keep index 0 for empty space only")]
+    [SerializeField] private GameObject[] obstaclePrefabs;
+
+    [Header("Normal Row Patterns")]
     [SerializeField] private ObstacleRow[] obstacleRows;
 
+    [Header("Special Obstacles")]
+    [SerializeField] private SpecialObstacle[] specialObstacles;
+    [SerializeField] private int[] specialObstacleRows = { 15 };       
+    [SerializeField] private float specialObstacleChance = 0.7f;       
+
     [Header("Spawn Configuration")]
-    [SerializeField] private int numberOfRows = 15;
-    [SerializeField] private float rowSpacing = 8f;
-    [SerializeField] private bool useFixedSpacing = false;
+    [SerializeField] private int numberOfRows = 30;
 
     [Header("Dynamic Cleanup + Debug")]
     [SerializeField] private bool enableDynamicCleanup = true;
@@ -80,7 +94,9 @@ public class SkiSlopeScript : MonoBehaviour
     [SerializeField] private bool showDebugInfo = false;
 
     private List<Transform> spawnedObstacles = new List<Transform>();
+    private List<Transform> spawnedSpecialObstacles = new List<Transform>();
     private List<float> rowZPositions = new List<float>();
+    private List<int> specialObstacleRowIndices = new List<int>();
     private SkiProgressTracker progressTracker;
     private float lastCleanupCheck = 0f;
     private float cachedSlopeAngle = 0f;
@@ -131,23 +147,23 @@ public class SkiSlopeScript : MonoBehaviour
 
     private void CalculateSlopeAngle()
     {
-        if (autoDetectSlopeAngle)
+        if (slopeObject != null)
         {
-            if (slopeObject != null)
+            cachedSlopeAngle = slopeObject.transform.eulerAngles.x;
+
+            if (cachedSlopeAngle > 180f)
             {
-                cachedSlopeAngle = slopeObject.transform.eulerAngles.x;
-
-                if (cachedSlopeAngle > 180f)
-                {
-                    cachedSlopeAngle -= 360f;
-                }
-
-                if (showDebugInfo)
-                {
-                    Debug.Log($"Auto-detected slope angle: {cachedSlopeAngle}° from slope object '{slopeObject.name}'");
-                }
+                cachedSlopeAngle -= 360f;
             }
-            else if (slopeStart != null && slopeEnd != null)
+
+            if (showDebugInfo)
+            {
+                Debug.Log($"Auto-detected slope angle: {cachedSlopeAngle}° from slope object '{slopeObject.name}'");
+            }
+        }
+        else
+        {
+            if (slopeStart != null && slopeEnd != null)
             {
                 Vector3 slopeDirection = (slopeEnd.position - slopeStart.position).normalized;
                 cachedSlopeAngle = Mathf.Asin(slopeDirection.y) * Mathf.Rad2Deg;
@@ -163,41 +179,91 @@ public class SkiSlopeScript : MonoBehaviour
                 Debug.LogWarning("Cannot auto-detect slope angle: no slope object or start/end points assigned");
             }
         }
-        else
-        {
-            cachedSlopeAngle = manualSlopeAngle;
-
-            if (showDebugInfo)
-            {
-                Debug.Log($"Using manual slope angle: {cachedSlopeAngle}°");
-            }
-        }
     }
 
     private void SpawnAllRows()
     {
         Vector3 direction = (slopeEnd.position - slopeStart.position).normalized;
         float totalDistance = Vector3.Distance(slopeStart.position, slopeEnd.position);
-
-        float spacing;
-        if (useFixedSpacing)
-        {
-            spacing = rowSpacing;
-        }
-        else
-        {
-            spacing = totalDistance / (numberOfRows + 1);
-        }
+        float spacing = totalDistance / (numberOfRows + 1);
 
         for (int row = 1; row <= numberOfRows; row++)
         {
             Vector3 basePosition = slopeStart.position + direction * (spacing * row);
-            SpawnRow(basePosition, row);
+
+            bool shouldSpawnSpecial = ShouldSpawnSpecialObstacle(row);
+
+            if (shouldSpawnSpecial)
+            {
+                SpawnSpecialObstacle(basePosition, row);
+                specialObstacleRowIndices.Add(row);
+            }
+            else
+            {
+                SpawnNormalRow(basePosition, row);
+            }
+
             rowZPositions.Add(basePosition.z);
         }
     }
 
-    private void SpawnRow(Vector3 basePosition, int rowIndex)
+    private bool ShouldSpawnSpecialObstacle(int rowIndex)
+    {
+        foreach (int specialRow in specialObstacleRows)
+        {
+            if (rowIndex == specialRow)
+            {
+                return Random.Range(0f, 1f) <= specialObstacleChance;
+            }
+        }
+        return false;
+    }
+
+    private void SpawnSpecialObstacle(Vector3 basePosition, int rowIndex)
+    {
+        if (specialObstacles == null || specialObstacles.Length == 0)
+        {
+            Debug.LogWarning("No special obstacles configured, spawning normal row instead");
+            SpawnNormalRow(basePosition, rowIndex);
+            return;
+        }
+
+        SpecialObstacle specialObstacle = specialObstacles[Random.Range(0, specialObstacles.Length)];
+
+        if (showDebugInfo)
+        {
+            Debug.Log($"Row {rowIndex}: Spawning special obstacle '{specialObstacle.name}'");
+        }
+
+        if (specialObstacle.structurePrefab != null)
+        {
+            Vector3 structurePosition = basePosition + specialObstacle.structureOffset;
+            Quaternion slopeRotation = Quaternion.Euler(cachedSlopeAngle, 0f, 0f);
+
+            GameObject structure = Instantiate(specialObstacle.structurePrefab, structurePosition, slopeRotation);
+            structure.name = $"{specialObstacle.name}_Structure_Row{rowIndex}";
+            spawnedSpecialObstacles.Add(structure.transform);
+        }
+
+        if (specialObstacle.triggerPrefab != null)
+        {
+            Vector3 triggerPosition = basePosition + specialObstacle.triggerOffset;
+            GameObject trigger = Instantiate(specialObstacle.triggerPrefab, triggerPosition, Quaternion.identity);
+            trigger.name = $"{specialObstacle.name}_Trigger_Row{rowIndex}";
+
+            SpikeSpawner spikeSpawner = trigger.GetComponent<SpikeSpawner>();
+            if (spikeSpawner == null)
+            {
+                spikeSpawner = trigger.AddComponent<SpikeSpawner>();
+            }
+
+            spikeSpawner.SetupSpawner(specialObstacle, basePosition, laneOffsets, cachedSlopeAngle);
+
+            spawnedSpecialObstacles.Add(trigger.transform);
+        }
+    }
+
+    private void SpawnNormalRow(Vector3 basePosition, int rowIndex)
     {
         if (obstacleRows == null || obstacleRows.Length == 0)
         {
@@ -233,96 +299,17 @@ public class SkiSlopeScript : MonoBehaviour
             }
 
             Vector3 spawnPosition = basePosition + new Vector3(laneOffsets[lane], 0f, 0f);
-
             Quaternion slopeRotation = Quaternion.Euler(cachedSlopeAngle, 0f, 0f);
             GameObject spawnedObstacle = Instantiate(prefab, spawnPosition, slopeRotation);
             spawnedObstacle.name = $"{prefab.name}_Row{rowIndex}_Lane{lane}";
-
-            AdjustObstacleHeight(spawnedObstacle, basePosition.y);
 
             spawnedObstacles.Add(spawnedObstacle.transform);
         }
     }
 
-    private void AdjustObstacleHeight(GameObject obstacle, float baseY)
-    {
-        if (!autoAdjustHeight)
-        {
-            obstacle.transform.position += Vector3.up * groundOffset;
-            return;
-        }
-
-        float finalGroundY = baseY;
-
-        if (useRaycastGrounding)
-        {
-            Vector3 rayStart = obstacle.transform.position + Vector3.up * 10f;     
-            Ray ray = new Ray(rayStart, Vector3.down);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 20f, groundLayerMask))
-            {
-                finalGroundY = hit.point.y;
-
-                if (showDebugInfo)
-                {
-                    Debug.Log($"Raycast found ground for {obstacle.name} at Y: {hit.point.y}");
-                }
-            }
-            else
-            {
-                if (showDebugInfo)
-                {
-                    Debug.LogWarning($"Raycast failed for {obstacle.name}, using base position");
-                }
-            }
-        }
-
-        float pivotCompensation = 0f;
-        if (compensateForCenterPivot)
-        {
-            Renderer renderer = obstacle.GetComponent<Renderer>();
-            if (renderer == null)
-            {
-                renderer = obstacle.GetComponentInChildren<Renderer>();
-            }
-
-            if (renderer != null)
-            {
-                Vector3 currentPos = obstacle.transform.position;
-                Bounds bounds = renderer.bounds;
-
-                float distanceToBottom = currentPos.y - bounds.min.y;
-                pivotCompensation = distanceToBottom;
-
-                if (showDebugInfo)
-                {
-                    Debug.Log($"Pivot compensation for {obstacle.name}: {pivotCompensation} (bounds bottom: {bounds.min.y}, pivot: {currentPos.y})");
-                }
-            }
-            else
-            {
-                if (showDebugInfo)
-                {
-                    Debug.LogWarning($"No renderer found for {obstacle.name}, cannot compensate for pivot");
-                }
-            }
-        }
-
-        obstacle.transform.position = new Vector3(
-            obstacle.transform.position.x,
-            finalGroundY + pivotCompensation + groundOffset,
-            obstacle.transform.position.z
-        );
-
-        if (showDebugInfo)
-        {
-            Debug.Log($"Final position for {obstacle.name}: Y = {finalGroundY} + {pivotCompensation} + {groundOffset} = {finalGroundY + pivotCompensation + groundOffset}");
-        }
-    }
-
     private void PerformDynamicCleanup()
     {
-        if (progressTracker == null || spawnedObstacles.Count == 0) return;
+        if (progressTracker == null) return;
 
         float player1Progress = progressTracker.GetPlayerProgress(1);
         float player2Progress = progressTracker.GetPlayerProgress(2);
@@ -333,16 +320,24 @@ public class SkiSlopeScript : MonoBehaviour
         float trailingPlayerZ = Mathf.Lerp(startZ, endZ, trailingProgress);
 
         Vector3 direction = (slopeEnd.position - slopeStart.position).normalized;
-        float rowSpacingActual = useFixedSpacing ? rowSpacing : Vector3.Distance(slopeStart.position, slopeEnd.position) / (numberOfRows + 1);
+        float rowSpacingActual = Vector3.Distance(slopeStart.position, slopeEnd.position) / (numberOfRows + 1);
         float cleanupThreshold = trailingPlayerZ - (rowsToKeepBehindLastPlayer * rowSpacingActual * Mathf.Sign(direction.z));
 
+        CleanupObstacleList(spawnedObstacles, cleanupThreshold, direction.z, "normal");
+
+        CleanupObstacleList(spawnedSpecialObstacles, cleanupThreshold, direction.z, "special");
+    }
+
+    private void CleanupObstacleList(List<Transform> obstacleList, float cleanupThreshold, float directionZ, string type)
+    {
         List<Transform> obstaclesToRemove = new List<Transform>();
-        foreach (Transform obstacle in spawnedObstacles)
+
+        foreach (Transform obstacle in obstacleList)
         {
             if (obstacle == null) continue;
 
             bool shouldRemove = false;
-            if (direction.z > 0)
+            if (directionZ > 0)
             {
                 shouldRemove = obstacle.position.z < cleanupThreshold;
             }
@@ -361,14 +356,14 @@ public class SkiSlopeScript : MonoBehaviour
         {
             if (obstacle != null)
             {
-                spawnedObstacles.Remove(obstacle);
+                obstacleList.Remove(obstacle);
                 DestroyImmediate(obstacle.gameObject);
             }
         }
 
         if (showDebugInfo && obstaclesToRemove.Count > 0)
         {
-            Debug.Log($"SkiSlopeSpawner: Cleaned up {obstaclesToRemove.Count} obstacles. {spawnedObstacles.Count} remaining.");
+            Debug.Log($"Cleaned up {obstaclesToRemove.Count} {type} obstacles. {obstacleList.Count} remaining.");
         }
     }
 
@@ -394,7 +389,18 @@ public class SkiSlopeScript : MonoBehaviour
             }
         }
         spawnedObstacles.Clear();
+
+        foreach (Transform obstacle in spawnedSpecialObstacles)
+        {
+            if (obstacle != null)
+            {
+                DestroyImmediate(obstacle.gameObject);
+            }
+        }
+        spawnedSpecialObstacles.Clear();
+
         rowZPositions.Clear();
+        specialObstacleRowIndices.Clear();
     }
 
     public void RespawnAllRows()
@@ -429,11 +435,13 @@ public class SkiSlopeScript : MonoBehaviour
 
         if (Application.isPlaying && rowZPositions.Count > 0)
         {
-            Gizmos.color = Color.green;
-            foreach (float zPos in rowZPositions)
+            for (int i = 0; i < rowZPositions.Count; i++)
             {
-                Vector3 rowCenter = new Vector3(slopeStart.position.x, slopeStart.position.y, zPos);
-                Gizmos.DrawWireSphere(rowCenter, 0.5f);
+                bool isSpecialRow = specialObstacleRowIndices.Contains(i + 1);
+                Gizmos.color = isSpecialRow ? Color.red : Color.green;
+
+                Vector3 rowCenter = new Vector3(slopeStart.position.x, slopeStart.position.y, rowZPositions[i]);
+                Gizmos.DrawWireSphere(rowCenter, isSpecialRow ? 1f : 0.5f);
             }
         }
     }
