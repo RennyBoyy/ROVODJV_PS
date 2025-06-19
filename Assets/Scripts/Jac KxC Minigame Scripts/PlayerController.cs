@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private bool onRoughGround;
     private float coyoteCounter;
     private float jumpBufferCounter;
+    private bool wasGrounded = true;
 
     private GameManager_Slope gameManagerSlope;
 
@@ -47,15 +48,33 @@ public class PlayerController : MonoBehaviour
         jumpForce = Mathf.Sqrt(2f * g * jumpHeight);
 
         gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
+        wasGrounded = isGrounded;
     }
 
     void Update()
     {
+        bool previousGrounded = wasGrounded;
+        wasGrounded = isGrounded;
+
+        if (!previousGrounded && isGrounded)
+        {
+            SkiGameConfigurator.Instance?.PlayLandingSound(playerID == 1);
+        }
+
         if (isGrounded) coyoteCounter = coyoteTime;
         else coyoteCounter -= Time.deltaTime;
 
         if (jumpInput) jumpBufferCounter = jumpBufferTime;
         jumpBufferCounter -= Time.deltaTime;
+
+        if (moving)
+        {
+            SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
+        }
+        else
+        {
+            SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
+        }
 
         jumpInput = false;
     }
@@ -70,6 +89,7 @@ public class PlayerController : MonoBehaviour
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
             isGrounded = false;
+            SkiGameConfigurator.Instance?.PlayJumpSound(playerID == 1);
         }
 
         HandleMovement();
@@ -120,6 +140,8 @@ public class PlayerController : MonoBehaviour
             m_Rigidbody.linearVelocity = v;
             m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.Impulse);
 
+            SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
+
             Destroy(collision.gameObject);
             StartCoroutine(StopMoving());
         }
@@ -139,8 +161,10 @@ public class PlayerController : MonoBehaviour
     private IEnumerator StopMoving()
     {
         moving = false;
+        SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         yield return new WaitForSeconds(0.5f);
         moving = true;
+        SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -149,6 +173,7 @@ public class PlayerController : MonoBehaviour
         didplayer1win = (playerID == 1);
 
         moving = false;
+        SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
 
