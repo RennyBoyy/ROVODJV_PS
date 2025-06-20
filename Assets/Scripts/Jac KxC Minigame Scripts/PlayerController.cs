@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -39,14 +38,15 @@ public class PlayerController : MonoBehaviour
     private bool wasGrounded = true;
 
     private GameManager_Slope gameManagerSlope;
+    [Header("Animator")]
+    [SerializeField] private Animator kittyAnimator;
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        moving = true;
         float g = Mathf.Abs(Physics.gravity.y) * gravityMultiplier;
         jumpForce = Mathf.Sqrt(2f * g * jumpHeight);
-
+        m_Rigidbody.useGravity = false;
         gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
         wasGrounded = isGrounded;
     }
@@ -79,6 +79,7 @@ public class PlayerController : MonoBehaviour
         jumpInput = false;
     }
 
+
     void FixedUpdate()
     {
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
@@ -107,24 +108,47 @@ public class PlayerController : MonoBehaviour
             m_Rigidbody.linearVelocity = m_Rigidbody.linearVelocity.normalized * maxSpeed;
 
         m_Rigidbody.angularVelocity *= 0.2f;
+       
     }
+    public void startMoving()
+    {
+        moving = true;
+        m_Rigidbody.useGravity = true;
+    }
+
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        Debug.Log($"OnMove called with context: {ctx}");
-        moveInput = ctx.ReadValue<Vector2>().x;
+        Vector2 moveValue = ctx.ReadValue<Vector2>();
+        moveInput = moveValue.x;
+       // Debug.Log($"OnMove called. Phase: {ctx.phase}, Value: {moveValue}");
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
+        // Debug.Log($"OnJump called. Phase: {ctx.phase}, Performed: {ctx.performed}");
         if (ctx.performed)
+        {
             jumpInput = true;
+            kittyAnimator?.SetTrigger("Jump");
+        }
     }
 
     private void HandleMovement()
     {
-        if (moveInput > 0.1f) m_Rigidbody.AddForce(new Vector3(lateralThrust, 0, 0), ForceMode.Impulse);
-        if (moveInput < -0.1f) m_Rigidbody.AddForce(new Vector3(-lateralThrust, 0, 0), ForceMode.Impulse);
+        int moveDir = 0;
+        if (moveInput > 0.1f)
+        {
+            m_Rigidbody.AddForce(new Vector3(lateralThrust, 0, 0), ForceMode.Impulse);
+            moveDir = 1;
+        }
+        else if (moveInput < -0.1f)
+        {
+            m_Rigidbody.AddForce(new Vector3(-lateralThrust, 0, 0), ForceMode.Impulse);
+            moveDir = -1;
+        }
+        // Set the animator parameter
+        kittyAnimator?.SetInteger("MoveDirection", moveDir);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -145,6 +169,7 @@ public class PlayerController : MonoBehaviour
 
             Destroy(collision.gameObject);
             StartCoroutine(StopMoving());
+            kittyAnimator?.SetTrigger("Hit");
         }
 
         if (collision.gameObject.CompareTag("RoughTerrain"))
