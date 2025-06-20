@@ -1570,7 +1570,7 @@ Terrain:
   m_GameObject: {fileID: 111361776}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: e985076e6b789d14c9c246da0593361b, type: 2}
+  m_TerrainData: {fileID: 0}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
@@ -16157,13 +16157,17 @@ MonoBehaviour:
   complexObstacles:
   - name: Falling Tree
     prefab: {fileID: 6124387321273843517, guid: 84b2c3eeea6819a4795839535dd896d3, type: 3}
-    targetRow: 5
+    targetRow: 25
     triggerDistance: 2
+  - name: Ice Arch
+    prefab: {fileID: 6312662210615849900, guid: 39d197afb4598f34db20e9fad42fcf64, type: 3}
+    targetRow: 20
+    triggerDistance: 5
+  - name: Penguin Meteor
+    prefab: {fileID: 3112361915496464436, guid: caea24f6641fc80459d67c6f597b2101, type: 3}
+    targetRow: 10
+    triggerDistance: 5
   numberOfRows: 30
-  enableDynamicCleanup: 0
-  rowsToKeepBehindLastPlayer: 2
-  cleanupCheckInterval: 1
-  showDebugInfo: 0
 --- !u!1 &1206129698
 GameObject:
   m_ObjectHideFlags: 0
@@ -22842,7 +22846,7 @@ MonoBehaviour:
   m_Rigidbody: {fileID: 0}
   lateralThrust: 1
   baseForwardThrust: 0.9
-  maxSpeed: 200
+  maxSpeed: 70
   gravityMultiplier: 2
   jumpHeight: 4
   coyoteTime: 0.1
