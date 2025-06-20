@@ -181,7 +181,7 @@ public class SkiSlopeScript : MonoBehaviour
 
             BoxCollider rowTrigger = rowParent.AddComponent<BoxCollider>();
             rowTrigger.isTrigger = true;
-            rowTrigger.size = new Vector3(12f, 8f, 0.5f);      
+            rowTrigger.size = new Vector3(100f, 100f, 0.5f);      
 
             RowTrigger rowComponent = rowParent.AddComponent<RowTrigger>();
             rowComponent.Initialize(row);

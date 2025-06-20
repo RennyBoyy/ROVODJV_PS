@@ -111,6 +111,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        Debug.Log($"OnMove called with context: {ctx}");
         moveInput = ctx.ReadValue<Vector2>().x;
     }
 
