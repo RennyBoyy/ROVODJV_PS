@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Physics Controllers")]
-    [SerializeField] private float jumpForce = 30f;          
+    [SerializeField] private float jumpForce = 30f;       // will be recalculated
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private bool moving;
     [SerializeField] private Rigidbody m_Rigidbody;
@@ -28,10 +28,6 @@ public class PlayerController : MonoBehaviour
     [Header("Rough Terrain")]
     [SerializeField] private float roughDrag = 1.5f;
 
-    [Header("Animation")]
-    [SerializeField] private Animator characterAnimator;
-    [SerializeField] private float movementThreshold = 0.1f;
-
     public bool didplayer1win;
     public int playerID;
 
@@ -52,12 +48,6 @@ public class PlayerController : MonoBehaviour
         jumpForce = Mathf.Sqrt(2f * g * jumpHeight);
 
         gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
-
-        if (characterAnimator == null)
-        {
-            characterAnimator = GetComponentInChildren<Animator>();
-        }
-
         wasGrounded = isGrounded;
     }
 
@@ -86,23 +76,7 @@ public class PlayerController : MonoBehaviour
             SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         }
 
-        UpdateMovementAnimations();
-
         jumpInput = false;
-    }
-
-    void UpdateMovementAnimations()
-    {
-        if (characterAnimator == null) return;
-
-        Vector3 velocity = m_Rigidbody.linearVelocity;
-        float horizontalVelocity = velocity.x;
-
-        bool isMovingLeft = horizontalVelocity < -movementThreshold;
-        bool isMovingRight = horizontalVelocity > movementThreshold;
-
-        characterAnimator.SetBool("isMovingLeft", isMovingLeft);
-        characterAnimator.SetBool("isMovingRight", isMovingRight);
     }
 
     void FixedUpdate()
@@ -116,11 +90,6 @@ public class PlayerController : MonoBehaviour
             coyoteCounter = 0f;
             isGrounded = false;
             SkiGameConfigurator.Instance?.PlayJumpSound(playerID == 1);
-
-            if (characterAnimator != null)
-            {
-                characterAnimator.SetTrigger("Jump");
-            }
         }
 
         HandleMovement();
@@ -164,11 +133,7 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            if (characterAnimator != null)
-            {
-                characterAnimator.SetTrigger("hit");
-            }
-
+            // one‐off slam down
             m_Rigidbody.angularVelocity = Vector3.zero;
             var v = m_Rigidbody.linearVelocity;
             v.y = 0f;
@@ -197,12 +162,6 @@ public class PlayerController : MonoBehaviour
     {
         moving = false;
         SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
-
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetTrigger("stop");
-        }
-
         yield return new WaitForSeconds(0.5f);
         moving = true;
         SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
@@ -218,22 +177,9 @@ public class PlayerController : MonoBehaviour
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
 
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetTrigger("defeat");
-        }
-
         if (gameManagerSlope != null)
         {
             gameManagerSlope.TriggerGameEndFromPlayer(this);
-        }
-    }
-
-    public void TriggerVictory()
-    {
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetTrigger("victory");
         }
     }
 }

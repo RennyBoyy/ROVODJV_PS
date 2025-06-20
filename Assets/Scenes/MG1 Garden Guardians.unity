@@ -13416,19 +13416,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a2ff45c2bb6e8a44b235aec790166d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpSound: {fileID: 0}
-  throwSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  emptyThrowSound: {fileID: 0}
-  scarecrowSpawnSound: {fileID: 0}
-  scarecrowEatingSound: {fileID: 0}
-  pumpkinEatenSound: {fileID: 0}
-  scarecrowDeathSound: {fileID: 0}
-  loseSound: {fileID: 0}
-  backgroundMusic: {fileID: 0}
-  birdChirpingSound: {fileID: 0}
-  windmillCreakingSound: {fileID: 0}
-  windSound: {fileID: 0}
+  jumpSound: {fileID: 8300000, guid: b3873f22331d77946a0e6a757e1b8cdc, type: 3}
+  throwSound: {fileID: 8300000, guid: ed402b72acf410c449b580cc8d3954fd, type: 3}
+  reloadSound: {fileID: 8300000, guid: ae8ce2d487a7c3442bf52323d88846ce, type: 3}
+  emptyThrowSound: {fileID: 8300000, guid: e451dff36528b2a47b382eb7f2a853ac, type: 3}
+  scarecrowSpawnSound: {fileID: 8300000, guid: 3b55dc4303cc34544bc34a2f91498dce, type: 3}
+  scarecrowEatingSound: {fileID: 8300000, guid: be103410b31662042b3188ee2a3c403b, type: 3}
+  pumpkinEatenSound: {fileID: 8300000, guid: 937a3a0fa207a684383eeac05e83bd25, type: 3}
+  scarecrowDeathSound: {fileID: 8300000, guid: 77eb8cd6025b0504f8a95fc9b7c9d010, type: 3}
+  loseSound: {fileID: 8300000, guid: f669830f31c98444f876e80c38ea7d00, type: 3}
+  backgroundMusic: {fileID: 8300000, guid: 177b45c1df93fe345b8ea31e2dff4238, type: 3}
+  birdChirpingSound: {fileID: 8300000, guid: 7d8219dd411c5214f831be1cda495c4a, type: 3}
+  windmillCreakingSound: {fileID: 8300000, guid: 076ac597d4f114f41845fe75e1e51126, type: 3}
+  windSound: {fileID: 8300000, guid: aeb86d700f7c40e4bb8a8227ea539756, type: 3}
   characterIntroSound: {fileID: 0}
   countdownNumberSound: {fileID: 0}
   countdownGoSound: {fileID: 0}
