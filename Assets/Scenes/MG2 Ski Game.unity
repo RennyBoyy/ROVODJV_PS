@@ -6765,10 +6765,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 5.3050423
-  m_Height: 19.330463
+  m_Radius: 5.5332704
+  m_Height: 11.066541
   m_Direction: 1
-  m_Center: {x: 0.7449112, y: 4.997678, z: 1.2709656}
+  m_Center: {x: 0.7449112, y: 3.7413507, z: 1.0427327}
 --- !u!114 &542103404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18839,10 +18839,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 5.3050423
-  m_Height: 19.078854
+  m_Radius: 5.5332704
+  m_Height: 11.066541
   m_Direction: 1
-  m_Center: {x: 0.7449112, y: 4.8718777, z: 1.2709647}
+  m_Center: {x: 0.7449112, y: 3.7413507, z: 1.0427327}
 --- !u!95 &1349248587 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}

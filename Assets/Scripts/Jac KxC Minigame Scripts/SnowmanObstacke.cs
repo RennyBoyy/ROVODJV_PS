@@ -5,7 +5,6 @@ public class SnowmanObstacke : MonoBehaviour
 {
     [SerializeField] private GameObject[] snowmen;
 
-    private int nextSnowmanToDie = 0;
 
     private void OnTriggerEnter(Collider other)
     {

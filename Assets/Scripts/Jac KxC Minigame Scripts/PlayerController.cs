@@ -168,7 +168,7 @@ public class PlayerController : MonoBehaviour
             SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
 
             Destroy(collision.gameObject);
-            StartCoroutine(StopMoving());
+            StartCoroutine(Collision());
             kittyAnimator?.SetTrigger("Hit");
         }
 
@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour
             onRoughGround = false;
     }
 
-    private IEnumerator StopMoving()
+    private IEnumerator Collision()
     {
         moving = false;
         SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
@@ -202,7 +202,14 @@ public class PlayerController : MonoBehaviour
         SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
-
+        if (didplayer1win)
+        {
+            kittyAnimator?.SetTrigger("victory");
+        }
+        else
+        {
+            kittyAnimator?.SetTrigger("defeat");
+        }
         if (gameManagerSlope != null)
         {
             gameManagerSlope.TriggerGameEndFromPlayer(this);
