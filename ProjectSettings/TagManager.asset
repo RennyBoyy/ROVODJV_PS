@@ -17,7 +17,7 @@ TagManager:
   - RoughTerrain
   - Slope
   - Wall
-  - SnowManHead
+  - Snowmen
   layers:
   - Default
   - TransparentFX
@@ -27,7 +27,7 @@ TagManager:
   - UI
   - Slope
   - Terrain
-  - 
+  - Obstacles
   - 
   - 
   - 

@@ -65,12 +65,20 @@ PrefabInstance:
       value: Snow Trees2
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 47282712690680143877a423e1473c2f, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 47282712690680143877a423e1473c2f, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 47282712690680143877a423e1473c2f, type: 3}
       propertyPath: m_TagString
       value: Obstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 2800250516343163423, guid: 47282712690680143877a423e1473c2f, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2800250516343163423, guid: 47282712690680143877a423e1473c2f, type: 3}
       propertyPath: m_IsActive
@@ -88,6 +96,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
+    - target: {fileID: 8416272007918961125, guid: 47282712690680143877a423e1473c2f, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -5,7 +5,7 @@ public class SnowmanObstacke : MonoBehaviour
 {
     [SerializeField] private GameObject[] snowmen;
 
-    private int nextSnowmanToLoseHead = 0;
+    private int nextSnowmanToDie = 0;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -13,27 +13,12 @@ public class SnowmanObstacke : MonoBehaviour
 
         Debug.Log("Snowman obstacle triggered by " + other.name);
 
-        if (nextSnowmanToLoseHead >= snowmen.Length) return;
+        // Get all currently active snowmen
+        var activeSnowmen = snowmen.Where(s => s.activeSelf).ToList();
+        if (activeSnowmen.Count == 0) return;
 
-        Transform head = snowmen[nextSnowmanToLoseHead]
-                         .transform.Find("Snowman(Head)");
-        if (head == null)
-        {
-            // fallback: find by tag
-            head = snowmen[nextSnowmanToLoseHead]
-                   .GetComponentsInChildren<Transform>()
-                   .FirstOrDefault(t => t.CompareTag("SnowManHead"));
-        }
-
-        if (head != null)
-        {
-            head.gameObject.SetActive(false);
-            nextSnowmanToLoseHead++;
-        }
-        else
-        {
-            Debug.LogError("Couldn't find head on " + snowmen[nextSnowmanToLoseHead].name);
-        }
+        // Randomly select one
+        int randomIndex = Random.Range(0, activeSnowmen.Count);
+        activeSnowmen[randomIndex].SetActive(false);
     }
-
 }
