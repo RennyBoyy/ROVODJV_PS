@@ -85,9 +85,17 @@ PrefabInstance:
       value: -147.82288
       objectReference: {fileID: 0}
     - target: {fileID: -5805326926300847223, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5805326926300847223, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 8e4a26ff17e27a346a3e33728b25d12b, type: 2}
+      objectReference: {fileID: 2100000, guid: 51e08061ef1319540a195d353f580e85, type: 2}
+    - target: {fileID: -5805326926300847223, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f8ac4c540fd86cf4a99d1be4f6d99dd2, type: 2}
     - target: {fileID: -4874003512123141728, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -13.642501
@@ -162,7 +170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_Name
-      value: bear_Prefab
+      value: Fruty
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_TagString
@@ -337,12 +345,6 @@ MonoBehaviour:
   player2Input: {fileID: 0}
   maxBullets: 10
   LeftOrRight: 0
-  jumpAudioSource: {fileID: 0}
-  throwAudioSource: {fileID: 0}
-  jumpSound: {fileID: 0}
-  throwSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  emptyThrowSound: {fileID: 0}
   bullets: 10
   laneMoveDuration: 0.25
 --- !u!54 &7582992937665486648
