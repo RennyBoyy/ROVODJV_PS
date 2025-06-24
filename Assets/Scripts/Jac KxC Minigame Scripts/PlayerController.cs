@@ -1,209 +1,203 @@
 ﻿using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Physics Controllers")]
-    [SerializeField] private float jumpForce = 30f;          
-    [SerializeField] private bool isGrounded = true;
-    [SerializeField] private bool moving;
     [SerializeField] private Rigidbody m_Rigidbody;
+    [SerializeField] private Animator kittyAnimator;
+    [SerializeField] private GameManager_Slope gameManagerSlope;
 
-    [Header("Movement Settings")]
-    [SerializeField] private float lateralThrust = 1.0f;
-    [SerializeField] private float baseForwardThrust = 0.9f;
-    [SerializeField] private float maxSpeed = 100f;
-    [SerializeField] private float gravityMultiplier = 2f;
+    [Header("Gravity Scale")]
+    [Range(0.5f, 5f)]
+    [Tooltip("Multiplier on Unity’s default 9.81 m/s² gravity")]
+    [SerializeField] private float gravityScale = 2f;
 
-    [Header("Jump Settings")]
-    [SerializeField] private float jumpHeight = 2.5f;
-    [SerializeField] private float coyoteTime = 0.1f;
-    [SerializeField] private float jumpBufferTime = 0.1f;
+    private float maxLeanAngle = 20f;
+    private float leanSpeed = 5f;
 
     [Header("Obstacle Slam")]
     [SerializeField] private float obstacleSlamForce = 20f;
 
-    [Header("Rough Terrain")]
-    [SerializeField] private float roughDrag = 1.5f;
+    [Header("Movement Settings")]
+    [Range(0f, 10f)]
+    [Tooltip("How hard the player is pushed left/right")]
+    [SerializeField] private float lateralThrust = 1f;
+    [Range(0f, 200f)]
+    [Tooltip("Max horizontal speed")]
+    [SerializeField] private float maxSpeed = 10f;
 
-    [Header("Animation")]
-    [SerializeField] private Animator characterAnimator;
-    [SerializeField] private float movementThreshold = 0.1f;
+    [Header("Slide Settings")]
+    [Range(0f, 10f)]
+    [Tooltip("g·sinθ multiplier for downhill slide")]
+    [SerializeField] private float slopeAcceleration = 6f;
 
-    public bool didplayer1win;
-    public int playerID;
+    [Header("Jump Settings")]
+    [Range(0f, 10f)]
+    [Tooltip("Peak jump height in meters")]
+    [SerializeField] private float jumpHeight = 2.5f;
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
 
+    // runtime state
+    private bool isGrounded;
+    private bool moving;
     private float moveInput;
-    private bool jumpInput;
-    private bool onRoughGround;
     private float coyoteCounter;
     private float jumpBufferCounter;
-    private bool wasGrounded = true;
-
-    private GameManager_Slope gameManagerSlope;
+    private bool didplayer1win;
+    public int playerID;
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        moving = true;
-        float g = Mathf.Abs(Physics.gravity.y) * gravityMultiplier;
-        jumpForce = Mathf.Sqrt(2f * g * jumpHeight);
-
         gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
 
-        if (characterAnimator == null)
-        {
-            characterAnimator = GetComponentInChildren<Animator>();
-        }
+        // strengthen Unity gravity uniformly:
+        Physics.gravity = new Vector3(0f, Physics.gravity.y * gravityScale, 0f);
+        m_Rigidbody.useGravity = true;
 
-        wasGrounded = isGrounded;
+        // lock all physics-driven rotation
+        m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+
+        isGrounded = true;
     }
 
     void Update()
     {
-        bool previousGrounded = wasGrounded;
-        wasGrounded = isGrounded;
-
-        if (!previousGrounded && isGrounded)
-        {
-            SkiGameConfigurator.Instance?.PlayLandingSound(playerID == 1);
-        }
-
+        // coyote & jump-buffer timers
         if (isGrounded) coyoteCounter = coyoteTime;
         else coyoteCounter -= Time.deltaTime;
-
-        if (jumpInput) jumpBufferCounter = jumpBufferTime;
         jumpBufferCounter -= Time.deltaTime;
-
-        if (moving)
-        {
-            SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
-        }
-        else
-        {
-            SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
-        }
-
-        UpdateMovementAnimations();
-
-        jumpInput = false;
-    }
-
-    void UpdateMovementAnimations()
-    {
-        if (characterAnimator == null) return;
-
-        Vector3 velocity = m_Rigidbody.linearVelocity;
-        float horizontalVelocity = velocity.x;
-
-        bool isMovingLeft = horizontalVelocity < -movementThreshold;
-        bool isMovingRight = horizontalVelocity > movementThreshold;
-
-        characterAnimator.SetBool("isMovingLeft", isMovingLeft);
-        characterAnimator.SetBool("isMovingRight", isMovingRight);
     }
 
     void FixedUpdate()
     {
+        HandleJump();
+        HandleMovement();
+        ApplySlopeSlideAndLean();
+        ClampHorizontalSpeed();
+    }
+
+    private void HandleJump()
+    {
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            Vector3 v = m_Rigidbody.linearVelocity;
-            v.y = jumpForce;
-            m_Rigidbody.linearVelocity = v;
+            // consume the jump
+            isGrounded = false;
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
-            isGrounded = false;
+
+            // true Newtonian jump: v0 = √(2 g_scaled h)
+            float g = Mathf.Abs(Physics.gravity.y);
+            float vY = Mathf.Sqrt(2f * g * jumpHeight);
+            Vector3 v = m_Rigidbody.linearVelocity;
+            m_Rigidbody.linearVelocity = new Vector3(v.x, vY, v.z);
+
             SkiGameConfigurator.Instance?.PlayJumpSound(playerID == 1);
-
-            if (characterAnimator != null)
-            {
-                characterAnimator.SetTrigger("Jump");
-            }
         }
+    }
 
-        HandleMovement();
-        m_Rigidbody.useGravity = true;
+    private void HandleMovement()
+    {
+        int dir = 0;
+        if (moveInput > 0.1f)
+        {
+            m_Rigidbody.AddForce(Vector3.right * lateralThrust, ForceMode.Impulse);
+            dir = 1;
+        }
+        else if (moveInput < -0.1f)
+        {
+            m_Rigidbody.AddForce(Vector3.left * lateralThrust, ForceMode.Impulse);
+            dir = -1;
+        }
+        kittyAnimator?.SetInteger("MoveDirection", dir);
+    }
 
-        if (!isGrounded)
-            m_Rigidbody.AddForce(Physics.gravity * (gravityMultiplier - 1f), ForceMode.Acceleration);
+    private void ApplySlopeSlideAndLean()
+    {
+        if (isGrounded && Physics.Raycast(transform.position, Vector3.down, out var hit, 1.2f))
+        {
+            // slide: project (scaled) gravity onto the slope
+            Vector3 downSlope = Vector3.ProjectOnPlane(Physics.gravity, hit.normal)
+                                * slopeAcceleration;
+            m_Rigidbody.AddForce(downSlope, ForceMode.Acceleration);
 
-        if (moving)
-            m_Rigidbody.AddForce(new Vector3(0, -0.8f, baseForwardThrust), ForceMode.Impulse);
+            // optional lean around X-axis
+            float signedAngle = Vector3.SignedAngle(
+                Vector3.up, hit.normal, Vector3.right
+            );
+            float pitch = Mathf.Clamp(signedAngle, -maxLeanAngle, maxLeanAngle);
+            Quaternion target = Quaternion.Euler(pitch, m_Rigidbody.rotation.eulerAngles.y, 0f);
+            m_Rigidbody.MoveRotation(
+                Quaternion.Slerp(m_Rigidbody.rotation, target, Time.fixedDeltaTime * leanSpeed)
+            );
+        }
+    }
 
-        m_Rigidbody.linearDamping = onRoughGround ? roughDrag : 0f;
-
-        if (m_Rigidbody.linearVelocity.magnitude > maxSpeed)
-            m_Rigidbody.linearVelocity = m_Rigidbody.linearVelocity.normalized * maxSpeed;
-
-        m_Rigidbody.angularVelocity *= 0.2f;
+    private void ClampHorizontalSpeed()
+    {
+        var v = m_Rigidbody.linearVelocity;
+        var xz = new Vector2(v.x, v.z);
+        if (xz.magnitude > maxSpeed)
+        {
+            xz = xz.normalized * maxSpeed;
+            m_Rigidbody.linearVelocity = new Vector3(xz.x, v.y, xz.y);
+        }
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (!moving) return;
         moveInput = ctx.ReadValue<Vector2>().x;
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
-            jumpInput = true;
+        if (ctx.performed && isGrounded)
+            jumpBufferCounter = jumpBufferTime;
     }
 
-    private void HandleMovement()
+    public void startMoving()
     {
-        if (moveInput > 0.1f) m_Rigidbody.AddForce(new Vector3(lateralThrust, 0, 0), ForceMode.Impulse);
-        if (moveInput < -0.1f) m_Rigidbody.AddForce(new Vector3(-lateralThrust, 0, 0), ForceMode.Impulse);
+        moving = true;
+        m_Rigidbody.useGravity = true;
+
+        // Compute the exact vertical velocity to reach jumpHeight:
+        float g = Mathf.Abs(Physics.gravity.y);
+        float vY = Mathf.Sqrt(2f * g * jumpHeight);
+
+        // Build a flat forward direction (ignore any residual Y)
+        Vector3 forwardDir = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+
+        m_Rigidbody.linearVelocity = forwardDir * 8f
+                             + Vector3.up * vY;
+
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision col)
     {
-        if (collision.contacts[0].normal.y > 0.5f)
+        if (col.contacts[0].normal.y > 0.5f)
             isGrounded = true;
 
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (col.gameObject.CompareTag("Obstacle"))
         {
-            if (characterAnimator != null)
-            {
-                characterAnimator.SetTrigger("hit");
-            }
-
             m_Rigidbody.angularVelocity = Vector3.zero;
-            var v = m_Rigidbody.linearVelocity;
-            v.y = 0f;
-            m_Rigidbody.linearVelocity = v;
+            var v = m_Rigidbody.linearVelocity; v.y = 0f; m_Rigidbody.linearVelocity = v;
             m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.Impulse);
-
             SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
-
-            Destroy(collision.gameObject);
-            StartCoroutine(StopMoving());
+            Destroy(col.gameObject);
+            StartCoroutine(CollisionRecovery());
+            kittyAnimator?.SetTrigger("Hit");
         }
-
-        if (collision.gameObject.CompareTag("RoughTerrain"))
-            onRoughGround = true;
-        else if (collision.gameObject.CompareTag("Slope"))
-            onRoughGround = false;
     }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("RoughTerrain"))
-            onRoughGround = false;
-    }
-
-    private IEnumerator StopMoving()
+    private IEnumerator CollisionRecovery()
     {
         moving = false;
         SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
-
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetTrigger("stop");
-        }
-
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.2f);
         moving = true;
         SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
     }
@@ -212,28 +206,10 @@ public class PlayerController : MonoBehaviour
     {
         if (!other.CompareTag("LoseCon")) return;
         didplayer1win = (playerID == 1);
-
         moving = false;
-        SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
-
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetTrigger("defeat");
-        }
-
-        if (gameManagerSlope != null)
-        {
-            gameManagerSlope.TriggerGameEndFromPlayer(this);
-        }
-    }
-
-    public void TriggerVictory()
-    {
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetTrigger("victory");
-        }
+        kittyAnimator?.SetTrigger(didplayer1win ? "victory" : "defeat");
+        gameManagerSlope?.TriggerGameEndFromPlayer(this);
     }
 }

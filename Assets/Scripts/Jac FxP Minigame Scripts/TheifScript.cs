@@ -16,9 +16,7 @@ public class TheifScript : MonoBehaviour
     [SerializeField] private float maxSpawnInterval = 10f;
     [SerializeField] private float spawnIntervalDecrease = 0.5f; 
     [SerializeField] private int monstersPerWave = 1;
-    [SerializeField] private int maxMonstersPerWave = 10;
     [SerializeField] private float difficultyIncreaseInterval = 15f; 
-
     private float nextDifficultyIncreaseTime = 0f;
 
     void Start()
