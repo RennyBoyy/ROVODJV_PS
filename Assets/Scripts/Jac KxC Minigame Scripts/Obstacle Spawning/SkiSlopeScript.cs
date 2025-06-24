@@ -48,6 +48,7 @@ public class SkiSlopeScript : MonoBehaviour
     [SerializeField] private float[] laneOffsets = new float[] { -2f, 0f, 2f };
     [SerializeField] private GameObject slopeObject;
     [SerializeField] private GameObject[] obstaclePrefabs;
+    [SerializeField] private float[] obstacleVerticalOffsets;        
     [SerializeField] private ObstacleRow[] obstacleRows;
     [SerializeField] private ComplexObstacle[] complexObstacles;
     [SerializeField] private int numberOfRows = 30;
@@ -57,6 +58,7 @@ public class SkiSlopeScript : MonoBehaviour
     private List<float> rowZPositions = new List<float>();
     private List<int> complexObstacleRowIndices = new List<int>();
     private float cachedSlopeAngle = 0f;
+    private ObstacleRow lastUsedObstacleRow = null;       
 
     private void Start()
     {
@@ -185,7 +187,8 @@ public class SkiSlopeScript : MonoBehaviour
             return;
         }
 
-        ObstacleRow selectedRow = obstacleRows[Random.Range(0, obstacleRows.Length)];
+        ObstacleRow selectedRow = GetRandomObstacleRowExcludingLast();
+        lastUsedObstacleRow = selectedRow;      
         int[] lanePattern = selectedRow.GetLanePattern();
 
         for (int lane = 0; lane < Mathf.Min(laneOffsets.Length, lanePattern.Length); lane++)
@@ -205,9 +208,16 @@ public class SkiSlopeScript : MonoBehaviour
                 continue;
             }
 
-            Vector3 spawnPosition = basePosition + new Vector3(laneOffsets[lane], 0f, 0f);
+            float verticalOffset = 0f;
+            if (obstacleVerticalOffsets != null && obstacleIndex < obstacleVerticalOffsets.Length)
+            {
+                verticalOffset = obstacleVerticalOffsets[obstacleIndex];
+            }
+
+            Vector3 spawnPosition = basePosition + new Vector3(laneOffsets[lane], verticalOffset, 0f);
             Quaternion slopeRotation = Quaternion.Euler(cachedSlopeAngle, 0f, 0f);
-            GameObject spawnedObstacle = Instantiate(prefab, spawnPosition, slopeRotation, rowParent);
+            Quaternion finalRotation = slopeRotation * prefab.transform.rotation;        
+            GameObject spawnedObstacle = Instantiate(prefab, spawnPosition, finalRotation, rowParent);
             spawnedObstacle.name = $"{prefab.name}_Row{rowIndex}_Lane{lane}";
 
             spawnedObstacles.Add(spawnedObstacle.transform);
@@ -244,5 +254,35 @@ public class SkiSlopeScript : MonoBehaviour
 
         rowZPositions.Clear();
         complexObstacleRowIndices.Clear();
+        lastUsedObstacleRow = null;       
+    }
+
+    private ObstacleRow GetRandomObstacleRowExcludingLast()
+    {
+        if (obstacleRows.Length == 1)
+        {
+            return obstacleRows[0];
+        }
+
+        if (lastUsedObstacleRow == null)
+        {
+            return obstacleRows[Random.Range(0, obstacleRows.Length)];
+        }
+
+        List<ObstacleRow> availableRows = new List<ObstacleRow>();
+        foreach (ObstacleRow row in obstacleRows)
+        {
+            if (row != lastUsedObstacleRow)
+            {
+                availableRows.Add(row);
+            }
+        }
+
+        if (availableRows.Count == 0)
+        {
+            return obstacleRows[Random.Range(0, obstacleRows.Length)];
+        }
+
+        return availableRows[Random.Range(0, availableRows.Count)];
     }
 }
