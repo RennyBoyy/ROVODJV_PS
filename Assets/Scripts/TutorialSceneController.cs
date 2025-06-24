@@ -10,22 +10,21 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private GameObject[] tutorialPanels;
 
     [Header("Ready System - Image Based")]
-    [SerializeField] private GameObject[] playerReadyImages = new GameObject[2];        
-    [SerializeField] private Sprite waitingSprite;                                      
-    [SerializeField] private Sprite readySprite;                                        
+    [SerializeField] private GameObject[] playerReadyImages = new GameObject[2];
+    [SerializeField] private Sprite waitingSprite;
+    [SerializeField] private Sprite readySprite;
 
     [Header("Input Actions")]
     [SerializeField] private InputActionAsset inputActions;
 
     [Header("Debug Options")]
     [SerializeField] private bool singleControllerDebug = false;
-    [SerializeField] private KeyCode debugReadyKey = KeyCode.JoystickButton2;
 
     private InputAction[] confirmActions;
     private bool[] playerReady = new bool[2];
     private int currentTutorialIndex = 0;
     private bool allPlayersReady = false;
-    private Image[] readyImages = new Image[2];      
+    private Image[] readyImages = new Image[2];
 
     void Awake()
     {
