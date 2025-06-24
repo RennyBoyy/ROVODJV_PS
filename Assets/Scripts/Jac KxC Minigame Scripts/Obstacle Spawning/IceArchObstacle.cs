@@ -73,6 +73,9 @@ public class IceArchObstacle : MonoBehaviour
                 spike.AddComponent<BoxCollider>();
             }
 
+            // Add the spike stopper component
+            IceSpikeStopper stopper = spike.AddComponent<IceSpikeStopper>();
+
             spike.tag = "Obstacle";
 
             spawnedSpikes.Add(spike);
@@ -130,4 +133,27 @@ public class IceArchObstacle : MonoBehaviour
     }
 
     public bool HasTriggered => hasTriggered;
+}
+
+public class IceSpikeStopper : MonoBehaviour
+{
+    private bool hasStopped = false;
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (hasStopped) return;
+
+        if (collision.gameObject.CompareTag("Slope"))
+        {
+            hasStopped = true;
+
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true;
+            }
+        }
+    }
 }

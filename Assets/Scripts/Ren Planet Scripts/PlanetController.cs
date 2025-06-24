@@ -22,14 +22,12 @@ public class PlanetController : MonoBehaviour
     private float _bobPhase;
 
     [Header("Selection Settings")]
-    [SerializeField] private float raycastDistance = 7f;
     [SerializeField] private float snapDuration = 0.5f;
     [SerializeField] private float snapCooldownDuration = 2f;
     [SerializeField] private float inactivityTimeout = 3f;
     [SerializeField] private float inputLockDuration = 0.5f;
 
     [Header("Snap Detection")]
-    [SerializeField] private float snapDetectionRadius = 2f;
     [SerializeField] private float snapAngleThreshold = 30f;
 
     [Header("Snap Smoothing")]
@@ -39,7 +37,6 @@ public class PlanetController : MonoBehaviour
 
     [Header("Visual Effects")]
     [SerializeField] private Material outlineMaterial;
-    [SerializeField] private string outlineShaderName = "Outline";
     [SerializeField] private bool useOutlineEffect = true;
 
     [Header("Level Configuration")]
@@ -75,7 +72,6 @@ public class PlanetController : MonoBehaviour
     private enum PlanetState { Idle, Active, Focused }
     private PlanetState currentState = PlanetState.Idle;
 
-    private Transform currentlyFocusedLevel;
     private float lastInputTime;
     private Vector3 screenCenter;
     private bool _isSnapping = false;
@@ -373,7 +369,6 @@ public class PlanetController : MonoBehaviour
     private void EnterIdleState()
     {
         currentState = PlanetState.Idle;
-        currentlyFocusedLevel = null;
         currentVelocity = Vector2.zero;
     }
 

@@ -13,7 +13,7 @@ public class PlaceableObject
     public string name;
 
     [Header("Placement Behavior")]
-    public bool alignToTerrain = true;
+    public bool alignToSurface = true;
     public bool randomYRotation = true;
     [Range(-180f, 180f)]
     public float rotationOffset = 0f;
@@ -33,9 +33,6 @@ public class PlaceableObject
 
 public class TerrainManualPlacer : MonoBehaviour
 {
-    [Header("Terrain Reference")]
-    [SerializeField] private Terrain targetTerrain;
-
     [Header("Manual Placement")]
     [SerializeField] private List<PlaceableObject> placeableObjects = new List<PlaceableObject>();
     [SerializeField] private int selectedObjectIndex = 0;
@@ -44,6 +41,7 @@ public class TerrainManualPlacer : MonoBehaviour
     [SerializeField] private LayerMask terrainLayerMask = -1;
     [SerializeField] private bool enableClickPlacement = true;
     [SerializeField] private KeyCode placementModifier = KeyCode.LeftShift;
+    [SerializeField] private float raycastDistance = 1000f;
 
     [Header("Organization")]
     [SerializeField] private bool createParentContainer = true;
@@ -57,7 +55,7 @@ public class TerrainManualPlacer : MonoBehaviour
     private Transform objectContainer;
     private List<GameObject> placedObjects = new List<GameObject>();
     private Vector3 lastMousePosition;
-    private TerrainInfo currentTerrainInfo;
+    private SurfaceInfo currentSurfaceInfo;
     private bool isValidPlacement;
 
 #if UNITY_EDITOR
@@ -78,7 +76,7 @@ public class TerrainManualPlacer : MonoBehaviour
 
         Event currentEvent = Event.current;
 
-        UpdateMouseTerrainInfo();
+        UpdateMouseSurfaceInfo();
 
         if (currentEvent.type == EventType.MouseDown &&
             currentEvent.button == 0 &&
@@ -102,7 +100,7 @@ public class TerrainManualPlacer : MonoBehaviour
         }
     }
 
-    private void UpdateMouseTerrainInfo()
+    private void UpdateMouseSurfaceInfo()
     {
         Vector2 mousePosition = Event.current.mousePosition;
 
@@ -113,12 +111,12 @@ public class TerrainManualPlacer : MonoBehaviour
         Ray ray = sceneCamera.ScreenPointToRay(mousePosition);
 
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayerMask))
+        if (Physics.Raycast(ray, out hit, raycastDistance, terrainLayerMask))
         {
-            if (hit.collider.GetComponent<Terrain>() == targetTerrain)
+            if (IsOnTerrainLayer(hit.collider.gameObject))
             {
-                currentTerrainInfo = GetTerrainInfoAtPosition(hit.point);
-                isValidPlacement = ValidatePlacement(currentTerrainInfo);
+                currentSurfaceInfo = GetSurfaceInfoAtPosition(hit);
+                isValidPlacement = ValidatePlacement(currentSurfaceInfo);
                 lastMousePosition = hit.point;
             }
             else
@@ -132,6 +130,12 @@ public class TerrainManualPlacer : MonoBehaviour
         }
     }
 
+    private bool IsOnTerrainLayer(GameObject obj)
+    {
+        int objLayer = obj.layer;
+        return (terrainLayerMask.value & (1 << objLayer)) != 0;
+    }
+
     private void DrawPlacementPreview()
     {
         PlaceableObject currentObject = GetCurrentPlaceableObject();
@@ -140,13 +144,14 @@ public class TerrainManualPlacer : MonoBehaviour
         Color handleColor = isValidPlacement ? previewColor : invalidPreviewColor;
         Handles.color = handleColor;
 
-        Handles.SphereHandleCap(0, currentTerrainInfo.worldPosition, Quaternion.identity, 0.5f, EventType.Repaint);
+        Handles.SphereHandleCap(0, currentSurfaceInfo.worldPosition, Quaternion.identity, 0.5f, EventType.Repaint);
 
-        Handles.DrawLine(currentTerrainInfo.worldPosition,
-                        currentTerrainInfo.worldPosition + currentTerrainInfo.normal * 2f);
+        Handles.DrawLine(currentSurfaceInfo.worldPosition,
+                        currentSurfaceInfo.worldPosition + currentSurfaceInfo.normal * 2f);
 
-        Vector3 labelPosition = currentTerrainInfo.worldPosition + Vector3.up * 1f;
-        string infoText = $"Slope: {currentTerrainInfo.slope:F1}°";
+        Vector3 labelPosition = currentSurfaceInfo.worldPosition + Vector3.up * 1f;
+        string infoText = $"Slope: {currentSurfaceInfo.slope:F1}°";
+        infoText += $"\nSurface: {currentSurfaceInfo.surfaceObject.name}";
 
         if (!isValidPlacement && currentObject.showSlopeWarning)
         {
@@ -161,11 +166,6 @@ public class TerrainManualPlacer : MonoBehaviour
 
     private void OnValidate()
     {
-        if (targetTerrain == null)
-        {
-            targetTerrain = GetComponent<Terrain>();
-        }
-
         if (placeableObjects != null && placeableObjects.Count > 0)
         {
             selectedObjectIndex = Mathf.Clamp(selectedObjectIndex, 0, placeableObjects.Count - 1);
@@ -181,48 +181,54 @@ public class TerrainManualPlacer : MonoBehaviour
         return placeableObjects[selectedObjectIndex];
     }
 
-    private TerrainInfo GetTerrainInfoAtPosition(Vector3 worldPos)
+    private SurfaceInfo GetSurfaceInfoAtPosition(RaycastHit hit)
     {
-        TerrainInfo info = new TerrainInfo();
+        SurfaceInfo info = new SurfaceInfo();
 
-        if (targetTerrain == null || targetTerrain.terrainData == null)
-        {
-            info.isValid = false;
-            return info;
-        }
-
-        TerrainData terrainData = targetTerrain.terrainData;
-        Vector3 terrainPosition = targetTerrain.transform.position;
-        Vector3 terrainSize = terrainData.size;
-
-        float relativeX = (worldPos.x - terrainPosition.x) / terrainSize.x;
-        float relativeZ = (worldPos.z - terrainPosition.z) / terrainSize.z;
-
-        if (relativeX < 0 || relativeX > 1 || relativeZ < 0 || relativeZ > 1)
-        {
-            info.isValid = false;
-            return info;
-        }
-
-        info.height = terrainData.GetInterpolatedHeight(relativeX, relativeZ);
-        info.worldPosition = new Vector3(worldPos.x, terrainPosition.y + info.height, worldPos.z);
-
-        Vector3 terrainNormal = terrainData.GetInterpolatedNormal(relativeX, relativeZ);
-        info.normal = terrainNormal;
-        info.slope = Vector3.Angle(Vector3.up, terrainNormal);
-
+        info.worldPosition = hit.point;
+        info.normal = hit.normal;
+        info.slope = Vector3.Angle(Vector3.up, hit.normal);
+        info.surfaceObject = hit.collider.gameObject;
         info.isValid = true;
+
+        Terrain terrain = hit.collider.GetComponent<Terrain>();
+        if (terrain != null)
+        {
+            info.isUnityTerrain = true;
+            info.unityTerrain = terrain;
+
+            TerrainData terrainData = terrain.terrainData;
+            if (terrainData != null)
+            {
+                Vector3 terrainPosition = terrain.transform.position;
+                Vector3 terrainSize = terrainData.size;
+
+                float relativeX = (hit.point.x - terrainPosition.x) / terrainSize.x;
+                float relativeZ = (hit.point.z - terrainPosition.z) / terrainSize.z;
+
+                if (relativeX >= 0 && relativeX <= 1 && relativeZ >= 0 && relativeZ <= 1)
+                {
+                    Vector3 terrainNormal = terrainData.GetInterpolatedNormal(relativeX, relativeZ);
+                    info.normal = terrainNormal;
+                    info.slope = Vector3.Angle(Vector3.up, terrainNormal);
+
+                    float terrainHeight = terrainData.GetInterpolatedHeight(relativeX, relativeZ);
+                    info.worldPosition = new Vector3(hit.point.x, terrainPosition.y + terrainHeight, hit.point.z);
+                }
+            }
+        }
+
         return info;
     }
 
-    private bool ValidatePlacement(TerrainInfo terrainInfo)
+    private bool ValidatePlacement(SurfaceInfo surfaceInfo)
     {
-        if (!terrainInfo.isValid) return false;
+        if (!surfaceInfo.isValid) return false;
 
         PlaceableObject currentObject = GetCurrentPlaceableObject();
         if (currentObject?.prefab == null) return false;
 
-        if (terrainInfo.slope > currentObject.maxSlope) return false;
+        if (surfaceInfo.slope > currentObject.maxSlope) return false;
 
         return true;
     }
@@ -233,24 +239,25 @@ public class TerrainManualPlacer : MonoBehaviour
         if (currentObject?.prefab == null) return;
 
         SetupObjectContainer();
-        PlaceObject(currentObject, currentTerrainInfo);
+        PlaceObject(currentObject, currentSurfaceInfo);
         SavePlacementChanges();
 
-        Debug.Log($"Placed {currentObject.name} at {currentTerrainInfo.worldPosition}");
+        string surfaceType = currentSurfaceInfo.isUnityTerrain ? "Unity Terrain" : "GameObject";
+        Debug.Log($"Placed {currentObject.name} on {surfaceType} '{currentSurfaceInfo.surfaceObject.name}' at {currentSurfaceInfo.worldPosition}");
     }
 
-    private void PlaceObject(PlaceableObject placeableObject, TerrainInfo terrainInfo)
+    private void PlaceObject(PlaceableObject placeableObject, SurfaceInfo surfaceInfo)
     {
-        GameObject newObject = Instantiate(placeableObject.prefab, terrainInfo.worldPosition, Quaternion.identity);
+        GameObject newObject = Instantiate(placeableObject.prefab, surfaceInfo.worldPosition, Quaternion.identity);
 
         if (objectContainer != null)
         {
             newObject.transform.SetParent(objectContainer);
         }
 
-        if (placeableObject.alignToTerrain)
+        if (placeableObject.alignToSurface)
         {
-            newObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, terrainInfo.normal);
+            newObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, surfaceInfo.normal);
         }
 
         if (placeableObject.randomYRotation)
@@ -523,18 +530,6 @@ public class TerrainManualPlacer : MonoBehaviour
     [ContextMenu("Validate Current Setup")]
     public void ValidateCurrentSetup()
     {
-        if (targetTerrain == null)
-        {
-            Debug.LogError("No terrain assigned!");
-            return;
-        }
-
-        if (targetTerrain.terrainData == null)
-        {
-            Debug.LogError("Terrain has no TerrainData!");
-            return;
-        }
-
         if (placeableObjects == null || placeableObjects.Count == 0)
         {
             Debug.LogWarning("No placeable objects defined!");
@@ -557,15 +552,39 @@ public class TerrainManualPlacer : MonoBehaviour
         }
 
         PlaceableObject currentObj = GetCurrentPlaceableObject();
-        Debug.Log($"Manual placer validation complete! {validObjects}/{placeableObjects.Count} objects have valid prefabs.");
+        Debug.Log($"Terrain placer validation complete! {validObjects}/{placeableObjects.Count} objects have valid prefabs.");
         Debug.Log($"Current selection: {selectedObjectIndex} - Name: '{currentObj?.name ?? "NULL"}', Prefab: {(currentObj?.prefab != null ? currentObj.prefab.name : "NULL")}");
         Debug.Log($"Placement: {(enableClickPlacement ? "Enabled" : "Disabled")}");
+        Debug.Log($"Layer Mask: {LayerMaskToLayerNames(terrainLayerMask)}");
 
         if (enableClickPlacement)
         {
             string modifierText = placementModifier == KeyCode.None ? "Click" : $"{placementModifier} + Click";
-            Debug.Log($"Usage: {modifierText} on terrain to place objects");
+            Debug.Log($"Usage: {modifierText} on objects with 'Terrain' layer to place objects");
         }
+    }
+
+    private string LayerMaskToLayerNames(LayerMask layerMask)
+    {
+        List<string> layerNames = new List<string>();
+
+        for (int i = 0; i < 32; i++)
+        {
+            if ((layerMask.value & (1 << i)) != 0)
+            {
+                string layerName = LayerMask.LayerToName(i);
+                if (!string.IsNullOrEmpty(layerName))
+                {
+                    layerNames.Add($"{layerName} ({i})");
+                }
+                else
+                {
+                    layerNames.Add($"Layer {i}");
+                }
+            }
+        }
+
+        return layerNames.Count > 0 ? string.Join(", ", layerNames) : "None";
     }
 
     public void SetSelectedObject(int index)
@@ -597,11 +616,14 @@ public class TerrainManualPlacer : MonoBehaviour
     }
 }
 
-public struct TerrainInfo
+public struct SurfaceInfo
 {
     public Vector3 worldPosition;
     public Vector3 normal;
-    public float height;
     public float slope;
+    public GameObject surfaceObject;
     public bool isValid;
+
+    public bool isUnityTerrain;
+    public Terrain unityTerrain;
 }
