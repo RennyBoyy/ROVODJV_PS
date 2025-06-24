@@ -3821,6 +3821,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 148.49176
       objectReference: {fileID: 0}
+    - target: {fileID: 9187303810407717040, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9187303810407717040, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
     - target: {fileID: 9212398258259807509, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -1.5494342
@@ -4217,7 +4225,7 @@ Terrain:
   m_GameObject: {fileID: 848020838}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: 896a83c2b6c08f54daa3972fc29ceb1b, type: 2}
+  m_TerrainData: {fileID: 0}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
@@ -6553,6 +6561,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 148.49176
       objectReference: {fileID: 0}
+    - target: {fileID: 9187303810407717040, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9187303810407717040, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ee9ae42cf78e5ab4d8d143febeedb1b0, type: 2}
     - target: {fileID: 9212398258259807509, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -1.5494353
