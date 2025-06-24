@@ -13,12 +13,6 @@ public class PlayerScript : MonoBehaviour
     public PlayerInput player1Input;
     public PlayerInput player2Input;
     public int maxBullets = 5;
-    public bool LeftOrRight;
-
-    private GameObject[] fruitUIObjects = new GameObject[5];
-    private Sprite emptyFruitSprite;
-    private Sprite[] originalSprites = new Sprite[5];
-    private Image[] fruitImages = new Image[5];
 
     public int bullets;
     private int currentLane = 3;
@@ -34,38 +28,49 @@ public class PlayerScript : MonoBehaviour
     private bool canMove = true;
 
     private bool insideReloadZone = false;
+    private GameManager_Fruity minigameManager;
 
     private void Start()
     {
         bullets = maxBullets;
 
-        for (int i = 0; i < fruitUIObjects.Length; i++)
+        // Find MinigameManager for UI updates
+        minigameManager = FindFirstObjectByType<GameManager_Fruity>();
+
+        animator = GetComponent<Animator>();
+
+        // Find this player's index to assign correct controller
+        PlayerScript[] allPlayers = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        int playerIndex = -1;
+        for (int i = 0; i < allPlayers.Length; i++)
         {
-            if (fruitUIObjects[i] != null)
+            if (allPlayers[i] == this)
             {
-                fruitImages[i] = fruitUIObjects[i].GetComponent<Image>();
-                if (fruitImages[i] != null)
-                {
-                    originalSprites[i] = fruitImages[i].sprite;
-                }
+                playerIndex = i;
+                break;
             }
         }
 
-        UpdateAmmoUI();
-        animator = GetComponent<Animator>();
-
         var gamepads = Gamepad.all;
-        if (player1Input != null && gamepads.Count > 0)
+        if (playerIndex == 0 && gamepads.Count > 0) // Fruity (P1)
         {
-            player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
-            player1Input.ActivateInput();
+            if (player1Input != null)
+            {
+                player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
+                player1Input.ActivateInput();
+            }
+        }
+        else if (playerIndex == 1 && gamepads.Count > 1) // Potato (P2)
+        {
+            if (player2Input != null)
+            {
+                player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
+                player2Input.ActivateInput();
+            }
         }
 
-        if (player2Input != null && gamepads.Count > 1)
-        {
-            player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
-            player2Input.ActivateInput();
-        }
+        // Update initial ammo UI
+        UpdateAmmoUI();
     }
 
     private void Update()
@@ -110,7 +115,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane--;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(-1);
-                FruityGameConfigurator.Instance?.PlayJumpSound(LeftOrRight);
+                FruityGameConfigurator.Instance?.PlayJumpSound(IsPlayer1());
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -122,7 +127,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane++;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(1);
-                FruityGameConfigurator.Instance?.PlayJumpSound(LeftOrRight);
+                FruityGameConfigurator.Instance?.PlayJumpSound(IsPlayer1());
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -174,7 +179,7 @@ public class PlayerScript : MonoBehaviour
         if (bullets <= 0)
         {
             Debug.Log("Out of Ammo");
-            FruityGameConfigurator.Instance?.PlayEmptyThrowSound(LeftOrRight);
+            FruityGameConfigurator.Instance?.PlayEmptyThrowSound(IsPlayer1());
         }
         else
         {
@@ -182,26 +187,18 @@ public class PlayerScript : MonoBehaviour
                 Instantiate(tomato, hand.transform.position, transform.rotation);
             bullets--;
             UpdateAmmoUI();
-            FruityGameConfigurator.Instance?.PlayThrowSound(LeftOrRight);
+            FruityGameConfigurator.Instance?.PlayThrowSound(IsPlayer1());
         }
     }
 
     public void UpdateAmmoUI()
     {
-        for (int i = 0; i < fruitImages.Length; i++)
-        {
-            if (fruitImages[i] != null)
-            {
-                if (i < bullets)
-                {
-                    fruitImages[i].sprite = originalSprites[i];
-                }
-                else
-                {
-                    fruitImages[i].sprite = emptyFruitSprite;
-                }
-            }
-        }
+        if (minigameManager == null) return;
+
+        if (IsPlayer1())
+            minigameManager.UpdateP1AmmoUI(bullets);
+        else
+            minigameManager.UpdateP2AmmoUI(bullets);
     }
 
     private IEnumerator MoveLock()
@@ -215,34 +212,9 @@ public class PlayerScript : MonoBehaviour
         var playerScript = playerInput.GetComponent<PlayerScript>();
         if (playerScript != null)
         {
-            if (playerInput.playerIndex == 0)
-            {
-                playerScript.LeftOrRight = true;
-            }
-            else if (playerInput.playerIndex == 1)
-            {
-                playerScript.LeftOrRight = false;
-            }
+            // Player identity is now determined by index, not LeftOrRight
+            // Index 0 = Fruity (P1, left), Index 1 = Potato (P2, right)
         }
-    }
-
-    public void SetAmmoUI(GameObject[] uiObjects, Sprite emptySprite)
-    {
-        fruitUIObjects = uiObjects;
-        emptyFruitSprite = emptySprite;
-
-        for (int i = 0; i < fruitUIObjects.Length; i++)
-        {
-            if (fruitUIObjects[i] != null)
-            {
-                fruitImages[i] = fruitUIObjects[i].GetComponent<Image>();
-                if (fruitImages[i] != null)
-                {
-                    originalSprites[i] = fruitImages[i].sprite;
-                }
-            }
-        }
-        UpdateAmmoUI();
     }
 
     public void ReloadAmmo(int amount)
@@ -254,7 +226,7 @@ public class PlayerScript : MonoBehaviour
         {
             bullets += ammoToGive;
             UpdateAmmoUI();
-            FruityGameConfigurator.Instance?.PlayReloadSound(LeftOrRight);
+            FruityGameConfigurator.Instance?.PlayReloadSound(IsPlayer1());
         }
     }
 
@@ -274,5 +246,18 @@ public class PlayerScript : MonoBehaviour
             insideReloadZone = false;
             Debug.Log("Exited reload zone – can throw again.");
         }
+    }
+
+    private bool IsPlayer1()
+    {
+        PlayerScript[] allPlayers = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        for (int i = 0; i < allPlayers.Length; i++)
+        {
+            if (allPlayers[i] == this)
+            {
+                return i == 0; // Index 0 = Fruity (P1), Index 1 = Potato (P2)
+            }
+        }
+        return false; // Fallback
     }
 }

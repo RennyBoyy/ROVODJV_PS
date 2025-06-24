@@ -3,133 +3,138 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager_Fruity : MonoBehaviour
 {
-    public int Fruit_Remaining = 1;
     public bool gameActive = false;
-    [SerializeField] private TextMeshProUGUI loseText;
 
     [Header("Player Detection")]
     [SerializeField] private Transform player1Transform;
     [SerializeField] private Transform player2Transform;
 
-    private GameOverManager gameOverManager;
+    [Header("UI Assignment")]
+
+    [Header("Ammo UI Images")]
+    [SerializeField] private Image[] p1AmmoImages = new Image[5]; // P1 ammo images 1-5
+    [SerializeField] private Image[] p2AmmoImages = new Image[5]; // P2 ammo images 1-5
+    [SerializeField] private Sprite p1EmptySprite; // P1 empty sprite
+    [SerializeField] private Sprite p2EmptySprite; // P2 empty sprite
+
+    // Store original sprites for each ammo image
+    private Sprite[] p1OriginalSprites = new Sprite[5];
+    private Sprite[] p2OriginalSprites = new Sprite[5];
+
     private bool gameEnded = false;
+
+    public bool IsGameDone { get; private set; }
+    public int WinningPlayer { get; private set; } // 0 = player1, 1 = player2
 
     void Start()
     {
-        gameOverManager = GameOverManager.Instance;
-
         if (player1Transform == null || player2Transform == null)
         {
             FindPlayerTransforms();
         }
 
+        // Cache original sprites for each ammo image
+        CacheOriginalSprites();
+    }
+
+    private void CacheOriginalSprites()
+    {
+        // Cache P1 ammo original sprites
+        for (int i = 0; i < p1AmmoImages.Length; i++)
+        {
+            if (p1AmmoImages[i] != null)
+                p1OriginalSprites[i] = p1AmmoImages[i].sprite;
+        }
+
+        // Cache P2 ammo original sprites
+        for (int i = 0; i < p2AmmoImages.Length; i++)
+        {
+            if (p2AmmoImages[i] != null)
+                p2OriginalSprites[i] = p2AmmoImages[i].sprite;
+        }
     }
 
     void FindPlayerTransforms()
     {
         PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
 
-        foreach (PlayerScript player in players)
+        for (int i = 0; i < players.Length; i++)
         {
-            if (player.LeftOrRight && player1Transform == null)
+            if (i == 0 && player1Transform == null)
             {
-                player1Transform = player.transform;
+                player1Transform = players[i].transform;
             }
-            else if (!player.LeftOrRight && player2Transform == null)
+            else if (i == 1 && player2Transform == null)
             {
-                player2Transform = player.transform;
+                player2Transform = players[i].transform;
             }
         }
 
         Debug.Log($"Found players: Player1 = {(player1Transform != null ? player1Transform.name : "None")}, Player2 = {(player2Transform != null ? player2Transform.name : "None")}");
     }
 
-    void Update()
+    // Game ends only when monsters reach lose triggers (handled by MonsterBad script)
+    // No need for redundant ammo-based lose condition
+
+    public void EndGame(int winningPlayer)
     {
-        if (Fruit_Remaining <= 0 && !gameEnded)
-        {
-            loseGame();
-        }
-    }
+        IsGameDone = true;
+        WinningPlayer = winningPlayer;
 
-    private void loseGame()
-    {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        Debug.Log("You lose!");
-
-        FruityGameConfigurator.Instance?.PlayLoseSound();
-
-        if (gameOverManager != null)
-        {
-            bool player1Lost = DetermineLosingPlayer(null); // Fallback to random if no MonsterBad instance is provided
-            gameOverManager.HandleGameEnd(player1Lost);
-        }
-        else
-        {
-            if (loseText != null)
-                loseText.gameObject.SetActive(true);
-            StartCoroutine(LoadSceneAfterDelay());
-        }
-    }
-
-    private bool DetermineLosingPlayer(MonsterBad monster)
-    {
-        if (monster != null)
-            return monster.didplayer1lose;
-        return Random.Range(0, 2) == 0;
-    }
-
-    private IEnumerator LoadSceneAfterDelay()
-    {
-        yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene("BugabooPlanet");
-    }
-
-    // Add this method to handle game end from a specific MonsterBad instance
-    public void TriggerGameEndFromMonster(MonsterBad monster)
-    {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        Debug.Log("[GameManager_Fruity] You lose! TriggerGameEndFromMonster called.");
-
-        bool player1Lost = DetermineLosingPlayer(monster);
-        Debug.Log($"[GameManager_Fruity] Calling HandleGameEnd. player1Lost={player1Lost}, monster={monster}");
-
-        if (gameOverManager != null)
-        {
-            Debug.Log("[GameManager_Fruity] gameOverManager is not null, calling HandleGameEnd.");
-            gameOverManager.HandleGameEnd(player1Lost);
-        }
-        else
-        {
-            Debug.LogWarning("[GameManager_Fruity] gameOverManager is null!");
-            if (loseText != null)
-                loseText.gameObject.SetActive(true);
-            StartCoroutine(LoadSceneAfterDelay());
-        }
-        // Stop MonsterBad movement
-        MonsterBad.isMoving = false;
-        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
-        foreach (var thief in thieves)
-        {
-            thief.StopAllCoroutines();
-            thief.enabled = false;
-        }
+        // Disable all gameplay scripts
         PlayerScript[] players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
         foreach (var player in players)
             if (player != null) player.enabled = false;
+        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
+        foreach (var thief in thieves)
+            if (thief != null) thief.enabled = false;
+        MonsterBad.isMoving = false;
+        MonsterBad[] monsters = FindObjectsByType<MonsterBad>(FindObjectsSortMode.None);
+        foreach (var monster in monsters)
+            if (monster != null) monster.enabled = false;
 
-        // Destroy all MonsterBad (scarecrow) enemies in the scene
-        foreach (var monsters in FindObjectsByType<MonsterBad>(FindObjectsSortMode.None))
+        // Destroy all existing enemies
+        foreach (var monster in monsters)
+            if (monster != null) Destroy(monster.gameObject);
+
+        // Notify GameManager (GameIntroManager)
+        GameIntroManager.Instance.OnGameEnd(winningPlayer);
+    }
+
+    // Update P1 ammo UI (Fruity) - replaces from right to left
+    public void UpdateP1AmmoUI(int ammoCount)
+    {
+        for (int i = 0; i < p1AmmoImages.Length; i++)
         {
-            Destroy(monsters.gameObject);
+            if (p1AmmoImages[i] != null)
+            {
+                // Right to left: index 4 is rightmost, index 0 is leftmost
+                int rightToLeftIndex = 4 - i;
+                if (rightToLeftIndex < ammoCount)
+                    p1AmmoImages[i].sprite = p1OriginalSprites[i];
+                else
+                    p1AmmoImages[i].sprite = p1EmptySprite;
+            }
         }
     }
 
+    // Update P2 ammo UI (Potato) - replaces from left to right
+    public void UpdateP2AmmoUI(int ammoCount)
+    {
+        for (int i = 0; i < p2AmmoImages.Length; i++)
+        {
+            if (p2AmmoImages[i] != null)
+            {
+                // Left to right: index 0 is leftmost, index 4 is rightmost
+                if (i < ammoCount)
+                    p2AmmoImages[i].sprite = p2OriginalSprites[i];
+                else
+                    p2AmmoImages[i].sprite = p2EmptySprite;
+            }
+        }
+    }
 }

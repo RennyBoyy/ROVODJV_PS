@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class FlythroughPoint
@@ -17,38 +18,60 @@ public class FlythroughPoint
 
 public class GameIntroManager : MonoBehaviour
 {
-    [Header("Camera")]
+    public static GameIntroManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+        // No DontDestroyOnLoad, so each scene gets its own instance
+    }
+
+    [Header("INTRO")]
     [SerializeField] private Camera gameCamera;
     [SerializeField] private Transform gameplayPosition;
     [SerializeField] private float zoomSpeed = 2f;
     [SerializeField] private AnimationCurve zoomCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-
-    [Header("Cinematic Path (Flythrough)")]
     [SerializeField] private FlythroughPoint[] flythroughPoints;
     [SerializeField] private float flySpeed = 1f;
-
-    [Header("UI Splash Overlays")]
+    [Space(30)]
     [SerializeField] private GameObject frutyNameUI;
     [SerializeField] private GameObject potatoNameUI;
     [SerializeField] private GameObject vsSplashUI;
     [SerializeField] private Transform vsSplashPoint;
     [SerializeField] private float splashDisplayDuration = 1.5f;
-
-    [Header("Countdown")]
+    [Space(30)]
     [SerializeField] private GameObject countdownCanvas;
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private int countdownFrom = 3;
     [SerializeField] private float countdownDuration = 1f;
     [SerializeField] private float goDuration = 0.8f;
     [SerializeField] private string goText = "GO!";
-
-    [Header("Countdown Animation")]
     [SerializeField] private AnimationCurve scaleCurve = AnimationCurve.EaseInOut(0, 1.5f, 1, 0.8f);
     [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
-
-    [Header("Countdown Colors")]
     [SerializeField] private Color[] countdownColors = { Color.red, Color.yellow, Color.green };
     [SerializeField] private Color goColor = Color.white;
+
+    [Header("UI Canvases")]
+    [SerializeField] private GameObject gameplayUIPanel;
+    [SerializeField] private GameObject player1WinUI;
+    [SerializeField] private GameObject player2WinUI;
+    // Add other global UI canvases here as needed
+
+    [Header("ENDING")]
+    [SerializeField] private Transform podium1stPlace;
+    [SerializeField] private Transform podium2ndPlace;
+    [SerializeField] private Transform outroCameraTransform;
+    [SerializeField] private float endgameDelay = 3f;
+    // Add other ending/outro fields here as needed
+
+    [Header("Skip Intro")]
+    [SerializeField] private KeyCode skipIntroKey = KeyCode.Space;
+    [SerializeField] private bool allowSkipIntro = true;
 
     private Vector3 originalCameraPosition;
     private Quaternion originalCameraRotation;
@@ -56,10 +79,17 @@ public class GameIntroManager : MonoBehaviour
     private Vector3 originalCountdownScale;
     private bool introComplete = false;
     private PlayerScript[] playerScripts;
-
+    private bool gameEnded = false;
+    private bool introSkipped = false;
 
     void Start()
     {
+        if (gameplayUIPanel != null)
+        {
+            gameplayUIPanel.SetActive(false);
+            Debug.Log("Gameplay UI panel deactivated at Start");
+        }
+
         if (gameCamera == null)
             gameCamera = Camera.main;
 
@@ -77,6 +107,24 @@ public class GameIntroManager : MonoBehaviour
         Debug.Log("GameIntroManager starting intro sequence");
 
         StartCoroutine(PlayFullIntroSequence());
+    }
+
+    void Update()
+    {
+        // Check for skip intro input (keyboard or gamepad)
+        if (allowSkipIntro && !introComplete && !introSkipped)
+        {
+            // Keyboard input
+            if (Input.GetKeyDown(skipIntroKey))
+            {
+                SkipIntro();
+            }
+            // Gamepad input (Circle/B button)
+            else if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
+            {
+                SkipIntro();
+            }
+        }
     }
 
     IEnumerator FlyThroughCameraPath()
@@ -395,6 +443,12 @@ public class GameIntroManager : MonoBehaviour
             thief.canWave = true;
         }
 
+        if (gameplayUIPanel != null)
+        {
+            gameplayUIPanel.SetActive(true);
+            Debug.Log("Gameplay UI panel activated at EnableGameplay");
+        }
+
         Debug.Log("Gameplay enabled!");
     }
 
@@ -408,5 +462,98 @@ public class GameIntroManager : MonoBehaviour
     public bool IsIntroComplete()
     {
         return introComplete;
+    }
+
+    // --- ENDGAME HANDLING ---
+    public void OnGameEnd(int winningPlayer)
+    {
+        // Move camera to outro position
+        if (outroCameraTransform != null && gameCamera != null)
+        {
+            gameCamera.transform.position = outroCameraTransform.position;
+            gameCamera.transform.rotation = outroCameraTransform.rotation;
+        }
+
+        // Teleport players to podiums
+        var players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        for (int i = 0; i < players.Length; i++)
+        {
+            // Index 0 = Fruity (P1, left), Index 1 = Potato (P2, right)
+            if (winningPlayer == 0 && i == 0)
+                players[i].transform.position = podium1stPlace.position;
+            else if (winningPlayer == 1 && i == 1)
+                players[i].transform.position = podium1stPlace.position;
+            else
+                players[i].transform.position = podium2ndPlace.position;
+        }
+
+        // Show Win UI
+        if (winningPlayer == 0 && player1WinUI != null)
+            player1WinUI.SetActive(true);
+        else if (winningPlayer == 1 && player2WinUI != null)
+            player2WinUI.SetActive(true);
+
+        // Optionally, start outro or reload scene after delay
+        StartCoroutine(HandleEndgameOutro());
+    }
+
+    private IEnumerator HandleEndgameOutro()
+    {
+        yield return new WaitForSeconds(endgameDelay);
+        // TODO: Transition to outro, podium, or reload scene as needed
+        // Example: SceneManager.LoadScene("BugabooPlanet");
+    }
+
+    public void SkipIntro()
+    {
+        if (introComplete || introSkipped) return;
+        
+        introSkipped = true;
+        Debug.Log("Intro skipped - going directly to countdown");
+        
+        // Stop any ongoing intro coroutines
+        StopAllCoroutines();
+        
+        // Disable any active splash/overlay UI
+        DisableAllSplashUI();
+        
+        // Set camera to gameplay position immediately
+        if (gameCamera != null && gameplayPosition != null)
+        {
+            gameCamera.transform.position = gameplayPosition.position;
+            gameCamera.transform.rotation = gameplayPosition.rotation;
+        }
+        
+        // Enable player input and start countdown sequence
+        EnablePlayerInput();
+        StartCoroutine(SkipIntroCountdownSequence());
+    }
+
+    // Special countdown sequence for skipped intro that calls EnableGameplay at the end
+    private IEnumerator SkipIntroCountdownSequence()
+    {
+        yield return StartCoroutine(PlayCountdown());
+        
+        // After countdown completes, enable gameplay (same as normal sequence)
+        EnableGameplay();
+        introComplete = true;
+    }
+
+    private void DisableAllSplashUI()
+    {
+        // Disable all splash/overlay UI elements
+        if (frutyNameUI != null) frutyNameUI.SetActive(false);
+        if (potatoNameUI != null) potatoNameUI.SetActive(false);
+        if (vsSplashUI != null) vsSplashUI.SetActive(false);
+        
+        // Disable any overlay UI from flythrough points
+        if (flythroughPoints != null)
+        {
+            foreach (var point in flythroughPoints)
+            {
+                if (point.overlayUI != null)
+                    point.overlayUI.SetActive(false);
+            }
+        }
     }
 }

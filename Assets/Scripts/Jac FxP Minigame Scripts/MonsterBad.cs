@@ -45,7 +45,7 @@ public class MonsterBad : MonoBehaviour
             eatingTimer += Time.deltaTime;
             if (eatingTimer >= monsterEatingTime && targetLife != null)
             {
-                // “Eat” the life: remove its collider & child visual
+                // "Eat" the life: remove its collider & child visual
                 var lifeCol = targetLife.GetComponent<Collider>();
                 if (lifeCol != null) Destroy(lifeCol);
 
@@ -80,7 +80,7 @@ public class MonsterBad : MonoBehaviour
         if (_anim == null || _rb == null)
             return;
 
-        // Grab this frame’s root-motion delta
+        // Grab this frame's root-motion delta
         Vector3 dp = _anim.deltaPosition;
         Debug.Log($"Δpos this frame: {dp.z:F3}");
         var info = _anim.GetCurrentAnimatorClipInfo(0);
@@ -88,7 +88,7 @@ public class MonsterBad : MonoBehaviour
             Debug.Log("Playing clip: " + info[0].clip.name);
 
 
-        // Only apply it when we’re allowed to move
+        // Only apply it when we're allowed to move
         if (!isEating && isMoving)
         {
             _rb.MovePosition(_rb.position + dp);
@@ -126,19 +126,15 @@ public class MonsterBad : MonoBehaviour
         }
         else if (other.CompareTag("LoseCon"))
         {
-            // Monster reached the “lose” trigger for player1
-            gameManager.Fruit_Remaining = 0;
-            didplayer1lose = true;
+            // Monster reached the "lose" trigger for player1
             if (gameManager != null)
-                gameManager.TriggerGameEndFromMonster(this);
+                gameManager.EndGame(0); // 0 = player1 lost
         }
         else if (other.CompareTag("LoseCon1"))
         {
-            // Monster reached the “lose” trigger for player2
-            gameManager.Fruit_Remaining = 0;
-            didplayer1lose = false;
+            // Monster reached the "lose" trigger for player2
             if (gameManager != null)
-                gameManager.TriggerGameEndFromMonster(this);
+                gameManager.EndGame(1); // 1 = player2 lost
         }
     }
 }
