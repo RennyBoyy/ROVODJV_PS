@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
-    [SerializeField] private GameObject tomato;
+    [SerializeField] private GameObject projectile;
     [SerializeField] private Transform[] lanePoints;
     [SerializeField] private Transform hand;
     [SerializeField] private string laneGroupName = "Collliders_Lives";
@@ -28,7 +28,7 @@ public class PlayerScript : MonoBehaviour
     private bool canMove = true;
 
     private bool insideReloadZone = false;
-    private GameManager_Fruity minigameManager;
+    [SerializeField] private GameManager_Fruity minigameManager;
 
     private void Start()
     {
@@ -183,8 +183,8 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (tomato != null && hand != null)
-                Instantiate(tomato, hand.transform.position, transform.rotation);
+            if (projectile != null && hand != null)
+                Instantiate(projectile, hand.transform.position, transform.rotation);
             bullets--;
             UpdateAmmoUI();
             FruityGameConfigurator.Instance?.PlayThrowSound(IsPlayer1());

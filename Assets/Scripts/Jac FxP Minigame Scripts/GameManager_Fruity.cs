@@ -18,12 +18,10 @@ public class GameManager_Fruity : MonoBehaviour
     [Header("Ammo UI Images")]
     [SerializeField] private Image[] p1AmmoImages = new Image[5]; // P1 ammo images 1-5
     [SerializeField] private Image[] p2AmmoImages = new Image[5]; // P2 ammo images 1-5
+    [SerializeField] private Sprite p1FullSprite; // P1 full ammo sprite
+    [SerializeField] private Sprite p2FullSprite; // P2 full ammo sprite
     [SerializeField] private Sprite p1EmptySprite; // P1 empty sprite
     [SerializeField] private Sprite p2EmptySprite; // P2 empty sprite
-
-    // Store original sprites for each ammo image
-    private Sprite[] p1OriginalSprites = new Sprite[5];
-    private Sprite[] p2OriginalSprites = new Sprite[5];
 
     private bool gameEnded = false;
 
@@ -35,26 +33,6 @@ public class GameManager_Fruity : MonoBehaviour
         if (player1Transform == null || player2Transform == null)
         {
             FindPlayerTransforms();
-        }
-
-        // Cache original sprites for each ammo image
-        CacheOriginalSprites();
-    }
-
-    private void CacheOriginalSprites()
-    {
-        // Cache P1 ammo original sprites
-        for (int i = 0; i < p1AmmoImages.Length; i++)
-        {
-            if (p1AmmoImages[i] != null)
-                p1OriginalSprites[i] = p1AmmoImages[i].sprite;
-        }
-
-        // Cache P2 ammo original sprites
-        for (int i = 0; i < p2AmmoImages.Length; i++)
-        {
-            if (p2AmmoImages[i] != null)
-                p2OriginalSprites[i] = p2AmmoImages[i].sprite;
         }
     }
 
@@ -112,10 +90,9 @@ public class GameManager_Fruity : MonoBehaviour
         {
             if (p1AmmoImages[i] != null)
             {
-                // Right to left: index 4 is rightmost, index 0 is leftmost
                 int rightToLeftIndex = 4 - i;
                 if (rightToLeftIndex < ammoCount)
-                    p1AmmoImages[i].sprite = p1OriginalSprites[i];
+                    p1AmmoImages[i].sprite = p1FullSprite;
                 else
                     p1AmmoImages[i].sprite = p1EmptySprite;
             }
@@ -129,9 +106,8 @@ public class GameManager_Fruity : MonoBehaviour
         {
             if (p2AmmoImages[i] != null)
             {
-                // Left to right: index 0 is leftmost, index 4 is rightmost
                 if (i < ammoCount)
-                    p2AmmoImages[i].sprite = p2OriginalSprites[i];
+                    p2AmmoImages[i].sprite = p2FullSprite;
                 else
                     p2AmmoImages[i].sprite = p2EmptySprite;
             }

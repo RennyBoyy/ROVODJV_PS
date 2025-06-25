@@ -9,6 +9,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
+      propertyPath: m_LocalScale.z
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: faefcbc2959de734abaa51e23566c2e4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -344,7 +348,6 @@ MonoBehaviour:
   player1Input: {fileID: 0}
   player2Input: {fileID: 0}
   maxBullets: 10
-  LeftOrRight: 0
   bullets: 10
   laneMoveDuration: 0.25
 --- !u!54 &7582992937665486648

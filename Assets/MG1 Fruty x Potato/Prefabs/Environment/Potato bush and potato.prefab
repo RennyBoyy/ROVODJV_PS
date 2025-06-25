@@ -65,9 +65,17 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -1789022924748715232, guid: ca8e6f429b423634e95406680dd28f3d, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -1789022924748715232, guid: ca8e6f429b423634e95406680dd28f3d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6b64847f34e33894ea2587e5ca857368, type: 2}
+    - target: {fileID: -1789022924748715232, guid: ca8e6f429b423634e95406680dd28f3d, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: dca16c9dd197b2b48abc48aefff55a96, type: 2}
     - target: {fileID: 919132149155446097, guid: ca8e6f429b423634e95406680dd28f3d, type: 3}
       propertyPath: m_Name
       value: Potato bush and potato
