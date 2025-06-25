@@ -215,7 +215,7 @@ public class FruityGameConfigurator : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Skipping {clip.name}, as both audio sources for this sound are busy");
+        Debug.Log($"Skipping {clip.name}, as both audio sources for this sound are bussy");
     }
 
     public void PlayLoseSound()

@@ -40,6 +40,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private float jumpBufferTime = 0.1f;
 
+    [Header("Balloon Reference")]
+    [SerializeField] private BalloonPhysics balloonController;
+
     // runtime state
     private bool isGrounded;
     private bool moving;
@@ -185,6 +188,9 @@ public class PlayerController : MonoBehaviour
         {
             m_Rigidbody.angularVelocity = Vector3.zero;
             var v = m_Rigidbody.linearVelocity; v.y = 0f; m_Rigidbody.linearVelocity = v;
+
+            balloonController?.OnPlayerHitObstacle();
+
             m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.Impulse);
             SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
             Destroy(col.gameObject);

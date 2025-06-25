@@ -690,6 +690,64 @@ MonoBehaviour:
   sfxVolume: 0.269
   ambientVolume: 0.388
   audioTransitionDuration: 1
+--- !u!1001 &264456159
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.28549105
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.17542186
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.91787535
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.21266611
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -29.378
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 148.948
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -13.309
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+      propertyPath: m_Name
+      value: Tiki island v2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects:
+    - {fileID: 2866621852552652557, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bd1f33e6ee7857745a157311bf1baa9c, type: 3}
 --- !u!1 &377878865
 GameObject:
   m_ObjectHideFlags: 0
@@ -3404,12 +3462,10 @@ MonoBehaviour:
   xCorrectionSpeed: 2
   bobSpeed: 1
   bobAmount: 0.1
-  raycastDistance: 7
   snapDuration: 0.5
   snapCooldownDuration: 2
   inactivityTimeout: 1
   inputLockDuration: 0.5
-  snapDetectionRadius: 1
   snapAngleThreshold: 15
   snapCurve:
     serializedVersion: 2
@@ -3438,7 +3494,6 @@ MonoBehaviour:
   snapStrength: 1.5
   useSphericalSnapping: 1
   outlineMaterial: {fileID: 2100000, guid: 326262a4b38f5114c82ee06f3052c2c6, type: 2}
-  outlineShaderName: Outline
   useOutlineEffect: 1
   levelData:
   - levelName: Fruty's Minigame
@@ -4805,3 +4860,4 @@ SceneRoots:
   - {fileID: 1357202946}
   - {fileID: 1859793766}
   - {fileID: 1105799958}
+  - {fileID: 264456159}
