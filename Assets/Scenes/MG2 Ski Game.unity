@@ -9117,7 +9117,7 @@ MonoBehaviour:
   m_Rigidbody: {fileID: 542103406}
   kittyAnimator: {fileID: 542103407}
   gameManagerSlope: {fileID: 0}
-  gravityScale: 3.64
+  gravityScale: 2.47
   obstacleSlamForce: 40
   lateralThrust: 2
   maxSpeed: 100
@@ -9125,7 +9125,7 @@ MonoBehaviour:
   jumpHeight: 10
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  balloonController: {fileID: 764746719}
+  balloonController: {fileID: 0}
   playerID: 1
 --- !u!54 &542103406
 Rigidbody:
@@ -36137,13 +36137,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: vCam
+      value: 
+      objectReference: {fileID: 445794604}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: maxSpeed
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: gravityScale
-      value: 3.64
+      value: 2.47
       objectReference: {fileID: 0}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: playercamera
+      value: 
+      objectReference: {fileID: 878837335}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

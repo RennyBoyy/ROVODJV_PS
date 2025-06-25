@@ -116,6 +116,8 @@ public class PlayerController : MonoBehaviour
             dir = -1;
         }
         kittyAnimator?.SetInteger("MoveDirection", dir);
+
+
     }
 
     private void ApplySlopeSlideAndLean()
