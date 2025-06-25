@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -43,6 +44,10 @@ public class PlayerController : MonoBehaviour
     [Header("Balloon Reference")]
     [SerializeField] private BalloonPhysics balloonController;
 
+    [Header("Camera Shake Settings")]
+    [SerializeField] private CinemachineBasicMultiChannelPerlin cameraShake;
+    [SerializeField] private float cameraShakeAmplitude;
+
     // runtime state
     private bool isGrounded;
     private bool moving;
@@ -63,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
         // lock all physics-driven rotation
         m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-
+        cameraShake.AmplitudeGain = 0f;
         isGrounded = true;
     }
 
@@ -190,6 +195,7 @@ public class PlayerController : MonoBehaviour
         {
             m_Rigidbody.angularVelocity = Vector3.zero;
             kittyAnimator?.SetTrigger("Hit");
+            cameraShake.AmplitudeGain = cameraShakeAmplitude;
             m_Rigidbody.linearVelocity = Vector3.zero;
             m_Rigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
             m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.VelocityChange);
@@ -207,6 +213,7 @@ public class PlayerController : MonoBehaviour
         SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         yield return new WaitForSeconds(1.2f);
         moving = true;
+        cameraShake.AmplitudeGain = 0f;
         m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
     }

@@ -4823,6 +4823,7 @@ MonoBehaviour:
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   balloonController: {fileID: 0}
+  cameraShake: {fileID: 0}
   playerID: 1
 --- !u!54 &327431396
 Rigidbody:
@@ -7283,6 +7284,7 @@ GameObject:
   - component: {fileID: 445794605}
   - component: {fileID: 445794604}
   - component: {fileID: 445794606}
+  - component: {fileID: 445794607}
   m_Layer: 0
   m_Name: FollowCam
   m_TagString: Untagged
@@ -7411,6 +7413,23 @@ MonoBehaviour:
       Wait: 1
       Time: 2
     Restrictions: 0
+--- !u!114 &445794607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445794602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 0
+  FrequencyGain: 0.1
+  m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &456880006
 GameObject:
   m_ObjectHideFlags: 0
@@ -9125,7 +9144,8 @@ MonoBehaviour:
   jumpHeight: 10
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  balloonController: {fileID: 0}
+  balloonController: {fileID: 764746719}
+  cameraShake: {fileID: 1444420996}
   playerID: 1
 --- !u!54 &542103406
 Rigidbody:
@@ -14090,6 +14110,10 @@ PrefabInstance:
     - target: {fileID: 8515189079946893622, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: m_Name
       value: Kity model
+      objectReference: {fileID: 0}
+    - target: {fileID: 8515189079946893622, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9036428632313381772, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: m_LocalPosition.x
@@ -24068,6 +24092,7 @@ GameObject:
   - component: {fileID: 1444420995}
   - component: {fileID: 1444420994}
   - component: {fileID: 1444420993}
+  - component: {fileID: 1444420996}
   m_Layer: 0
   m_Name: FollowCam(Player2)
   m_TagString: Untagged
@@ -24196,6 +24221,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 432332437}
   m_LocalEulerAnglesHint: {x: 30.64, y: 0, z: 0}
+--- !u!114 &1444420996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444420992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 0
+  FrequencyGain: 1
+  m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1452241465
 GameObject:
   m_ObjectHideFlags: 0
@@ -27746,6 +27788,7 @@ MonoBehaviour:
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   balloonController: {fileID: 0}
+  cameraShake: {fileID: 0}
   playerID: 2
 --- !u!54 &1651878910
 Rigidbody:
@@ -36144,6 +36187,10 @@ PrefabInstance:
       propertyPath: maxSpeed
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: cameraShake
+      value: 
+      objectReference: {fileID: 445794607}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: gravityScale
       value: 2.47
