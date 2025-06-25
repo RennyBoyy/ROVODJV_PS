@@ -158,7 +158,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && isGrounded)
+        if (ctx.performed && isGrounded && moving)
             jumpBufferCounter = jumpBufferTime;
     }
 
@@ -186,16 +186,14 @@ public class PlayerController : MonoBehaviour
 
         if (col.gameObject.CompareTag("Obstacle"))
         {
-            m_Rigidbody.angularVelocity = Vector3.zero;
-            var v = m_Rigidbody.linearVelocity; v.y = 0f; m_Rigidbody.linearVelocity = v;
-
-            balloonController?.OnPlayerHitObstacle();
-
-            m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.Impulse);
+            kittyAnimator?.SetTrigger("Hit");
+            m_Rigidbody.linearVelocity = Vector3.zero;
+            m_Rigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+            m_Rigidbody.AddForce(Vector3.down * obstacleSlamForce, ForceMode.VelocityChange);
             SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
             Destroy(col.gameObject);
             StartCoroutine(CollisionRecovery());
-            kittyAnimator?.SetTrigger("Hit");
+          
         }
     }
 
@@ -205,6 +203,7 @@ public class PlayerController : MonoBehaviour
         SkiGameConfigurator.Instance?.StopSkiingSound(playerID == 1);
         yield return new WaitForSeconds(1.2f);
         moving = true;
+        m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         SkiGameConfigurator.Instance?.StartSkiingSound(playerID == 1);
     }
 
