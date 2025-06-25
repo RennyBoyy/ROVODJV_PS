@@ -158,8 +158,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && isGrounded && moving)
-            jumpBufferCounter = jumpBufferTime;
+            if (ctx.performed && isGrounded && moving)
+                jumpBufferCounter = jumpBufferTime;
     }
 
     public void startMoving()
@@ -174,7 +174,7 @@ public class PlayerController : MonoBehaviour
         // Build a flat forward direction (ignore any residual Y)
         Vector3 forwardDir = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
 
-        m_Rigidbody.linearVelocity = forwardDir * 8f
+        m_Rigidbody.linearVelocity = forwardDir * 10f
                              + Vector3.up * vY;
 
     }
@@ -186,6 +186,7 @@ public class PlayerController : MonoBehaviour
 
         if (col.gameObject.CompareTag("Obstacle"))
         {
+            m_Rigidbody.angularVelocity = Vector3.zero;
             kittyAnimator?.SetTrigger("Hit");
             m_Rigidbody.linearVelocity = Vector3.zero;
             m_Rigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
@@ -193,7 +194,8 @@ public class PlayerController : MonoBehaviour
             SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
             Destroy(col.gameObject);
             StartCoroutine(CollisionRecovery());
-          
+         
+
         }
     }
 

@@ -2862,7 +2862,7 @@ GameObject:
   - component: {fileID: 168315414}
   - component: {fileID: 168315413}
   - component: {fileID: 168315412}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BeginningSlope
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -7477,7 +7477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!154 &459019245
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -9117,7 +9117,7 @@ MonoBehaviour:
   m_Rigidbody: {fileID: 542103406}
   kittyAnimator: {fileID: 542103407}
   gameManagerSlope: {fileID: 0}
-  gravityScale: 5
+  gravityScale: 3.64
   obstacleSlamForce: 40
   lateralThrust: 2
   maxSpeed: 100
@@ -9125,7 +9125,7 @@ MonoBehaviour:
   jumpHeight: 10
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  balloonController: {fileID: 0}
+  balloonController: {fileID: 764746719}
   playerID: 1
 --- !u!54 &542103406
 Rigidbody:
@@ -9678,7 +9678,7 @@ GameObject:
   - component: {fileID: 584420018}
   - component: {fileID: 584420017}
   - component: {fileID: 584420016}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SmallRamp
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -13304,6 +13304,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 116.786064
       objectReference: {fileID: 0}
+    - target: {fileID: 2977791641169203062, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 516b1cdffc0d38d469a430ff3c6f5c7b, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -13527,13 +13531,13 @@ MonoBehaviour:
   player: {fileID: 542103401}
   handAttachPoint: {fileID: 764746717}
   balloonRigidbody: {fileID: 764746718}
-  stringLength: 3
-  stringSpring: 200
-  stringDamper: 20
-  balloonMass: 0.1
-  buoyancyForce: 2
-  windResistance: 0.5
-  maxDrift: 5
+  stringLength: 4
+  stringSpring: 100
+  stringDamper: 10
+  balloonMass: 0.2
+  buoyancyForce: 3
+  windResistance: 1
+  maxDrift: 2.5
   windStrength: 1
   windDirection: {x: 1, y: 0, z: 0}
 --- !u!1 &771968877
@@ -13838,7 +13842,7 @@ GameObject:
   - component: {fileID: 790116401}
   - component: {fileID: 790116400}
   - component: {fileID: 790116399}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: SmallRamp
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -13946,7 +13950,7 @@ GameObject:
   - component: {fileID: 795981593}
   - component: {fileID: 795981592}
   - component: {fileID: 795981591}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EndPart
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -25487,7 +25491,7 @@ GameObject:
   - component: {fileID: 1528033137}
   - component: {fileID: 1528033136}
   - component: {fileID: 1528033135}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: BeginningSlope
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -32612,7 +32616,7 @@ GameObject:
   - component: {fileID: 1953661827}
   - component: {fileID: 1953661826}
   - component: {fileID: 1953661825}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: EndPart
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -35856,7 +35860,7 @@ GameObject:
   - component: {fileID: 2142294563}
   - component: {fileID: 2142294562}
   - component: {fileID: 2142294561}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: BigSlope
   m_TagString: Slope
   m_Icon: {fileID: 0}
@@ -36084,6 +36088,10 @@ PrefabInstance:
       propertyPath: buoyancyForce
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6034352032696806161, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8515189079946893622, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: m_Name
       value: Kity model
@@ -36127,6 +36135,14 @@ PrefabInstance:
     - target: {fileID: 9036428632313381772, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: maxSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: gravityScale
+      value: 3.64
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
