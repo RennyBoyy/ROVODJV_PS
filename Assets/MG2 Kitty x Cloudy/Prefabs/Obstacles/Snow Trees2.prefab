@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b6edc01d381bc8499abb7ba5e6ed6fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushForce: 250
+  pushForce: 200
   forceDirection: {x: -1, y: 0, z: 0}
   forcePosition: {x: 0, y: 50, z: 0}
   standingOffset: {x: 50, y: 0, z: 0}
