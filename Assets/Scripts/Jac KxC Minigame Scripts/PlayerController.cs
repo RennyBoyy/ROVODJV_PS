@@ -93,6 +93,7 @@ public class PlayerController : MonoBehaviour
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
             // consume the jump
+            kittyAnimator?.SetTrigger("Jump");
             isGrounded = false;
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
@@ -225,7 +226,7 @@ public class PlayerController : MonoBehaviour
         moving = false;
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
-        kittyAnimator?.SetTrigger(didplayer1win ? "victory" : "defeat");
+        kittyAnimator?.SetTrigger(didplayer1win ? "Victory" : "Defeat");
         gameManagerSlope?.TriggerGameEndFromPlayer(this);
     }
 }

@@ -4824,6 +4824,7 @@ MonoBehaviour:
   jumpBufferTime: 0.1
   balloonController: {fileID: 0}
   cameraShake: {fileID: 0}
+  cameraShakeAmplitude: 0
   playerID: 1
 --- !u!54 &327431396
 Rigidbody:
@@ -9136,7 +9137,7 @@ MonoBehaviour:
   m_Rigidbody: {fileID: 542103406}
   kittyAnimator: {fileID: 542103407}
   gameManagerSlope: {fileID: 0}
-  gravityScale: 2.47
+  gravityScale: 5
   obstacleSlamForce: 40
   lateralThrust: 2
   maxSpeed: 100
@@ -9146,6 +9147,7 @@ MonoBehaviour:
   jumpBufferTime: 0.1
   balloonController: {fileID: 764746719}
   cameraShake: {fileID: 1444420996}
+  cameraShakeAmplitude: 0
   playerID: 1
 --- !u!54 &542103406
 Rigidbody:
@@ -27789,6 +27791,7 @@ MonoBehaviour:
   jumpBufferTime: 0.1
   balloonController: {fileID: 0}
   cameraShake: {fileID: 0}
+  cameraShakeAmplitude: 0
   playerID: 2
 --- !u!54 &1651878910
 Rigidbody:
@@ -36193,7 +36196,7 @@ PrefabInstance:
       objectReference: {fileID: 445794607}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: gravityScale
-      value: 2.47
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: playercamera
