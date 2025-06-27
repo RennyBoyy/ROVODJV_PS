@@ -153,7 +153,7 @@ public class IceSpikeStopper : MonoBehaviour
     {
         if (hasStopped) return;
 
-        if (collision.gameObject.CompareTag("Slope"))
+        if (collision.gameObject.CompareTag("Slope") || collision.gameObject.CompareTag("RoughTerrain"))
         {
             hasStopped = true;
 

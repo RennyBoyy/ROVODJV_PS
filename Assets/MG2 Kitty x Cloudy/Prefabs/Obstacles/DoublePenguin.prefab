@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5165747758956292503}
+  - component: {fileID: 927852708295922447}
   m_Layer: 0
   m_Name: DoublePenguin
   m_TagString: Obstacle
@@ -25,14 +26,35 @@ Transform:
   m_GameObject: {fileID: 2222698769860095179}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -31.24, y: 1170.2, z: 989.34}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3916688996948867620}
   - {fileID: 8656334746253609283}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &927852708295922447
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2222698769860095179}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 11.798164, y: 24.911621, z: 13.779053}
+  m_Center: {x: 0.37213707, y: 11.955811, z: -0.3133545}
 --- !u!1001 &1369469134265901459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -85,7 +107,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PenguinInIceObstacle
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2807204630036860489, guid: b10f29b5661d28a4aa03893688e7f1db, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -147,7 +170,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PenguinInIceObstacle (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2807204630036860489, guid: b10f29b5661d28a4aa03893688e7f1db, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

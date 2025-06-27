@@ -54,6 +54,8 @@ public class FallingTreeObstacle : MonoBehaviour
     private void SetupSlopeIgnoring()
     {
         GameObject[] slopeObjects = GameObject.FindGameObjectsWithTag("Slope");
+        GameObject[] wallObjects = GameObject.FindGameObjectsWithTag("Wall");
+        GameObject[] roughObjects = GameObject.FindGameObjectsWithTag("RoughTerrain");
         Collider treeCollider = GetComponent<Collider>();
 
         if (treeCollider == null)
@@ -69,6 +71,25 @@ public class FallingTreeObstacle : MonoBehaviour
                 Physics.IgnoreCollision(treeCollider, slopeCollider);
             }
         }
+
+        foreach (GameObject wallObject in wallObjects)
+        {
+            Collider wallCollider = wallObject.GetComponent<Collider>();
+            if (wallCollider != null)
+            {
+                Physics.IgnoreCollision(treeCollider, wallCollider);
+            }
+        }
+
+        foreach (GameObject roughObject in roughObjects)
+        {
+            Collider roughCollider = roughObject.GetComponent<Collider>();
+            if (roughCollider != null)
+            {
+                Physics.IgnoreCollision(treeCollider, roughCollider);
+            }
+        }
+
     }
 
     public void Initialize(int rowIndex, Vector3 basePosition, float[] lanes, float slope, SkiSlopeScript script, float triggerDist)
