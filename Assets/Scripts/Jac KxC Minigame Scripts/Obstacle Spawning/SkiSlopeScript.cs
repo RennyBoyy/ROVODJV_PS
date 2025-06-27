@@ -36,7 +36,7 @@ public class ObstacleRow
 public class ComplexObstacle
 {
     public string name = "Complex Obstacle";
-    public GameObject prefab;
+    public GameObject prefab;          
     public int targetRow = 15;
     public float triggerDistance = 2f;
 }
@@ -48,7 +48,7 @@ public class SkiSlopeScript : MonoBehaviour
     [SerializeField] private float[] laneOffsets = new float[] { -2f, 0f, 2f };
     [SerializeField] private GameObject slopeObject;
     [SerializeField] private GameObject[] obstaclePrefabs;
-    [SerializeField] private float[] obstacleVerticalOffsets;        
+    [SerializeField] private float[] obstacleVerticalOffsets;
     [SerializeField] private ObstacleRow[] obstacleRows;
     [SerializeField] private ComplexObstacle[] complexObstacles;
     [SerializeField] private int numberOfRows = 30;
@@ -58,7 +58,7 @@ public class SkiSlopeScript : MonoBehaviour
     private List<float> rowZPositions = new List<float>();
     private List<int> complexObstacleRowIndices = new List<int>();
     private float cachedSlopeAngle = 0f;
-    private ObstacleRow lastUsedObstacleRow = null;       
+    private ObstacleRow lastUsedObstacleRow = null;
 
     private void Start()
     {
@@ -188,7 +188,7 @@ public class SkiSlopeScript : MonoBehaviour
         }
 
         ObstacleRow selectedRow = GetRandomObstacleRowExcludingLast();
-        lastUsedObstacleRow = selectedRow;      
+        lastUsedObstacleRow = selectedRow;
         int[] lanePattern = selectedRow.GetLanePattern();
 
         for (int lane = 0; lane < Mathf.Min(laneOffsets.Length, lanePattern.Length); lane++)
@@ -216,7 +216,7 @@ public class SkiSlopeScript : MonoBehaviour
 
             Vector3 spawnPosition = basePosition + new Vector3(laneOffsets[lane], verticalOffset, 0f);
             Quaternion slopeRotation = Quaternion.Euler(cachedSlopeAngle, 0f, 0f);
-            Quaternion finalRotation = slopeRotation * prefab.transform.rotation;        
+            Quaternion finalRotation = slopeRotation * prefab.transform.rotation;
             GameObject spawnedObstacle = Instantiate(prefab, spawnPosition, finalRotation, rowParent);
             spawnedObstacle.name = $"{prefab.name}_Row{rowIndex}_Lane{lane}";
 
@@ -254,7 +254,7 @@ public class SkiSlopeScript : MonoBehaviour
 
         rowZPositions.Clear();
         complexObstacleRowIndices.Clear();
-        lastUsedObstacleRow = null;       
+        lastUsedObstacleRow = null;
     }
 
     private ObstacleRow GetRandomObstacleRowExcludingLast()

@@ -101,7 +101,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPosition: {x: 250, y: 400, z: 0}
-  endPosition: {x: 20, y: 5, z: 0}
+  fallDirection: -1
+  leftEndPosition: {x: -20, y: 5, z: 0}
+  rightEndPosition: {x: 20, y: 5, z: 0}
   finalRotation: {x: 70, y: -75, z: -70}
   fallDuration: 3
   snowParticles: {fileID: 0}

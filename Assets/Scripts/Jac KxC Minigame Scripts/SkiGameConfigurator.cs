@@ -17,6 +17,13 @@ public class SkiGameConfigurator : MonoBehaviour
     [Header("Player Obstacle Hit Sound Effects")]
     [SerializeField] private AudioClip[] obstacleHitSounds;
 
+    [Header("Complex Obstacle Sound Effects")]
+    [SerializeField] private AudioClip treeStartFallingSound;
+    [SerializeField] private AudioClip treeHitGroundSound;
+    [SerializeField] private AudioClip meteorFallingSound;
+    [SerializeField] private AudioClip meteorImpactSound;
+    [SerializeField] private AudioClip spikeDetachSound;
+
     [Header("Background Music")]
     [SerializeField] private AudioClip backgroundMusic;
 
@@ -57,6 +64,7 @@ public class SkiGameConfigurator : MonoBehaviour
     [SerializeField] private float sfxVolume = 1.0f;
     [SerializeField] private float ambientVolume = 0.4f;
     [SerializeField] private float skiingVolume = 0.6f;
+    [SerializeField] private float obstacleVolume = 0.8f;
 
     private void Awake()
     {
@@ -206,6 +214,63 @@ public class SkiGameConfigurator : MonoBehaviour
 
     #endregion
 
+    #region Complex Obstacle Sound Methods
+
+    public void PlayTreeStartFallingSound(AudioSource source)
+    {
+        if (treeStartFallingSound != null && source != null)
+        {
+            source.volume = obstacleVolume;
+            source.PlayOneShot(treeStartFallingSound);
+        }
+    }
+
+    public void PlayTreeHitGroundSound(AudioSource source)
+    {
+        if (treeHitGroundSound != null && source != null)
+        {
+            source.volume = obstacleVolume;
+            source.PlayOneShot(treeHitGroundSound);
+        }
+    }
+
+    public void StartMeteorFallingSound(AudioSource source)
+    {
+        if (meteorFallingSound != null && source != null)
+        {
+            source.volume = obstacleVolume;
+            source.clip = meteorFallingSound;
+            source.loop = true;
+            source.Play();
+        }
+    }
+
+    public void StopMeteorFallingSoundAndPlayImpact(AudioSource source)
+    {
+        if (source != null)
+        {
+            source.loop = false;
+            source.Stop();
+
+            if (meteorImpactSound != null)
+            {
+                source.volume = obstacleVolume;
+                source.PlayOneShot(meteorImpactSound);
+            }
+        }
+    }
+
+    public void PlaySpikeDetachSound(AudioSource source)
+    {
+        if (spikeDetachSound != null && source != null)
+        {
+            source.volume = obstacleVolume;
+            source.PlayOneShot(spikeDetachSound);
+        }
+    }
+
+    #endregion
+
     #region Utility Methods
 
     private AudioClip GetRandomClip(AudioClip[] clips)
@@ -300,6 +365,11 @@ public class SkiGameConfigurator : MonoBehaviour
         skiingVolume = Mathf.Clamp01(volume);
         if (player1SkiingSource != null) player1SkiingSource.volume = skiingVolume;
         if (player2SkiingSource != null) player2SkiingSource.volume = skiingVolume;
+    }
+
+    public void SetObstacleVolume(float volume)
+    {
+        obstacleVolume = Mathf.Clamp01(volume);
     }
 
     public void SetAmbientVolume(float volume)
