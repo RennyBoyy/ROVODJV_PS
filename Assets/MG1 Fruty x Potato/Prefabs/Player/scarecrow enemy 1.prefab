@@ -148,6 +148,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterHealth: 1
   monsterEatingTime: 3
+  deathAnimationTrigger: Death
+  deathAnimationDuration: 2.02
   gameManager: {fileID: 0}
   didplayer1lose: 0
 --- !u!54 &1097812257310710957
