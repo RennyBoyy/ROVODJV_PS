@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -122,7 +123,7 @@ public class PlayerController : MonoBehaviour
             dir = -1;
         }
         kittyAnimator?.SetInteger("MoveDirection", dir);
-
+        Debug.Log(kittyAnimator.GetInteger("MoveDirection"));
 
     }
 
@@ -162,6 +163,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!moving) return;
         moveInput = ctx.ReadValue<Vector2>().x;
+        Debug.Log($"Player {playerID} move input: {moveInput}");
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
