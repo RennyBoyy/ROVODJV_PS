@@ -206,6 +206,19 @@ public class PlayerController : MonoBehaviour
          
 
         }
+
+        if (col.gameObject.CompareTag("RoughTerrain"))
+
+        {
+            maxSpeed = 60;
+        }
+
+
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("RoughTerrain")) maxSpeed = 100;
     }
 
     private IEnumerator CollisionRecovery()

@@ -22,9 +22,6 @@ public class Projectile : MonoBehaviour
 
     void Awake()
     {
-    
-        moveDirection = transform.forward;
-
         if (transform.childCount > 0)
         {
             visual = transform.GetChild(0);
@@ -89,5 +86,10 @@ public class Projectile : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void SetMoveDirection(Vector3 dir)
+    {
+        moveDirection = dir;
     }
 }

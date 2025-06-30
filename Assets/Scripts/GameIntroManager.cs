@@ -10,10 +10,13 @@ public class FlythroughPoint
     public Transform point;
     public AnimationCurve easing = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public bool isIntroTarget = false;
+    public bool isCharacter = false;
     public GameObject overlayUI;
     public float pauseDuration = 1.5f;
     public float driftSpeed = 0.5f;
     public Vector3 driftDirection = Vector3.right;
+    public PlayerIdentity targetPlayer;
+    public string introAnimTrigger = "Victory";
 }
 
 public class GameIntroManager : MonoBehaviour
@@ -67,6 +70,8 @@ public class GameIntroManager : MonoBehaviour
     [SerializeField] private Transform podium2ndPlace;
     [SerializeField] private Transform outroCameraTransform;
     [SerializeField] private float endgameDelay = 3f;
+    [SerializeField] private float outroCameraTransitionSpeed = 2f;
+    [SerializeField] private AnimationCurve outroCameraCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     // Add other ending/outro fields here as needed
 
     [Header("Skip Intro")]
@@ -81,6 +86,7 @@ public class GameIntroManager : MonoBehaviour
     private PlayerScript[] playerScripts;
     private bool gameEnded = false;
     private bool introSkipped = false;
+    private bool playerInputDisabled = false;
 
     void Start()
     {
@@ -163,6 +169,18 @@ public class GameIntroManager : MonoBehaviour
 
             if (next.isIntroTarget)
             {
+                // Only trigger animation if this is a character intro target
+                if (next.isCharacter)
+                {
+                    foreach (var player in playerScripts)
+                    {
+                        if (player.PlayerType == next.targetPlayer)
+                        {
+                            player.PlayIntroTargetAnimation(next.introAnimTrigger);
+                        }
+                    }
+                }
+
                 if (next.overlayUI != null) next.overlayUI.SetActive(true);
 
                 float pauseElapsed = 0f;
@@ -171,6 +189,18 @@ public class GameIntroManager : MonoBehaviour
                     pauseElapsed += Time.deltaTime;
                     gameCamera.transform.position += next.driftDirection * next.driftSpeed * Time.deltaTime;
                     yield return null;
+                }
+
+                // Only reset animation if this is a character intro target
+                if (next.isCharacter)
+                {
+                    foreach (var player in playerScripts)
+                    {
+                        if (player.PlayerType == next.targetPlayer)
+                        {
+                            player.ResetIntroTargetAnimation(next.introAnimTrigger);
+                        }
+                    }
                 }
 
                 if (next.overlayUI != null) next.overlayUI.SetActive(false);
@@ -404,11 +434,12 @@ public class GameIntroManager : MonoBehaviour
     void DisablePlayerInput()
     {
         Debug.Log("Disabling player input during camera animation");
+        playerInputDisabled = true;
         foreach (var player in playerScripts)
         {
             if (player != null)
             {
-                player.enabled = false;
+                player.canMove = false;
             }
         }
     }
@@ -417,11 +448,12 @@ public class GameIntroManager : MonoBehaviour
     void EnablePlayerInput()
     {
         Debug.Log("Enabling player input for countdown phase");
+        playerInputDisabled = false;
         foreach (var player in playerScripts)
         {
             if (player != null)
             {
-                player.enabled = true;
+                player.canMove = true;
             }
         }
     }
@@ -464,37 +496,136 @@ public class GameIntroManager : MonoBehaviour
         return introComplete;
     }
 
+    public bool IsGameEnded()
+    {
+        return gameEnded;
+    }
+
     // --- ENDGAME HANDLING ---
     public void OnGameEnd(int winningPlayer)
     {
-        // Move camera to outro position
-        if (outroCameraTransform != null && gameCamera != null)
+        gameEnded = true;
+        
+        // Disable player input during outro
+        DisablePlayerInput();
+
+        // Disable gameplay UI panel
+        if (gameplayUIPanel != null)
         {
-            gameCamera.transform.position = outroCameraTransform.position;
-            gameCamera.transform.rotation = outroCameraTransform.rotation;
+            gameplayUIPanel.SetActive(false);
+            Debug.Log("Gameplay UI panel deactivated at game end");
         }
 
-        // Teleport players to podiums
+        // Teleport players to podiums and set up their animations
+        SetupPodiumCharacters(winningPlayer);
+
+        // Start the outro sequence with a small delay
+        StartCoroutine(StartOutroSequence(winningPlayer));
+    }
+
+    private void SetupPodiumCharacters(int winningPlayer)
+    {
         var players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        
         for (int i = 0; i < players.Length; i++)
         {
-            // Index 0 = Fruity (P1, left), Index 1 = Potato (P2, right)
-            if (winningPlayer == 0 && i == 0)
-                players[i].transform.position = podium1stPlace.position;
-            else if (winningPlayer == 1 && i == 1)
-                players[i].transform.position = podium1stPlace.position;
-            else
-                players[i].transform.position = podium2ndPlace.position;
+            PlayerScript player = players[i];
+            if (player == null) continue;
+
+            // Determine if this player won or lost
+            // Note: winningPlayer parameter actually represents the LOSING player
+            // 0 = P1 (Fruity) lost, so P2 (Potato) won
+            // 1 = P2 (Potato) lost, so P1 (Fruity) won
+            bool isWinner = false;
+            if (winningPlayer == 0 && i == 1) // P2 (Potato) won because P1 lost
+            {
+                isWinner = true;
+                player.transform.position = podium1stPlace.position;
+            }
+            else if (winningPlayer == 1 && i == 0) // P1 (Fruity) won because P2 lost
+            {
+                isWinner = true;
+                player.transform.position = podium1stPlace.position;
+            }
+            else // This player lost
+            {
+                isWinner = false;
+                player.transform.position = podium2ndPlace.position;
+            }
+
+            // Make characters face the camera (screen)
+            FaceCharacterToCamera(player);
+
+            // Play victory or defeat animation
+            string animationTrigger = isWinner ? "Victory" : "Defeat";
+            player.PlayIntroTargetAnimation(animationTrigger);
+        }
+    }
+
+    private void FaceCharacterToCamera(PlayerScript player)
+    {
+        if (player == null || gameCamera == null) return;
+
+        // Get the direction from character to camera
+        Vector3 directionToCamera = (gameCamera.transform.position - player.transform.position).normalized;
+        directionToCamera.y = 0; // Keep rotation only on horizontal plane
+
+        // Handle different character facing directions
+        if (player.PlayerType == PlayerIdentity.Fruity)
+        {
+            // P1 Fruity's model faces -Z, so we need to rotate 180 degrees
+            // to make it face the camera properly
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera) * Quaternion.Euler(0, 180, 0);
+            player.transform.rotation = targetRotation;
+        }
+        else if (player.PlayerType == PlayerIdentity.Potato)
+        {
+            // P2 Potato's model faces +Z, so normal facing works
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+            player.transform.rotation = targetRotation;
+        }
+    }
+
+    private IEnumerator StartOutroSequence(int winningPlayer)
+    {
+        // Small delay before camera transition
+        yield return new WaitForSeconds(0.5f);
+        
+        // Move camera to outro position with smooth lerp
+        if (outroCameraTransform != null && gameCamera != null)
+        {
+            yield return StartCoroutine(SmoothLerpToOutro());
+        }
+        
+        // Show Win UI after camera has moved to podium
+        if (winningPlayer == 0 && player2WinUI != null) // P2 won
+            player2WinUI.SetActive(true);
+        else if (winningPlayer == 1 && player1WinUI != null) // P1 won
+            player1WinUI.SetActive(true);
+        
+        // Start the endgame outro handling
+        StartCoroutine(HandleEndgameOutro());
+    }
+
+    private IEnumerator SmoothLerpToOutro()
+    {
+        Vector3 startPosition = gameCamera.transform.position;
+        Quaternion startRotation = gameCamera.transform.rotation;
+        
+        float elapsed = 0f;
+        while (elapsed < 1f)
+        {
+            elapsed += Time.deltaTime * outroCameraTransitionSpeed;
+            float t = outroCameraCurve.Evaluate(elapsed);
+
+            gameCamera.transform.position = Vector3.Lerp(startPosition, outroCameraTransform.position, t);
+            gameCamera.transform.rotation = Quaternion.Lerp(startRotation, outroCameraTransform.rotation, t);
+
+            yield return null;
         }
 
-        // Show Win UI
-        if (winningPlayer == 0 && player1WinUI != null)
-            player1WinUI.SetActive(true);
-        else if (winningPlayer == 1 && player2WinUI != null)
-            player2WinUI.SetActive(true);
-
-        // Optionally, start outro or reload scene after delay
-        StartCoroutine(HandleEndgameOutro());
+        gameCamera.transform.position = outroCameraTransform.position;
+        gameCamera.transform.rotation = outroCameraTransform.rotation;
     }
 
     private IEnumerator HandleEndgameOutro()

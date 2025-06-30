@@ -16,14 +16,14 @@ public class GameManager_Fruity : MonoBehaviour
     [Header("UI Assignment")]
 
     [Header("Ammo UI Images")]
-    [SerializeField] private Image[] p1AmmoImages = new Image[5]; // P1 ammo images 1-5
-    [SerializeField] private Image[] p2AmmoImages = new Image[5]; // P2 ammo images 1-5
+    
     [SerializeField] private Sprite p1FullSprite; // P1 full ammo sprite
     [SerializeField] private Sprite p2FullSprite; // P2 full ammo sprite
     [SerializeField] private Sprite p1EmptySprite; // P1 empty sprite
     [SerializeField] private Sprite p2EmptySprite; // P2 empty sprite
+    [SerializeField] private Image[] p1AmmoImages = new Image[5]; // P1 ammo images 1-5
+    [SerializeField] private Image[] p2AmmoImages = new Image[5]; // P2 ammo images 1-5
 
-    private bool gameEnded = false;
 
     public bool IsGameDone { get; private set; }
     public int WinningPlayer { get; private set; } // 0 = player1, 1 = player2
@@ -51,8 +51,6 @@ public class GameManager_Fruity : MonoBehaviour
                 player2Transform = players[i].transform;
             }
         }
-
-        Debug.Log($"Found players: Player1 = {(player1Transform != null ? player1Transform.name : "None")}, Player2 = {(player2Transform != null ? player2Transform.name : "None")}");
     }
 
     // Game ends only when monsters reach lose triggers (handled by MonsterBad script)
@@ -70,7 +68,10 @@ public class GameManager_Fruity : MonoBehaviour
         TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
         foreach (var thief in thieves)
             if (thief != null) thief.enabled = false;
-        MonsterBad.isMoving = false;
+        
+        // Stop all monsters from moving
+        MonsterBad.StopAllMonsters();
+        
         MonsterBad[] monsters = FindObjectsByType<MonsterBad>(FindObjectsSortMode.None);
         foreach (var monster in monsters)
             if (monster != null) monster.enabled = false;
@@ -83,15 +84,14 @@ public class GameManager_Fruity : MonoBehaviour
         GameIntroManager.Instance.OnGameEnd(winningPlayer);
     }
 
-    // Update P1 ammo UI (Fruity) - replaces from right to left
+    // Update P1 ammo UI (Fruity) - now left to right
     public void UpdateP1AmmoUI(int ammoCount)
     {
         for (int i = 0; i < p1AmmoImages.Length; i++)
         {
             if (p1AmmoImages[i] != null)
             {
-                int rightToLeftIndex = 4 - i;
-                if (rightToLeftIndex < ammoCount)
+                if (i < ammoCount)
                     p1AmmoImages[i].sprite = p1FullSprite;
                 else
                     p1AmmoImages[i].sprite = p1EmptySprite;
@@ -99,14 +99,15 @@ public class GameManager_Fruity : MonoBehaviour
         }
     }
 
-    // Update P2 ammo UI (Potato) - replaces from left to right
+    // Update P2 ammo UI (Potato) - now right to left
     public void UpdateP2AmmoUI(int ammoCount)
     {
         for (int i = 0; i < p2AmmoImages.Length; i++)
         {
             if (p2AmmoImages[i] != null)
             {
-                if (i < ammoCount)
+                int rightToLeftIndex = p2AmmoImages.Length - 1 - i;
+                if (rightToLeftIndex < ammoCount)
                     p2AmmoImages[i].sprite = p2FullSprite;
                 else
                     p2AmmoImages[i].sprite = p2EmptySprite;

@@ -21,12 +21,21 @@ public class IceArchObstacle : MonoBehaviour
     private bool hasTriggered = false;
     private List<GameObject> spawnedSpikes = new List<GameObject>();
     private List<Transform> spikeSpawnPoints = new List<Transform>();
+    private AudioSource audioSource;
 
     private void Awake()
     {
         if (leftSpikePoint != null) spikeSpawnPoints.Add(leftSpikePoint);
         if (centerSpikePoint != null) spikeSpawnPoints.Add(centerSpikePoint);
         if (rightSpikePoint != null) spikeSpawnPoints.Add(rightSpikePoint);
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource.playOnAwake = false;
     }
 
     private void Start()
@@ -73,7 +82,6 @@ public class IceArchObstacle : MonoBehaviour
                 spike.AddComponent<BoxCollider>();
             }
 
-            // Add the spike stopper component
             IceSpikeStopper stopper = spike.AddComponent<IceSpikeStopper>();
 
             spike.tag = "Obstacle";
@@ -95,6 +103,8 @@ public class IceArchObstacle : MonoBehaviour
         if (hasTriggered || spawnedSpikes.Count == 0) return;
 
         hasTriggered = true;
+
+        SkiGameConfigurator.Instance?.PlaySpikeDetachSound(audioSource);
 
         List<GameObject> spikesToRelease = SelectRandomSpikes();
 
@@ -143,7 +153,7 @@ public class IceSpikeStopper : MonoBehaviour
     {
         if (hasStopped) return;
 
-        if (collision.gameObject.CompareTag("Slope"))
+        if (collision.gameObject.CompareTag("Slope") || collision.gameObject.CompareTag("RoughTerrain"))
         {
             hasStopped = true;
 

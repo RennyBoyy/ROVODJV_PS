@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 35b2e7a4dd0679b409cedfe846819e9f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 35b2e7a4dd0679b409cedfe846819e9f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1103.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 35b2e7a4dd0679b409cedfe846819e9f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1136.6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 35b2e7a4dd0679b409cedfe846819e9f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -105,10 +105,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pushForce: 500
-  forceDirection: {x: -1, y: 0, z: 0}
+  pushDirection: -1
   forcePosition: {x: 0, y: 5, z: 0}
   standingOffset: {x: 30, y: 0, z: 0}
-  showDebugInfo: 0
+  cameraShakeAmplitude: 2
+  cameraShakeDuration: 0.5
+  shakeDistanceRows: 3
 --- !u!54 &5541991180738352242
 Rigidbody:
   m_ObjectHideFlags: 0
