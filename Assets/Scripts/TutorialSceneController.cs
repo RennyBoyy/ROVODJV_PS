@@ -94,12 +94,13 @@ public class TutorialSceneController : MonoBehaviour
 
     public void OnPlayerJoined(PlayerInput playerInput)
     {
-      
-            int index = playerInput.playerIndex; // This is set by PlayerInputManager
-            PlayerIdentity identity = (PlayerIdentity)index; // 0 = Fruity, 1 = Potato
-            Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
+        int index = playerInput.playerIndex;
+        PlayerIdentity identity = (PlayerIdentity)index;
+        Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
+        PlayerManager.Instance.RegisterPlayer(index, pad, identity);
 
-            PlayerManager.Instance.RegisterPlayer(index, pad, identity);
+        // Mark the player ready and run the logic inside OnPlayerConfirm
+        OnPlayerConfirm(index);
     }
 
     void Update()

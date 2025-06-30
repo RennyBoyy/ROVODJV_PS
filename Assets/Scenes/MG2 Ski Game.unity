@@ -150305,6 +150305,10 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: playerID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: cameraShake
       value: 
       objectReference: {fileID: 445794607}
