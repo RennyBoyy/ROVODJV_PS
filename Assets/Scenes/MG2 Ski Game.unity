@@ -24145,6 +24145,9 @@ MonoBehaviour:
   balloonController: {fileID: 0}
   cameraShake: {fileID: 0}
   cameraShakeAmplitude: 0
+  playerIdentity: 0
+  player1Input: {fileID: 0}
+  player2Input: {fileID: 0}
   playerID: 1
 --- !u!54 &327431396
 Rigidbody:
@@ -117098,6 +117101,9 @@ MonoBehaviour:
   balloonController: {fileID: 0}
   cameraShake: {fileID: 0}
   cameraShakeAmplitude: 0
+  playerIdentity: 0
+  player1Input: {fileID: 0}
+  player2Input: {fileID: 0}
   playerID: 2
 --- !u!54 &1651878910
 Rigidbody:
@@ -150307,6 +150313,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+      propertyPath: player1Input
+      value: 
+      objectReference: {fileID: 185621954088504970}
+    - target: {fileID: 9044929135914307287, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
       propertyPath: playercamera
       value: 
       objectReference: {fileID: 878837335}
@@ -150323,6 +150333,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+--- !u!114 &185621954088504970 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5637298122587534431, guid: 9bd38b808f80d3a40b5cceeef6e83aba, type: 3}
+  m_PrefabInstance: {fileID: 185621954088504969}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2502405552793843092
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -151323,6 +151344,14 @@ PrefabInstance:
       propertyPath: gravityScale
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 8558902924902247537, guid: 51d5113058c47d14fbf302850545047e, type: 3}
+      propertyPath: player2Input
+      value: 
+      objectReference: {fileID: 2502405552793843093}
+    - target: {fileID: 8558902924902247537, guid: 51d5113058c47d14fbf302850545047e, type: 3}
+      propertyPath: playerIdentity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8848745168361328268, guid: 51d5113058c47d14fbf302850545047e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 4.475702
@@ -151344,6 +151373,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1906783399}
   m_SourcePrefab: {fileID: 100100000, guid: 51d5113058c47d14fbf302850545047e, type: 3}
+--- !u!114 &2502405552793843093 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5992084948572880307, guid: 51d5113058c47d14fbf302850545047e, type: 3}
+  m_PrefabInstance: {fileID: 2502405552793843092}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906783393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

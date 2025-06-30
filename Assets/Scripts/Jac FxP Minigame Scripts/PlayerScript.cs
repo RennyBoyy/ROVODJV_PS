@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // Used for modular intro/target animation assignment in minigames
-public enum PlayerIdentity { Fruity, Potato }
+
 
 public class PlayerScript : MonoBehaviour
 {
@@ -30,6 +30,8 @@ public class PlayerScript : MonoBehaviour
     private bool shootInput;
     public bool canMove = true;
 
+    public int playerID;
+
     private bool insideReloadZone = false;
     [SerializeField] private GameManager_Fruity minigameManager;
 
@@ -40,43 +42,26 @@ public class PlayerScript : MonoBehaviour
     private void Start()
     {
         bullets = maxBullets;
-
-        // Find MinigameManager for UI updates
         minigameManager = FindFirstObjectByType<GameManager_Fruity>();
-
         animator = GetComponent<Animator>();
 
-        // Find this player's index to assign correct controller
-        PlayerScript[] allPlayers = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
-        int playerIndex = -1;
-        for (int i = 0; i < allPlayers.Length; i++)
+        // Get assignment from PlayerManager
+        var data = PlayerManager.Instance.GetPlayer(playerID);
+        playerIdentity = data.identity;
+        Gamepad pad = data.gamepad;
+
+        // Set up PlayerInput if needed
+        if (playerID == 0 && pad != null && player1Input != null)
         {
-            if (allPlayers[i] == this)
-            {
-                playerIndex = i;
-                break;
-            }
+            player1Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player1Input.ActivateInput();
+        }
+        else if (playerID == 1 && pad != null && player2Input != null)
+        {
+            player2Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player2Input.ActivateInput();
         }
 
-        var gamepads = Gamepad.all;
-        if (playerIndex == 0 && gamepads.Count > 0) // Fruity (P1)
-        {
-            if (player1Input != null)
-            {
-                player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
-                player1Input.ActivateInput();
-            }
-        }
-        else if (playerIndex == 1 && gamepads.Count > 1) // Potato (P2)
-        {
-            if (player2Input != null)
-            {
-                player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
-                player2Input.ActivateInput();
-            }
-        }
-
-        // Update initial ammo UI
         UpdateAmmoUI();
     }
 
@@ -222,15 +207,7 @@ public class PlayerScript : MonoBehaviour
         canMove = true;
     }
 
-    public void OnPlayerJoined(PlayerInput playerInput)
-    {
-        var playerScript = playerInput.GetComponent<PlayerScript>();
-        if (playerScript != null)
-        {
-            // Player identity is now determined by index, not LeftOrRight
-            // Index 0 = Fruity (P1, left), Index 1 = Potato (P2, right)
-        }
-    }
+  
 
     public void ReloadAmmo(int amount)
     {

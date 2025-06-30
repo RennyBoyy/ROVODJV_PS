@@ -92,29 +92,14 @@ public class TutorialSceneController : MonoBehaviour
         }
     }
 
-    void OnEnable()
+    public void OnPlayerJoined(PlayerInput playerInput)
     {
-        for (int i = 0; i < confirmActions.Length; i++)
-        {
-            if (confirmActions[i] != null)
-            {
-                confirmActions[i].Enable();
-                int playerIndex = i;
-                confirmActions[i].performed += (ctx) => OnPlayerConfirm(playerIndex);
-            }
-        }
-    }
+      
+            int index = playerInput.playerIndex; // This is set by PlayerInputManager
+            PlayerIdentity identity = (PlayerIdentity)index; // 0 = Fruity, 1 = Potato
+            Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
 
-    void OnDisable()
-    {
-        for (int i = 0; i < confirmActions.Length; i++)
-        {
-            if (confirmActions[i] != null)
-            {
-                confirmActions[i].performed -= (ctx) => OnPlayerConfirm(i);
-                confirmActions[i].Disable();
-            }
-        }
+            PlayerManager.Instance.RegisterPlayer(index, pad, identity);
     }
 
     void Update()
