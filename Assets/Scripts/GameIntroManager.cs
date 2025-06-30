@@ -78,6 +78,10 @@ public class GameIntroManager : MonoBehaviour
     [SerializeField] private KeyCode skipIntroKey = KeyCode.Space;
     [SerializeField] private bool allowSkipIntro = true;
 
+    [Header("Skip Intro Tooltip")]
+    [SerializeField] private GameObject skipIntroTooltipPanel;
+
+
     private Vector3 originalCameraPosition;
     private Quaternion originalCameraRotation;
     private RectTransform countdownRectTransform;
@@ -112,6 +116,9 @@ public class GameIntroManager : MonoBehaviour
 
         Debug.Log("GameIntroManager starting intro sequence");
 
+        if (skipIntroTooltipPanel != null)
+            skipIntroTooltipPanel.SetActive(true);
+
         StartCoroutine(PlayFullIntroSequence());
     }
 
@@ -131,6 +138,7 @@ public class GameIntroManager : MonoBehaviour
                 SkipIntro();
             }
         }
+
     }
 
     IEnumerator FlyThroughCameraPath()
@@ -265,6 +273,9 @@ public class GameIntroManager : MonoBehaviour
 
         yield return StartCoroutine(FlyThroughCameraPath());
         yield return StartCoroutine(ReturnToGameplayView());
+
+        if (skipIntroTooltipPanel != null)
+            skipIntroTooltipPanel.SetActive(false);
 
         EnablePlayerInput();
         yield return StartCoroutine(PlayCountdown());
@@ -521,6 +532,7 @@ public class GameIntroManager : MonoBehaviour
 
         // Start the outro sequence with a small delay
         StartCoroutine(StartOutroSequence(winningPlayer));
+
     }
 
     private void SetupPodiumCharacters(int winningPlayer)
@@ -631,8 +643,7 @@ public class GameIntroManager : MonoBehaviour
     private IEnumerator HandleEndgameOutro()
     {
         yield return new WaitForSeconds(endgameDelay);
-        // TODO: Transition to outro, podium, or reload scene as needed
-        // Example: SceneManager.LoadScene("BugabooPlanet");
+        // Endgame UI is now visible, input is handled in Update()
     }
 
     public void SkipIntro()
@@ -658,6 +669,8 @@ public class GameIntroManager : MonoBehaviour
         // Enable player input and start countdown sequence
         EnablePlayerInput();
         StartCoroutine(SkipIntroCountdownSequence());
+        if (skipIntroTooltipPanel != null)
+            skipIntroTooltipPanel.SetActive(false);
     }
 
     // Special countdown sequence for skipped intro that calls EnableGameplay at the end
@@ -687,4 +700,5 @@ public class GameIntroManager : MonoBehaviour
             }
         }
     }
+
 }
