@@ -87,6 +87,7 @@ public class TutorialSceneController : MonoBehaviour
         if (singleControllerDebug)
         {
             OnPlayerConfirm(index);
+            Input.GetJoystickNames();
         }
     }
 
