@@ -76,12 +76,12 @@ public class PlayerController : MonoBehaviour
 
         if (playerID == 0 && pad != null && player1Input != null)
         {
-            player1Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player1Input.SwitchCurrentActionMap("Player");
             player1Input.ActivateInput();
         }
         else if (playerID == 1 && pad != null && player2Input != null)
         {
-            player2Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player2Input.SwitchCurrentActionMap("Player2");
             player2Input.ActivateInput();
         }
 
