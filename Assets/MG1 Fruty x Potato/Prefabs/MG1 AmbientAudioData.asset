@@ -1,32 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: MG1 AmbientAudioData
-  m_EditorClassIdentifier: Assembly-CSharp::AmbientAudioData
-  birdChirping:
-    name: 
-    clip: {fileID: 0}
-    volume: 0.4
-    loop: 1
-    priority: 0
-  windmillCreaking:
-    name: 
-    clip: {fileID: 0}
-    volume: 0.4
-    loop: 1
-    priority: 0
-  windSound:
-    name: 
-    clip: {fileID: 0}
-    volume: 0.4
-    loop: 1
-    priority: 0
+version https://git-lfs.github.com/spec/v1
+oid sha256:6f4f074840df43336b8269aa27f9ff60d408f6bf18b4e9454b0b3b31551aca17
+size 666
