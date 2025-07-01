@@ -42,6 +42,36 @@ public class TutorialSceneController : MonoBehaviour
             Debug.Log($"Tutorial Scene: Showing tutorial for level {currentTutorialIndex}");
         }
 
+        //int playerIndex = -1;
+        //for (int i = 0; i < allPlayers.Length; i++)
+        //{
+        //    if (allPlayers[i] == this)
+        //    {
+        //        playerIndex = i;
+        //        break;
+        //    }
+        //}
+
+        //var gamepads = Gamepad.all;
+        //if (playerIndex == 0 && gamepads.Count > 0) // Fruity (P1)
+        //{
+        //    if (player1Input != null)
+        //    {
+        //        player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
+        //        player1Input.ActivateInput();
+        //    }
+        //}
+        //else if (playerIndex == 1 && gamepads.Count > 1) // Potato (P2)
+        //{
+        //    if (player2Input != null)
+        //    {
+        //        player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
+        //        player2Input.ActivateInput();
+        //    }
+        //}
+
+
+
         ShowTutorial();
         StartCoroutine(FadeInFromBlack());
     }

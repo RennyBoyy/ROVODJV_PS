@@ -28,7 +28,8 @@ public class PlanetController : MonoBehaviour
     [SerializeField] private float inputLockDuration = 0.5f;
 
     [Header("Snap Detection")]
-    [SerializeField] private float snapAngleThreshold = 30f;
+    [SerializeField] private float raycastDistance = 10f;     
+    [SerializeField] private float snapAngleThreshold = 30f;     
 
     [Header("Snap Smoothing")]
     [SerializeField] private AnimationCurve snapCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -406,32 +407,25 @@ public class PlanetController : MonoBehaviour
         if (_snapCooldownTimer > 0f || _isSnapping || _isFocused)
             return;
 
-        Transform bestTarget = null;
-        float bestScore = float.MaxValue;
-
-        foreach (var level in levelData)
+        Ray ray = new Ray(_cam.position, _cam.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance) &&
+            hit.transform.CompareTag("Continent") &&
+            hit.transform.IsChildOf(transform))
         {
-            if (level.selectingSpot == null) continue;
-
-            Vector3 toSpot = (level.selectingSpot.position - _cam.position).normalized;
-            float angle = Vector3.Angle(_cam.forward, toSpot);
-
-            if (angle <= snapAngleThreshold)
+            if (snapAngleThreshold > 0)
             {
-                float distance = Vector3.Distance(_cam.position, level.selectingSpot.position);
-                float score = angle + (distance * 0.1f);
+                Vector3 toSpot = (hit.transform.position - _cam.position).normalized;
+                float angle = Vector3.Angle(_cam.forward, toSpot);
 
-                if (score < bestScore)
+                if (angle <= snapAngleThreshold)
                 {
-                    bestScore = score;
-                    bestTarget = level.selectingSpot;
+                    BeginSnap(hit.transform);
                 }
             }
-        }
-
-        if (bestTarget != null)
-        {
-            BeginSnap(bestTarget);
+            else
+            {
+                BeginSnap(hit.transform);
+            }
         }
     }
 
@@ -633,5 +627,39 @@ public class PlanetController : MonoBehaviour
 
         _currentOutlinedIsland = null;
         _originalMaterials = null;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (_cam == null) return;
+
+        Gizmos.color = Color.cyan;
+        Vector3 rayStart = _cam.position;
+        Vector3 rayDirection = _cam.forward;
+        Vector3 rayEnd = rayStart + rayDirection * raycastDistance;
+
+        Gizmos.DrawLine(rayStart, rayEnd);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(rayEnd, 0.5f);
+
+        Ray ray = new Ray(rayStart, rayDirection);
+        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(hit.point, 0.3f);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(rayStart, hit.point);
+
+            if (hit.transform.CompareTag("Continent") && hit.transform.IsChildOf(transform))
+            {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawWireCube(hit.transform.position, Vector3.one * 2f);
+            }
+        }
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(_cam.position, _cam.forward * 3f);
     }
 }

@@ -122,7 +122,7 @@ public class SkiProgressTracker : MonoBehaviour
         float player1Progress = GetPlayerProgress(1);
         float player2Progress = GetPlayerProgress(2);
 
-        if (player1Progress > player1Progress)
+        if (player1Progress > player2Progress)
             return 1;
         else if (player2Progress > player1Progress)
             return 2;

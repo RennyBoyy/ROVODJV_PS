@@ -704,7 +704,7 @@ GameObject:
   - component: {fileID: 361129280}
   m_Layer: 0
   m_Name: KittySelectingSpot
-  m_TagString: Untagged
+  m_TagString: Continent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1300,8 +1300,8 @@ MonoBehaviour:
   tutorialSceneName: TutorialScene
   gameSceneNames:
   - 
-  - First Level
-  - MiniGameFish
+  - MG1 Garden Guardians
+  - MG2 Ski Game
 --- !u!4 &452367630
 Transform:
   m_ObjectHideFlags: 0
@@ -2445,7 +2445,7 @@ GameObject:
   - component: {fileID: 959036364}
   m_Layer: 0
   m_Name: FrutySelectingSpot
-  m_TagString: Untagged
+  m_TagString: Continent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3198,7 +3198,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1357202945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3850,9 +3850,10 @@ MonoBehaviour:
   bobAmount: 0.1
   snapDuration: 0.5
   snapCooldownDuration: 2
-  inactivityTimeout: 1
+  inactivityTimeout: 1.5
   inputLockDuration: 0.5
-  snapAngleThreshold: 5
+  raycastDistance: 11
+  snapAngleThreshold: 0
   snapCurve:
     serializedVersion: 2
     m_Curve:
@@ -3877,8 +3878,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  snapStrength: 1
-  useSphericalSnapping: 0
+  snapStrength: 2
+  useSphericalSnapping: 1
   outlineMaterial: {fileID: 2100000, guid: 326262a4b38f5114c82ee06f3052c2c6, type: 2}
   useOutlineEffect: 1
   levelData:
@@ -4505,7 +4506,7 @@ GameObject:
   - component: {fileID: 2112765127}
   m_Layer: 0
   m_Name: BlueBlueSelectingSpot
-  m_TagString: Untagged
+  m_TagString: Continent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
