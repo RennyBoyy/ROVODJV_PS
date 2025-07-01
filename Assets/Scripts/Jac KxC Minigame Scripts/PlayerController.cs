@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -48,6 +49,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CinemachineBasicMultiChannelPerlin cameraShake;
     [SerializeField] private float cameraShakeAmplitude;
 
+    [Header("Player Identity")]
+    [SerializeField] private PlayerIdentity playerIdentity;
+    public PlayerIdentity PlayerType => playerIdentity;
+
+    public PlayerInput player1Input;
+    public PlayerInput player2Input;
+
     // runtime state
     private bool isGrounded;
     private bool moving;
@@ -61,6 +69,23 @@ public class PlayerController : MonoBehaviour
     {
         m_Rigidbody = GetComponent<Rigidbody>();
         gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
+
+        var data = PlayerManager.Instance.GetPlayer(playerID);
+        playerIdentity = data.identity;
+        Gamepad pad = data.gamepad;
+
+        if (playerID == 0 && pad != null && player1Input != null)
+        {
+            player1Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player1Input.ActivateInput();
+        }
+        else if (playerID == 1 && pad != null && player2Input != null)
+        {
+            player2Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player2Input.ActivateInput();
+        }
+
+        // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
         // strengthen Unity gravity uniformly:
         Physics.gravity = new Vector3(0f, Physics.gravity.y * gravityScale, 0f);
@@ -122,7 +147,7 @@ public class PlayerController : MonoBehaviour
             dir = -1;
         }
         kittyAnimator?.SetInteger("MoveDirection", dir);
-
+        Debug.Log(kittyAnimator.GetInteger("MoveDirection"));
 
     }
 
@@ -162,6 +187,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!moving) return;
         moveInput = ctx.ReadValue<Vector2>().x;
+        Debug.Log($"Player {playerID} move input: {moveInput}");
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
