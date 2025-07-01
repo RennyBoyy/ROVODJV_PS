@@ -68,10 +68,10 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        playerID = playerInput.playerIndex;
+        /*playerID = playerInput.playerIndex;
         playerIdentity = (PlayerIdentity)playerID;
 
-        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");
+        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");*/
     }
 
     void Start()
@@ -85,21 +85,21 @@ public class PlayerController : MonoBehaviour
             // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
             // strengthen Unity gravity uniformly:
-            Physics.gravity = new Vector3(0f, Physics.gravity.y * gravityScale, 0f);
+            //Physics.gravity = new Vector3(0f, -9.81f * 25, 0f); // if different scenes require different gravity, this could work (but not in a player controller!)
 
             // lock all physics-driven rotation
             m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             cameraShake.AmplitudeGain = 0f;
             isGrounded = true;
 
-        int index = playerInput.playerIndex;
+       /* int index = playerInput.playerIndex;
 
         if (index == 0)
             playerInput.SwitchCurrentActionMap("Player");
         else if (index == 1)
             playerInput.SwitchCurrentActionMap("Player2");
 
-        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");
+        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
 
     }
 
@@ -117,11 +117,11 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         ApplySlopeSlideAndLean();
         ClampHorizontalSpeed();
-        /*if (moving)
-        {   
-            Vector3 customGravity = gravityScale * Physics.gravity;
-            m_Rigidbody.AddForce(customGravity, ForceMode.Acceleration);
-        }*/
+        //if (moving)
+        //{   
+        //    Vector3 customGravity = gravityScale * Physics.gravity;
+        //    m_Rigidbody.AddForce(customGravity, ForceMode.Acceleration);
+        //}
     }
 
     private void HandleJump()
@@ -197,7 +197,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!moving) return;
         moveInput = ctx.ReadValue<Vector2>().x;
-        Debug.Log($"Player {playerID} move input: {moveInput}");
+        //Debug.Log($"Player {playerID} move input: {moveInput}");
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
@@ -208,8 +208,9 @@ public class PlayerController : MonoBehaviour
 
     public void startMoving()
     {
-
-        WaitForSeconds wait = new WaitForSeconds(5.5f);
+        Debug.Log("Start moving");
+        //WaitForSeconds wait = new WaitForSeconds(5.5f);
+        //Debug.Log("...didn't wait");
         m_Rigidbody.useGravity = true;
         moving = true;
 
@@ -276,12 +277,14 @@ public class PlayerController : MonoBehaviour
 
             if (gameManagerSlope != null)
             {
-            if (other.CompareTag("Player")) 
+            Debug.Log($"[PlayerController] Player {playerID} hit LoseCon.");
+            if (gameObject.CompareTag("Player")) 
             {
+                Debug.Log($"[PlayerController] Player {playerID} lost the game.");
                 gameManagerSlope.EndGame(0);
-            }
-            if (other.CompareTag("Player2"))
+            }else if (gameObject.CompareTag("Player2"))
             {
+                Debug.Log($"[PlayerController] Player {playerID} lost the game.");
                 gameManagerSlope.EndGame(1);
             }
         }

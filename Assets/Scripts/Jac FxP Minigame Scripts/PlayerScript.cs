@@ -44,10 +44,10 @@ public class PlayerScript : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        playerID = playerInput.playerIndex;
+        /*playerID = playerInput.playerIndex;
         playerIdentity = (PlayerIdentity)playerID;
 
-        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");
+        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");*/
     }
     private void Start()
     {
@@ -55,14 +55,14 @@ public class PlayerScript : MonoBehaviour
         minigameManager = FindFirstObjectByType<GameManager_Fruity>();
         animator = GetComponent<Animator>();
 
-        int index = playerInput.playerIndex;
+        /*int index = playerInput.playerIndex;
 
         if (index == 0)
             playerInput.SwitchCurrentActionMap("Player");
         else if (index == 1)
             playerInput.SwitchCurrentActionMap("Player2");
 
-        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");
+        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
 
         UpdateAmmoUI();
     }

@@ -23,18 +23,17 @@ public class GameManager_Slope : MonoBehaviour
     void Start()
     {
         gameOverManager = GameOverManager.Instance;
-
        
     }
 
     
-
-    void Update()
+    public void restartGame()
     {
-        if (gameActive)
-        {
-
-        }
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("MAIN Bugaboo Planet");
     }
 
     
@@ -42,6 +41,7 @@ public class GameManager_Slope : MonoBehaviour
     // Call this to end the game from a specific player (e.g., when a player falls off)
     public void EndGame(int winningPlayer)
     {
+        Debug.Log($"[GameManager_Slope] Ending game. Winning Player: {winningPlayer}");
         IsGameDone = true;
         WinningPlayer = winningPlayer;
 
