@@ -8,20 +8,35 @@ public class MonsterBad : MonoBehaviour
     [Header("Stats")]
     [SerializeField] private int monsterHealth = 2;
     [SerializeField] private float monsterEatingTime = 3f;
+    [SerializeField] private string deathAnimationTrigger = "Death";
+    [SerializeField] private float deathAnimationDuration = 1.5f;
 
     [Header("References")]
     [SerializeField] private GameManager_Fruity gameManager;
 
     // State
     private bool isEating = false;
+    private bool isDying = false;
+    public bool isMoving = true;
     private float eatingTimer = 0f;
+    private float deathTimer = 0f;
     private GameObject targetLife = null;
     public bool didplayer1lose = false;
-    public static bool isMoving = true;
 
     // Components
     private Animator _anim;
     private Rigidbody _rb;
+
+    // Static method to stop all monsters (for game end)
+    public static void StopAllMonsters()
+    {
+        MonsterBad[] monsters = FindObjectsByType<MonsterBad>(FindObjectsSortMode.None);
+        foreach (var monster in monsters)
+        {
+            if (monster != null)
+                monster.isMoving = false;
+        }
+    }
 
     private void Start()
     {
@@ -39,6 +54,18 @@ public class MonsterBad : MonoBehaviour
 
     private void Update()
     {
+        // Handle death animation sequence
+        if (isDying)
+        {
+            deathTimer += Time.deltaTime;
+            if (deathTimer >= deathAnimationDuration)
+            {
+                // Death animation finished, destroy the monster
+                Destroy(gameObject);
+            }
+            return; // Don't process other updates while dying
+        }
+
         // When eating, increment timer and destroy the life object once time is up
         if (isEating)
         {
@@ -65,19 +92,46 @@ public class MonsterBad : MonoBehaviour
             }
         }
 
-        // If health hits zero, destroy the monster
-        if (monsterHealth <= 0)
+        // If health hits zero, start death sequence
+        if (monsterHealth <= 0 && !isDying)
         {
-            // Play death sound before destroying
-            FruityGameConfigurator.Instance?.PlayScarecrowDeathSound();
-            Destroy(gameObject);
+            StartDeathSequence();
         }
+    }
+
+    private void StartDeathSequence()
+    {
+        isDying = true;
+        deathTimer = 0f;
+        
+        // Disable movement and other behaviors
+        isMoving = false;
+        isEating = false;
+        
+        // Disable collider to prevent further interactions
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+        
+        // Play death animation
+        if (_anim != null)
+        {
+            _anim.SetTrigger(deathAnimationTrigger);
+        }
+        
+        // Play death sound
+        FruityGameConfigurator.Instance?.PlayScarecrowDeathSound();
+        
+        Debug.Log("Monster started death sequence");
     }
 
     // This is where root motion actually moves the Rigidbody
     private void OnAnimatorMove()
     {
         if (_anim == null || _rb == null)
+            return;
+
+        // Don't move during death sequence
+        if (isDying)
             return;
 
         // Grab this frame's root-motion delta
@@ -100,12 +154,11 @@ public class MonsterBad : MonoBehaviour
         }
     }
 
-
-
-
-
     private void OnTriggerEnter(Collider other)
     {
+        // Don't process triggers if dying
+        if (isDying) return;
+
         if (other.CompareTag("Tomato"))
         {
             // Monster takes damage on Tomato hit

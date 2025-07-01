@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+// Used for modular intro/target animation assignment in minigames
+
+
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private GameObject projectile;
@@ -25,51 +28,42 @@ public class PlayerScript : MonoBehaviour
     private Animator animator;
     private float moveInput;
     private bool shootInput;
-    private bool canMove = true;
+    public bool canMove = true;
+
+    public int playerID;
 
     private bool insideReloadZone = false;
     [SerializeField] private GameManager_Fruity minigameManager;
 
+    [Header("Player Identity")]
+    [SerializeField] private PlayerIdentity playerIdentity;
+    public PlayerIdentity PlayerType => playerIdentity;
+
+    private PlayerInput playerInput;
+
+    void Awake()
+    {
+        playerInput = GetComponent<PlayerInput>();
+        playerID = playerInput.playerIndex;
+        playerIdentity = (PlayerIdentity)playerID;
+
+        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");
+    }
     private void Start()
     {
         bullets = maxBullets;
-
-        // Find MinigameManager for UI updates
         minigameManager = FindFirstObjectByType<GameManager_Fruity>();
-
         animator = GetComponent<Animator>();
 
-        // Find this player's index to assign correct controller
-        PlayerScript[] allPlayers = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
-        int playerIndex = -1;
-        for (int i = 0; i < allPlayers.Length; i++)
-        {
-            if (allPlayers[i] == this)
-            {
-                playerIndex = i;
-                break;
-            }
-        }
+        int index = playerInput.playerIndex;
 
-        var gamepads = Gamepad.all;
-        if (playerIndex == 0 && gamepads.Count > 0) // Fruity (P1)
-        {
-            if (player1Input != null)
-            {
-                player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
-                player1Input.ActivateInput();
-            }
-        }
-        else if (playerIndex == 1 && gamepads.Count > 1) // Potato (P2)
-        {
-            if (player2Input != null)
-            {
-                player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
-                player2Input.ActivateInput();
-            }
-        }
+        if (index == 0)
+            playerInput.SwitchCurrentActionMap("Player");
+        else if (index == 1)
+            playerInput.SwitchCurrentActionMap("Player2");
 
-        // Update initial ammo UI
+        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");
+
         UpdateAmmoUI();
     }
 
@@ -115,7 +109,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane--;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(-1);
-                FruityGameConfigurator.Instance?.PlayJumpSound(IsPlayer1());
+                FruityGameConfigurator.Instance?.PlayJumpSound(playerIdentity == PlayerIdentity.Fruity);
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -127,7 +121,7 @@ public class PlayerScript : MonoBehaviour
                 currentLane++;
                 StartLerpToLane(currentLane);
                 TriggerMoveAnimation(1);
-                FruityGameConfigurator.Instance?.PlayJumpSound(IsPlayer1());
+                FruityGameConfigurator.Instance?.PlayJumpSound(playerIdentity == PlayerIdentity.Fruity);
             }
             canMove = false;
             StartCoroutine(MoveLock());
@@ -179,15 +173,23 @@ public class PlayerScript : MonoBehaviour
         if (bullets <= 0)
         {
             Debug.Log("Out of Ammo");
-            FruityGameConfigurator.Instance?.PlayEmptyThrowSound(IsPlayer1());
+            FruityGameConfigurator.Instance?.PlayEmptyThrowSound(playerIdentity == PlayerIdentity.Fruity);
         }
         else
         {
             if (projectile != null && hand != null)
-                Instantiate(projectile, hand.transform.position, transform.rotation);
+            {
+                GameObject proj = Instantiate(projectile, hand.transform.position, transform.rotation);
+                Projectile projScript = proj.GetComponent<Projectile>();
+                if (projScript != null)
+                {
+                    Vector3 dir = (playerIdentity == PlayerIdentity.Fruity) ? -Vector3.forward : Vector3.forward;
+                    projScript.SetMoveDirection(dir);
+                }
+            }
             bullets--;
             UpdateAmmoUI();
-            FruityGameConfigurator.Instance?.PlayThrowSound(IsPlayer1());
+            FruityGameConfigurator.Instance?.PlayThrowSound(playerIdentity == PlayerIdentity.Fruity);
         }
     }
 
@@ -195,7 +197,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (minigameManager == null) return;
 
-        if (IsPlayer1())
+        if (playerIdentity == PlayerIdentity.Fruity)
             minigameManager.UpdateP1AmmoUI(bullets);
         else
             minigameManager.UpdateP2AmmoUI(bullets);
@@ -207,15 +209,7 @@ public class PlayerScript : MonoBehaviour
         canMove = true;
     }
 
-    public void OnPlayerJoined(PlayerInput playerInput)
-    {
-        var playerScript = playerInput.GetComponent<PlayerScript>();
-        if (playerScript != null)
-        {
-            // Player identity is now determined by index, not LeftOrRight
-            // Index 0 = Fruity (P1, left), Index 1 = Potato (P2, right)
-        }
-    }
+  
 
     public void ReloadAmmo(int amount)
     {
@@ -226,7 +220,7 @@ public class PlayerScript : MonoBehaviour
         {
             bullets += ammoToGive;
             UpdateAmmoUI();
-            FruityGameConfigurator.Instance?.PlayReloadSound(IsPlayer1());
+            FruityGameConfigurator.Instance?.PlayReloadSound(playerIdentity == PlayerIdentity.Fruity);
         }
     }
 
@@ -248,16 +242,21 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private bool IsPlayer1()
+    /// <summary>
+    /// Plays an intro/target animation by trigger name (for use in intro cinematics, etc).
+    /// </summary>
+    public void PlayIntroTargetAnimation(string triggerName)
     {
-        PlayerScript[] allPlayers = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
-        for (int i = 0; i < allPlayers.Length; i++)
-        {
-            if (allPlayers[i] == this)
-            {
-                return i == 0; // Index 0 = Fruity (P1), Index 1 = Potato (P2)
-            }
-        }
-        return false; // Fallback
+        if (animator != null && !string.IsNullOrEmpty(triggerName))
+            animator.SetTrigger(triggerName);
+    }
+
+    /// <summary>
+    /// Resets an intro/target animation trigger (call at end of intro to return to default state).
+    /// </summary>
+    public void ResetIntroTargetAnimation(string triggerName)
+    {
+        if (animator != null && !string.IsNullOrEmpty(triggerName))
+            animator.ResetTrigger(triggerName);
     }
 }

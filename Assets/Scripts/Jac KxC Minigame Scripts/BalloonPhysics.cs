@@ -30,7 +30,6 @@ public class BalloonPhysics : MonoBehaviour
     {
         SetupBalloonPhysics();
         SetupStringConnection();
-        SetupStringVisual();
 
         lastPlayerPosition = player.position;
     }
@@ -71,10 +70,6 @@ public class BalloonPhysics : MonoBehaviour
         springJoint.maxDistance = stringLength;
         springJoint.tolerance = 0.025f;
         springJoint.enableCollision = false;       
-    }
-
-    void SetupStringVisual()
-    {
     }
 
     void FixedUpdate()

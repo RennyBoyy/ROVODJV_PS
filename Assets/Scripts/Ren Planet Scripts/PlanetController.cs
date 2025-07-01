@@ -27,8 +27,9 @@ public class PlanetController : MonoBehaviour
     [SerializeField] private float inactivityTimeout = 3f;
     [SerializeField] private float inputLockDuration = 0.5f;
 
-    [Header("Snap Detection")]
-    [SerializeField] private float snapAngleThreshold = 30f;
+    [Header("Raycast Detection")]
+    [SerializeField] private LayerMask sphereColliderLayer = 1;
+    [SerializeField] private float raycastDistance = 1000f;
 
     [Header("Snap Smoothing")]
     [SerializeField] private AnimationCurve snapCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -55,8 +56,9 @@ public class PlanetController : MonoBehaviour
         [Header("Identification")]
         public string levelName;
 
-        [Header("Detection")]
-        public Transform selectingSpot;
+        [Header("Detection & Snapping")]
+        public SphereCollider detectionSphere;       
+        public Transform snapTarget;                     
 
         [Header("Visual Effects")]
         public GameObject islandGameObject;
@@ -96,9 +98,14 @@ public class PlanetController : MonoBehaviour
     private float _idleWeightVel = 0f;
     private Vector2 _lastInput = Vector2.up;
 
+    private SphereCollider _currentDetectedSphere;
+    private SphereCollider _lastTriggeredSphere;
+    private Camera _camera;
+
     void Awake()
     {
         _cam = Camera.main.transform;
+        _camera = Camera.main;
 
         foreach (var levelInfo in levelData)
             if (levelInfo.panel != null)
@@ -156,21 +163,25 @@ public class PlanetController : MonoBehaviour
         for (int i = 0; i < levelData.Count; i++)
         {
             var level = levelData[i];
-            if (level.selectingSpot == null)
+            if (level.detectionSphere == null)
             {
-                Debug.LogWarning($"Level '{level.levelName}' has no selecting spot assigned!");
+                Debug.LogWarning($"Level '{level.levelName}' has no detection sphere assigned!");
                 continue;
             }
 
-            if (!level.selectingSpot.CompareTag("Continent"))
+            if (level.snapTarget == null)
             {
-                level.selectingSpot.tag = "Continent";
-                Debug.Log($"Auto-assigned 'Continent' tag to {level.levelName} selecting spot");
+                Debug.LogWarning($"Level '{level.levelName}' has no snap target assigned!");
+                continue;
             }
 
-            if (!level.selectingSpot.IsChildOf(transform))
+            level.detectionSphere.isTrigger = true;
+
+            if (level.detectionSphere.gameObject.layer != Mathf.RoundToInt(Mathf.Log(sphereColliderLayer.value, 2)))
             {
-                Debug.LogWarning($"Level '{level.levelName}' selecting spot is not a child of the planet!");
+                int targetLayer = Mathf.RoundToInt(Mathf.Log(sphereColliderLayer.value, 2));
+                level.detectionSphere.gameObject.layer = targetLayer;
+                Debug.Log($"Auto-assigned layer {targetLayer} to {level.levelName} detection sphere");
             }
         }
     }
@@ -231,7 +242,7 @@ public class PlanetController : MonoBehaviour
 
         if (currentState != PlanetState.Idle)
         {
-            TryAutoSnap();
+            CheckRaycastDetection();
         }
 
         if (!_inputLocked)
@@ -246,6 +257,77 @@ public class PlanetController : MonoBehaviour
         {
             ApplyIdleMotion();
         }
+    }
+
+    private void CheckRaycastDetection()
+    {
+        if (_snapCooldownTimer > 0f || _isSnapping || _isFocused)
+            return;
+
+        Ray ray = _camera.ScreenPointToRay(screenCenter);
+        RaycastHit hit;
+
+        bool rayHitSphere = Physics.Raycast(ray, out hit, raycastDistance, sphereColliderLayer);
+
+        if (rayHitSphere)
+        {
+            SphereCollider hitSphereCollider = hit.collider as SphereCollider;
+            if (hitSphereCollider != null)
+            {
+                _currentDetectedSphere = hitSphereCollider;
+
+                if (_lastTriggeredSphere != hitSphereCollider)
+                {
+                    LevelData? levelData = FindLevelDataByDetectionSphere(hitSphereCollider);
+                    if (levelData.HasValue)
+                    {
+                        BeginSnap(levelData.Value);
+                        _lastTriggeredSphere = hitSphereCollider;
+
+                        hitSphereCollider.enabled = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            _currentDetectedSphere = null;
+
+            if (_lastTriggeredSphere != null && !IsRaycastHittingAnySphere())
+            {
+                EnableAllSphereColliders();
+                _lastTriggeredSphere = null;
+            }
+        }
+    }
+
+    private bool IsRaycastHittingAnySphere()
+    {
+        Ray ray = _camera.ScreenPointToRay(screenCenter);
+        return Physics.Raycast(ray, raycastDistance, sphereColliderLayer);
+    }
+
+    private void EnableAllSphereColliders()
+    {
+        foreach (var level in levelData)
+        {
+            if (level.detectionSphere != null)
+            {
+                level.detectionSphere.enabled = true;
+            }
+        }
+    }
+
+    private LevelData? FindLevelDataByDetectionSphere(SphereCollider sphere)
+    {
+        foreach (var level in levelData)
+        {
+            if (level.detectionSphere == sphere)
+            {
+                return level;
+            }
+        }
+        return null;
     }
 
     private Vector2 GetInputVector()
@@ -401,54 +483,13 @@ public class PlanetController : MonoBehaviour
         }
     }
 
-    private void TryAutoSnap()
-    {
-        if (_snapCooldownTimer > 0f || _isSnapping || _isFocused)
-            return;
-
-        Transform bestTarget = null;
-        float bestScore = float.MaxValue;
-
-        foreach (var level in levelData)
-        {
-            if (level.selectingSpot == null) continue;
-
-            Vector3 toSpot = (level.selectingSpot.position - _cam.position).normalized;
-            float angle = Vector3.Angle(_cam.forward, toSpot);
-
-            if (angle <= snapAngleThreshold)
-            {
-                float distance = Vector3.Distance(_cam.position, level.selectingSpot.position);
-                float score = angle + (distance * 0.1f);
-
-                if (score < bestScore)
-                {
-                    bestScore = score;
-                    bestTarget = level.selectingSpot;
-                }
-            }
-        }
-
-        if (bestTarget != null)
-        {
-            BeginSnap(bestTarget);
-        }
-    }
-
-    private void BeginSnap(Transform target)
+    private void BeginSnap(LevelData targetLevel)
     {
         _bobPhase = 0f;
         transform.position = _startPos;
         currentVelocity = Vector2.zero;
 
-        LevelData? targetLevel = FindLevelDataBySelectingSpot(target);
-        if (targetLevel == null)
-        {
-            Debug.LogWarning($"No level data found for selecting spot: {target.name}");
-            return;
-        }
-
-        _snapTargetName = targetLevel.Value.levelName;
+        _snapTargetName = targetLevel.levelName;
         _isSnapping = true;
         _inputLocked = true;
         _snapLerp = 0f;
@@ -456,7 +497,7 @@ public class PlanetController : MonoBehaviour
 
         if (useSphericalSnapping)
         {
-            Vector3 targetWorldPos = target.position;
+            Vector3 targetWorldPos = targetLevel.snapTarget.position;
             Vector3 planetCenter = transform.position;
             Vector3 cameraPos = _cam.position;
 
@@ -468,7 +509,7 @@ public class PlanetController : MonoBehaviour
         }
         else
         {
-            Vector3 normal = (target.position - transform.position).normalized;
+            Vector3 normal = (targetLevel.snapTarget.position - transform.position).normalized;
             Vector3 toCam = (_cam.position - transform.position).normalized;
             Quaternion align = Quaternion.FromToRotation(normal, toCam);
             _snapEndRot = align * transform.rotation;
@@ -476,27 +517,15 @@ public class PlanetController : MonoBehaviour
 
         _snapEndRot = Quaternion.Slerp(_snapStartRot, _snapEndRot, snapStrength);
 
-        if (useOutlineEffect && targetLevel.Value.islandGameObject != null)
+        if (useOutlineEffect && targetLevel.islandGameObject != null)
         {
-            ApplyOutlineToIsland(targetLevel.Value.islandGameObject);
+            ApplyOutlineToIsland(targetLevel.islandGameObject);
         }
 
         if (PlanetGameConfigurator.Instance != null)
         {
             PlanetGameConfigurator.Instance.PlayHoverSound();
         }
-    }
-
-    private LevelData? FindLevelDataBySelectingSpot(Transform selectingSpot)
-    {
-        foreach (var level in levelData)
-        {
-            if (level.selectingSpot == selectingSpot)
-            {
-                return level;
-            }
-        }
-        return null;
     }
 
     private void RunSnap()

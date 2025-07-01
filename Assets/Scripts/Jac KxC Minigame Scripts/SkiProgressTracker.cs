@@ -17,7 +17,8 @@ public class SkiProgressTracker : MonoBehaviour
     [SerializeField] private RectTransform player2Icon;
 
     [Header("Settings")]
-    [SerializeField] private float iconOffset = 10f;      
+    [SerializeField] private float player1IconOffset = 15f;      
+    [SerializeField] private float player2IconOffset = -15f;     
 
     private float trackLength;
     private float startZ;
@@ -49,7 +50,6 @@ public class SkiProgressTracker : MonoBehaviour
         Debug.Log($"Track initialized: Start Z={startZ}, Finish Z={finishZ}, Length={trackLength}");
     }
 
-
     void Update()
     {
         UpdatePlayerProgress();
@@ -62,13 +62,13 @@ public class SkiProgressTracker : MonoBehaviour
         if (player1Transform != null && player1Icon != null)
         {
             float player1Progress = CalculateProgress(player1Transform.position.z);
-            UpdateIconPosition(player1Icon, player1Progress, true);
+            UpdateIconPosition(player1Icon, player1Progress, player1IconOffset);
         }
 
         if (player2Transform != null && player2Icon != null)
         {
             float player2Progress = CalculateProgress(player2Transform.position.z);
-            UpdateIconPosition(player2Icon, player2Progress, false);
+            UpdateIconPosition(player2Icon, player2Progress, player2IconOffset);
         }
     }
 
@@ -76,11 +76,11 @@ public class SkiProgressTracker : MonoBehaviour
     {
         float progress;
 
-        if (finishZ > startZ)      
+        if (finishZ > startZ)
         {
             progress = (currentZ - startZ) / trackLength;
         }
-        else      
+        else
         {
             progress = (startZ - currentZ) / trackLength;
         }
@@ -88,13 +88,11 @@ public class SkiProgressTracker : MonoBehaviour
         return Mathf.Clamp01(progress);
     }
 
-    void UpdateIconPosition(RectTransform icon, float progress, bool isPlayer1)
+    void UpdateIconPosition(RectTransform icon, float progress, float yOffset)
     {
         if (icon == null || progressBar == null) return;
 
         float xPosition = (progress * progressBarWidth) - (progressBarWidth * 0.5f);
-
-        float yOffset = isPlayer1 ? iconOffset : -iconOffset;
 
         Vector2 newPosition = new Vector2(xPosition, yOffset);
         icon.anchoredPosition = newPosition;
@@ -129,7 +127,7 @@ public class SkiProgressTracker : MonoBehaviour
         else if (player2Progress > player1Progress)
             return 2;
         else
-            return 0;  
+            return 0;
     }
 
     public void SetPlayerReferences(Transform p1, Transform p2)
@@ -143,5 +141,11 @@ public class SkiProgressTracker : MonoBehaviour
         startPoint = start;
         finishPoint = finish;
         InitializeTracker();
+    }
+
+    public void SetPlayerOffsets(float player1Offset, float player2Offset)
+    {
+        player1IconOffset = player1Offset;
+        player2IconOffset = player2Offset;
     }
 }
