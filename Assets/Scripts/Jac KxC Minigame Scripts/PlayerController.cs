@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
 
     // runtime state
     private bool isGrounded;
-    private bool moving;
+    public bool moving;
     private float moveInput;
     private float coyoteCounter;
     private float jumpBufferCounter;
@@ -198,6 +198,10 @@ public class PlayerController : MonoBehaviour
 
     public void startMoving()
     {
+        kittyAnimator?.SetTrigger("Start");
+
+        WaitForSeconds wait = new WaitForSeconds(5.5f);
+
         moving = true;
         m_Rigidbody.useGravity = true;
 
@@ -261,11 +265,35 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("LoseCon")) return;
-        didplayer1win = (playerID == 1);
+
+            if (gameManagerSlope != null)
+            {
+            if (other.CompareTag("Player")) 
+            {
+                gameManagerSlope.EndGame(0);
+            }
+            if (other.CompareTag("Player2"))
+            {
+                gameManagerSlope.EndGame(1);
+            }
+        }
         moving = false;
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
         kittyAnimator?.SetTrigger(didplayer1win ? "Victory" : "Defeat");
-        gameManagerSlope?.TriggerGameEndFromPlayer(this);
+    }
+    public void PlayIntroTargetAnimation(string triggerName)
+    {
+        if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))
+            kittyAnimator.SetTrigger(triggerName);
+    }
+
+    /// <summary>
+    /// Resets an intro/target animation trigger (call at end of intro to return to default state).
+    /// </summary>
+    public void ResetIntroTargetAnimation(string triggerName)
+    {
+        if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))
+            kittyAnimator.ResetTrigger(triggerName);
     }
 }
