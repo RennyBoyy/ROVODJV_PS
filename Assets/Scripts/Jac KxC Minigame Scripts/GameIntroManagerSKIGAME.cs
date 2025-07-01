@@ -569,13 +569,13 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         {
             // P1 Fruity's model faces -Z, so we need to rotate 180 degrees
             // to make it face the camera properly
-            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera) * Quaternion.Euler(0, 180, 0);
             player.transform.rotation = targetRotation;
         }
         else if (player.PlayerType == PlayerIdentity.Potato)
         {
             // P2 Potato's model faces +Z, so normal facing works
-            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera) * Quaternion.Euler(0, 180, 0);
             player.transform.rotation = targetRotation;
         }
     }
