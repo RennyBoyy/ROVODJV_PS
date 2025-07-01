@@ -2222,6 +2222,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2406253717013818634, guid: f2102008ec7d57149a9e09be3ac50ad3, type: 3}
   m_PrefabInstance: {fileID: 331441905}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &339844577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 339844579}
+  - component: {fileID: 339844578}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &339844578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339844577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 7f58fdf3246c61d43be711769a236018, type: 2}
+--- !u!4 &339844579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339844577}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.0987215, y: -1.8477689, z: 4.589121}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &350145591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11541,33 +11590,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 423a66a5d98c13343b4f9d31dd23a7b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlRotationSpeed: 40
-  idleSpinSpeed: 10
+  playerRotationSpeed: 50
+  idleRotationSpeed: 10
+  idleRotationAxis: {x: 0, y: 1, z: 0}
+  rotationalInertia: 0.8
+  correctXRotation: 1
+  xCorrectionSpeed: 2
   bobSpeed: 1
   bobAmount: 0.1
-  idleDelay: 0.5
-  idleFadeSpeed: 3
-  raycastDistance: 11
   snapDuration: 0.5
-  snapSmoothStep: 0.8
   snapCooldownDuration: 2
+  inactivityTimeout: 3
+  inputLockDuration: 0.5
+  sphereColliderLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  raycastDistance: 11
+  snapCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  snapStrength: 1
+  useSphericalSnapping: 1
   outlineMaterial: {fileID: 2100000, guid: 326262a4b38f5114c82ee06f3052c2c6, type: 2}
-  useOutlineEffect: 1
+  useOutlineEffect: 0
   levelData:
   - levelName: Fruty
-    selectingSpot: {fileID: 3146283119100964881}
+    detectionSphere: {fileID: 9066428722646365690}
+    snapTarget: {fileID: 2113899815}
     islandGameObject: {fileID: 642439031393610072}
     panel: {fileID: 614433631}
     levelNumber: 1
     ambientSound: {fileID: 8300000, guid: 177b45c1df93fe345b8ea31e2dff4238, type: 3}
   - levelName: Kitty
-    selectingSpot: {fileID: 5128982403381943763}
+    detectionSphere: {fileID: 5128982403381943764}
+    snapTarget: {fileID: 361129279}
     islandGameObject: {fileID: 1303838017162265664}
     panel: {fileID: 524178944}
     levelNumber: 2
     ambientSound: {fileID: 8300000, guid: 439c7178eaa6e854d9c4ce9bc3711665, type: 3}
   - levelName: BlueBlue
-    selectingSpot: {fileID: 4840217824846059238}
+    detectionSphere: {fileID: 4840217824846059239}
+    snapTarget: {fileID: 7502663672432180725}
     islandGameObject: {fileID: 544829631922435017}
     panel: {fileID: 1624817946}
     levelNumber: 0
@@ -12313,7 +12397,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -15333,8 +15417,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.35868353
-  m_Center: {x: -0.052475832, y: 0.03237441, z: -0.43603414}
+  m_Radius: 0.27199253
+  m_Center: {x: -0.052475818, y: 0.06824118, z: -0.38520372}
 --- !u!4 &4971006270446639407
 Transform:
   m_ObjectHideFlags: 0
@@ -15465,8 +15549,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.30020198
-  m_Center: {x: -0.00076629216, y: 0.0048324643, z: 0.59329367}
+  m_Radius: 0.24076132
+  m_Center: {x: -0.0007662851, y: 0.0048321374, z: 0.5338528}
 --- !u!33 &5138834218062860501
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -16337,8 +16421,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.70256364
-  m_Center: {x: 0.024856359, y: 0.1260704, z: 0.7849703}
+  m_Radius: 0.4026643
+  m_Center: {x: 0.024856377, y: 0.12607041, z: 0.93776363}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -16352,3 +16436,4 @@ SceneRoots:
   - {fileID: 1859793766}
   - {fileID: 1105799958}
   - {fileID: 227896879}
+  - {fileID: 339844579}

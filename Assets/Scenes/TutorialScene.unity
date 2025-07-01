@@ -442,10 +442,10 @@ RectTransform:
   - {fileID: 1033662240}
   - {fileID: 95755287}
   - {fileID: 1346528437}
-  - {fileID: 1069462691}
   - {fileID: 1933707896}
   - {fileID: 1480984331}
   - {fileID: 159676716}
+  - {fileID: 1069462691}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

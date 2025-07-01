@@ -6535,6 +6535,7 @@ MonoBehaviour:
   bullets: 5
   laneMoveDuration: 0.25
   canMove: 1
+  playerID: 0
   minigameManager: {fileID: 0}
   playerIdentity: 0
 --- !u!1001 &37848815
@@ -23334,7 +23335,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -55545,6 +55546,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 39272df3fad6a704f8da38ffefc8caf8, type: 3}
   m_PrefabInstance: {fileID: 1163364164}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1164473266
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1164473268}
+  - component: {fileID: 1164473267}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1164473267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164473266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 7f58fdf3246c61d43be711769a236018, type: 2}
+--- !u!4 &1164473268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164473266}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.0987215, y: -1.8477689, z: 4.589121}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1169989328
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62481,6 +62531,7 @@ MonoBehaviour:
   bullets: 5
   laneMoveDuration: 0.25
   canMove: 1
+  playerID: 0
   minigameManager: {fileID: 0}
   playerIdentity: 1
 --- !u!1001 &1448205465
@@ -67998,6 +68049,7 @@ MonoBehaviour:
   bullets: 5
   laneMoveDuration: 0.25
   canMove: 1
+  playerID: 0
   minigameManager: {fileID: 0}
   playerIdentity: 0
 --- !u!95 &1588593916
@@ -81986,3 +82038,4 @@ SceneRoots:
   - {fileID: 1459961518}
   - {fileID: 306077532}
   - {fileID: 417210755}
+  - {fileID: 1164473268}

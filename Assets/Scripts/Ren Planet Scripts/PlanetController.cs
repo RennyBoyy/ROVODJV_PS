@@ -4,26 +4,37 @@ using System.Collections.Generic;
 
 public class PlanetController : MonoBehaviour
 {
-    [Header("Speeds")]
-    [SerializeField] private float controlRotationSpeed = 30f;
-    [SerializeField] private float idleSpinSpeed = 10f;
+    [Header("Rotation Settings")]
+    [SerializeField] private float playerRotationSpeed = 50f;
+    [SerializeField] private float idleRotationSpeed = 10f;
+    [SerializeField] private Vector3 idleRotationAxis = Vector3.up;
+    [SerializeField] private float rotationalInertia = 0.8f;
 
-    [Header("Bobbing")]
+    [Header("Original Rotation Correction")]
+    [SerializeField] private bool correctXRotation = true;
+    [SerializeField] private float xCorrectionSpeed = 2f;
+    private float originalXRotation;
+
+    [Header("Bobbing Motion")]
     [SerializeField] private float bobSpeed = 1f;
     [SerializeField] private float bobAmount = 0.1f;
+    private Vector3 _startPos;
+    private float _bobPhase;
 
-    [Header("Idle Resume")]
-    [SerializeField] private float idleDelay = 0.5f;
-    [SerializeField] private float idleFadeSpeed = 3f;
-
-    [Header("Focus / Snap Settings")]
-    [SerializeField] private float raycastDistance = 7f;
+    [Header("Selection Settings")]
     [SerializeField] private float snapDuration = 0.5f;
-    [Range(0f, 1f)]
-    [SerializeField] private float snapSmoothStep = 0.8f;
-
-    [Header("Snap Cooldown")]
     [SerializeField] private float snapCooldownDuration = 2f;
+    [SerializeField] private float inactivityTimeout = 3f;
+    [SerializeField] private float inputLockDuration = 0.5f;
+
+    [Header("Raycast Detection")]
+    [SerializeField] private LayerMask sphereColliderLayer = 1;
+    [SerializeField] private float raycastDistance = 1000f;
+
+    [Header("Snap Smoothing")]
+    [SerializeField] private AnimationCurve snapCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    [SerializeField] private float snapStrength = 1f;
+    [SerializeField] private bool useSphericalSnapping = true;
 
     [Header("Visual Effects")]
     [SerializeField] private Material outlineMaterial;
@@ -32,12 +43,12 @@ public class PlanetController : MonoBehaviour
     [Header("Level Configuration")]
     [SerializeField] private List<LevelData> levelData;
 
-    [Header("Input Actions (via PlayerInput)")]
+    [Header("Input Actions (via PlayerInput) - Optional")]
     public InputActionAsset actions;
 
     private InputAction moveAction;
-    private InputAction backAction;
     private InputAction confirmAction;
+    private bool useNewInputSystem = false;
 
     [System.Serializable]
     public struct LevelData
@@ -45,8 +56,9 @@ public class PlanetController : MonoBehaviour
         [Header("Identification")]
         public string levelName;
 
-        [Header("Detection")]
-        public Transform selectingSpot;
+        [Header("Detection & Snapping")]
+        public SphereCollider detectionSphere;       
+        public Transform snapTarget;                     
 
         [Header("Visual Effects")]
         public GameObject islandGameObject;
@@ -59,49 +71,91 @@ public class PlanetController : MonoBehaviour
         public AudioClip ambientSound;
     }
 
-    private Transform _cam;
-    private Vector3 _startPos;
-    private float _bobPhase;
-    private float _idleTimer;
-    private float _idleWeight = 1f;
-    private float _idleWeightVel = 0f;
-    private Vector2 _lastInput = Vector2.up;
+    private enum PlanetState { Idle, Active, Focused }
+    private PlanetState currentState = PlanetState.Idle;
 
-    private bool _isSnapping;
-    private bool _isFocused;
+    private float lastInputTime;
+    private Vector3 screenCenter;
+    private bool _isSnapping = false;
+    private bool _isFocused = false;
+    private bool _inputLocked = false;
+    private float _snapCooldownTimer = 0f;
+    private float _inputLockTimer = 0f;
     private Quaternion _snapStartRot;
     private Quaternion _snapEndRot;
     private float _snapLerp;
-
-    private float _snapCooldownTimer = 0f;
     private string _snapTargetName;
     private GameObject _activePanel;
     private int _activeLevelNumber;
     private GameObject _currentOutlinedIsland;
     private Material[] _originalMaterials;
 
+    private Vector2 currentVelocity = Vector2.zero;
+    private bool wasReceivingInput = false;
+    private Transform _cam;
+    private float _idleTimer;
+    private float _idleWeight = 1f;
+    private float _idleWeightVel = 0f;
+    private Vector2 _lastInput = Vector2.up;
+
+    private SphereCollider _currentDetectedSphere;
+    private SphereCollider _lastTriggeredSphere;
+    private Camera _camera;
+
     void Awake()
     {
         _cam = Camera.main.transform;
+        _camera = Camera.main;
 
         foreach (var levelInfo in levelData)
             if (levelInfo.panel != null)
                 levelInfo.panel.SetActive(false);
 
-        var pi = GetComponent<PlayerInput>();
-        var map = pi.currentActionMap;
-
-        moveAction = map.FindAction("Move", true);
-        backAction = map.FindAction("Back", true);
-        confirmAction = map.FindAction("Confirm", true);
-
-        ValidateLevelData();
+        SetupNewInputSystem();
     }
 
-    void Start()
+    private void SetupNewInputSystem()
     {
+        try
+        {
+            var pi = GetComponent<PlayerInput>();
+            if (pi != null)
+            {
+                var map = pi.currentActionMap;
+                if (map != null)
+                {
+                    moveAction = map.FindAction("Move", true);
+                    confirmAction = map.FindAction("Confirm", true);
+
+                    if (moveAction != null && confirmAction != null)
+                    {
+                        useNewInputSystem = true;
+                        Debug.Log("PlanetController: Using New Input System");
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"PlanetController: PlayerInput setup failed, using traditional input. Error: {e.Message}");
+        }
+
+        if (!useNewInputSystem)
+        {
+            Debug.Log("PlanetController: Using Traditional Input System");
+        }
+    }
+
+    private void Start()
+    {
+        screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f);
+        lastInputTime = Time.time;
         _startPos = transform.position;
         _bobPhase = 0f;
+
+        originalXRotation = transform.eulerAngles.x;
+
+        ValidateLevelData();
     }
 
     private void ValidateLevelData()
@@ -109,43 +163,56 @@ public class PlanetController : MonoBehaviour
         for (int i = 0; i < levelData.Count; i++)
         {
             var level = levelData[i];
-            if (level.selectingSpot == null)
+            if (level.detectionSphere == null)
             {
-                Debug.LogWarning($"Level '{level.levelName}' has no selecting spot assigned!");
+                Debug.LogWarning($"Level '{level.levelName}' has no detection sphere assigned!");
                 continue;
             }
 
-            if (!level.selectingSpot.CompareTag("Continent"))
+            if (level.snapTarget == null)
             {
-                level.selectingSpot.tag = "Continent";
-                Debug.Log($"Auto-assigned 'Continent' tag to {level.levelName} selecting spot");
+                Debug.LogWarning($"Level '{level.levelName}' has no snap target assigned!");
+                continue;
             }
 
-            if (!level.selectingSpot.IsChildOf(transform))
+            level.detectionSphere.isTrigger = true;
+
+            if (level.detectionSphere.gameObject.layer != Mathf.RoundToInt(Mathf.Log(sphereColliderLayer.value, 2)))
             {
-                Debug.LogWarning($"Level '{level.levelName}' selecting spot is not a child of the planet!");
+                int targetLayer = Mathf.RoundToInt(Mathf.Log(sphereColliderLayer.value, 2));
+                level.detectionSphere.gameObject.layer = targetLayer;
+                Debug.Log($"Auto-assigned layer {targetLayer} to {level.levelName} detection sphere");
             }
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        moveAction?.Enable();
-        backAction?.Enable();
-        confirmAction?.Enable();
+        if (useNewInputSystem)
+        {
+            moveAction?.Enable();
+            confirmAction?.Enable();
+        }
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        moveAction?.Disable();
-        backAction?.Disable();
-        confirmAction?.Disable();
+        if (useNewInputSystem)
+        {
+            moveAction?.Disable();
+            confirmAction?.Disable();
+        }
     }
 
-    void Update()
+    private void Update()
     {
         if (_snapCooldownTimer > 0f)
             _snapCooldownTimer -= Time.deltaTime;
+
+        if (_inputLockTimer > 0f)
+            _inputLockTimer -= Time.deltaTime;
+        else
+            _inputLocked = false;
 
         if (_isSnapping)
         {
@@ -155,117 +222,304 @@ public class PlanetController : MonoBehaviour
 
         if (_isFocused)
         {
-            if (backAction.triggered)
+            if (!_inputLocked)
             {
-                ClosePanel();
-                _isFocused = false;
-                _snapCooldownTimer = snapCooldownDuration;
-            }
-            else if (confirmAction.triggered)
-            {
-                SelectCurrentLevel();
+                Vector2 input = GetInputVector();
+                if (input.sqrMagnitude > 0.1f)
+                {
+                    ClosePanel();
+                    _isFocused = false;
+                    _snapCooldownTimer = snapCooldownDuration;
+                    HandleMovement(input);
+                }
+                else if (GetConfirmInput())
+                {
+                    SelectCurrentLevel();
+                }
             }
             return;
         }
 
-        Vector2 inV = moveAction.ReadValue<Vector2>();
-        if (inV.sqrMagnitude > 0.001f)
-            HandleMovement(inV);
-        else
-            ApplyIdleMotion();
+        if (currentState != PlanetState.Idle)
+        {
+            CheckRaycastDetection();
+        }
 
-        TryAutoSnap();
+        if (!_inputLocked)
+        {
+            Vector2 inputVector = GetInputVector();
+            if (inputVector.sqrMagnitude > 0.001f)
+                HandleMovement(inputVector);
+            else
+                ApplyIdleMotion();
+        }
+        else
+        {
+            ApplyIdleMotion();
+        }
     }
 
-    void HandleMovement(Vector2 inV)
+    private void CheckRaycastDetection()
     {
-        _lastInput = inV.normalized;
+        if (_snapCooldownTimer > 0f || _isSnapping || _isFocused)
+            return;
+
+        Ray ray = _camera.ScreenPointToRay(screenCenter);
+        RaycastHit hit;
+
+        bool rayHitSphere = Physics.Raycast(ray, out hit, raycastDistance, sphereColliderLayer);
+
+        if (rayHitSphere)
+        {
+            SphereCollider hitSphereCollider = hit.collider as SphereCollider;
+            if (hitSphereCollider != null)
+            {
+                _currentDetectedSphere = hitSphereCollider;
+
+                if (_lastTriggeredSphere != hitSphereCollider)
+                {
+                    LevelData? levelData = FindLevelDataByDetectionSphere(hitSphereCollider);
+                    if (levelData.HasValue)
+                    {
+                        BeginSnap(levelData.Value);
+                        _lastTriggeredSphere = hitSphereCollider;
+
+                        hitSphereCollider.enabled = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            _currentDetectedSphere = null;
+
+            if (_lastTriggeredSphere != null && !IsRaycastHittingAnySphere())
+            {
+                EnableAllSphereColliders();
+                _lastTriggeredSphere = null;
+            }
+        }
+    }
+
+    private bool IsRaycastHittingAnySphere()
+    {
+        Ray ray = _camera.ScreenPointToRay(screenCenter);
+        return Physics.Raycast(ray, raycastDistance, sphereColliderLayer);
+    }
+
+    private void EnableAllSphereColliders()
+    {
+        foreach (var level in levelData)
+        {
+            if (level.detectionSphere != null)
+            {
+                level.detectionSphere.enabled = true;
+            }
+        }
+    }
+
+    private LevelData? FindLevelDataByDetectionSphere(SphereCollider sphere)
+    {
+        foreach (var level in levelData)
+        {
+            if (level.detectionSphere == sphere)
+            {
+                return level;
+            }
+        }
+        return null;
+    }
+
+    private Vector2 GetInputVector()
+    {
+        if (useNewInputSystem && moveAction != null)
+        {
+            return moveAction.ReadValue<Vector2>();
+        }
+        else
+        {
+            return new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        }
+    }
+
+    private bool GetConfirmInput()
+    {
+        if (useNewInputSystem && confirmAction != null)
+        {
+            return confirmAction.triggered;
+        }
+        else
+        {
+            return Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space);
+        }
+    }
+
+    private void HandleMovement(Vector2 input)
+    {
+        _lastInput = input.normalized;
         _idleTimer = 0f;
-        _idleWeight = Mathf.SmoothDamp(_idleWeight, 0f, ref _idleWeightVel, 1f / idleFadeSpeed);
+        _idleWeight = Mathf.SmoothDamp(_idleWeight, 0f, ref _idleWeightVel, 1f / 3f);
+        lastInputTime = Time.time;
+        wasReceivingInput = true;
 
-        transform.Rotate(Vector3.up,
-                         inV.x * controlRotationSpeed * Time.deltaTime,
-                         Space.World);
+        if (currentState == PlanetState.Idle)
+        {
+            EnterActiveState();
+        }
 
-        transform.Rotate(_cam.right,
-                         -inV.y * controlRotationSpeed * Time.deltaTime,
-                         Space.World);
+        currentVelocity = input * playerRotationSpeed;
+
+        float rotationX = currentVelocity.x * Time.deltaTime;
+        float rotationY = -currentVelocity.y * Time.deltaTime;
+
+        transform.Rotate(Vector3.up, rotationX, Space.World);
+        transform.Rotate(_cam.right, rotationY, Space.World);
 
         transform.position = _startPos;
     }
 
-    void ApplyIdleMotion()
+    private void ApplyIdleMotion()
     {
+        if (wasReceivingInput)
+        {
+            wasReceivingInput = false;
+        }
+
+        currentVelocity *= rotationalInertia;
+
+        if (currentVelocity.magnitude < 0.1f)
+        {
+            currentVelocity = Vector2.zero;
+        }
+
+        if (currentVelocity.magnitude > 0)
+        {
+            float rotationX = currentVelocity.x * Time.deltaTime;
+            float rotationY = -currentVelocity.y * Time.deltaTime;
+
+            transform.Rotate(Vector3.up, rotationX, Space.World);
+            transform.Rotate(_cam.right, rotationY, Space.World);
+        }
+
         _idleTimer += Time.deltaTime;
-        if (_idleTimer < idleDelay)
+        if (_idleTimer < 0.5f)
         {
             transform.position = _startPos;
             return;
         }
 
-        _idleWeight = Mathf.SmoothDamp(_idleWeight, 1f, ref _idleWeightVel, 1f / idleFadeSpeed);
-        _bobPhase += Time.deltaTime * bobSpeed;
-
-        Vector3 axis;
-        float sign;
-        if (Mathf.Abs(_lastInput.x) >= Mathf.Abs(_lastInput.y))
+        if (currentState == PlanetState.Active && Time.time - lastInputTime > inactivityTimeout)
         {
-            axis = Vector3.up;
-            sign = Mathf.Sign(_lastInput.x);
-        }
-        else
-        {
-            axis = _cam.right;
-            sign = -Mathf.Sign(_lastInput.y);
+            EnterIdleState();
         }
 
-        transform.Rotate(axis,
-                         sign * idleSpinSpeed * _idleWeight * Time.deltaTime,
-                         Space.World);
+        if (currentState == PlanetState.Idle)
+        {
+            _idleWeight = Mathf.SmoothDamp(_idleWeight, 1f, ref _idleWeightVel, 1f / 3f);
+            _bobPhase += Time.deltaTime * bobSpeed;
 
-        float offsetY = Mathf.Sin(_bobPhase) * bobAmount * _idleWeight;
-        transform.position = _startPos + Vector3.up * offsetY;
+            Vector3 axis;
+            float sign;
+            if (Mathf.Abs(_lastInput.x) >= Mathf.Abs(_lastInput.y))
+            {
+                axis = Vector3.up;
+                sign = Mathf.Sign(_lastInput.x);
+            }
+            else
+            {
+                axis = _cam.right;
+                sign = -Mathf.Sign(_lastInput.y);
+            }
+
+            transform.Rotate(axis, sign * idleRotationSpeed * _idleWeight * Time.deltaTime, Space.World);
+
+            float offsetY = Mathf.Sin(_bobPhase) * bobAmount * _idleWeight;
+            transform.position = _startPos + Vector3.up * offsetY;
+
+            if (correctXRotation)
+            {
+                CorrectXRotation();
+            }
+        }
     }
 
-    void TryAutoSnap()
+    private void EnterActiveState()
     {
-        if (_snapCooldownTimer > 0f || _isSnapping || _isFocused)
-            return;
+        currentState = PlanetState.Active;
+    }
 
-        Ray ray = new Ray(_cam.position, _cam.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance) &&
-            hit.transform.CompareTag("Continent") &&
-            hit.transform.IsChildOf(transform))
+    private void EnterIdleState()
+    {
+        currentState = PlanetState.Idle;
+        currentVelocity = Vector2.zero;
+    }
+
+    private void CorrectXRotation()
+    {
+        float currentXRotation = transform.eulerAngles.x;
+        if (currentXRotation > 180f)
         {
-            BeginSnap(hit.transform);
+            currentXRotation -= 360f;
+        }
+
+        float targetXRotation = originalXRotation;
+        if (targetXRotation > 180f)
+        {
+            targetXRotation -= 360f;
+        }
+
+        float xDifference = Mathf.DeltaAngle(currentXRotation, targetXRotation);
+
+        if (Mathf.Abs(xDifference) > 0.1f)
+        {
+            float correctionAmount = Mathf.Sign(xDifference) * xCorrectionSpeed * Time.deltaTime;
+
+            if (Mathf.Abs(correctionAmount) > Mathf.Abs(xDifference))
+            {
+                correctionAmount = xDifference;
+            }
+
+            transform.Rotate(Vector3.right, correctionAmount, Space.World);
         }
     }
 
-    void BeginSnap(Transform target)
+    private void BeginSnap(LevelData targetLevel)
     {
         _bobPhase = 0f;
         transform.position = _startPos;
+        currentVelocity = Vector2.zero;
 
-        LevelData? targetLevel = FindLevelDataBySelectingSpot(target);
-        if (targetLevel == null)
-        {
-            Debug.LogWarning($"No level data found for selecting spot: {target.name}");
-            return;
-        }
-
-        _snapTargetName = targetLevel.Value.levelName;
+        _snapTargetName = targetLevel.levelName;
         _isSnapping = true;
+        _inputLocked = true;
         _snapLerp = 0f;
         _snapStartRot = transform.rotation;
 
-        Vector3 normal = (target.position - transform.position).normalized;
-        Vector3 toCam = (_cam.position - transform.position).normalized;
-        Quaternion align = Quaternion.FromToRotation(normal, toCam);
-        _snapEndRot = align * transform.rotation;
-
-        if (useOutlineEffect && targetLevel.Value.islandGameObject != null)
+        if (useSphericalSnapping)
         {
-            ApplyOutlineToIsland(targetLevel.Value.islandGameObject);
+            Vector3 targetWorldPos = targetLevel.snapTarget.position;
+            Vector3 planetCenter = transform.position;
+            Vector3 cameraPos = _cam.position;
+
+            Vector3 toCameraFromPlanet = (cameraPos - planetCenter).normalized;
+            Vector3 toTargetFromPlanet = (targetWorldPos - planetCenter).normalized;
+
+            Quaternion targetAlignment = Quaternion.FromToRotation(toTargetFromPlanet, toCameraFromPlanet);
+            _snapEndRot = targetAlignment * transform.rotation;
+        }
+        else
+        {
+            Vector3 normal = (targetLevel.snapTarget.position - transform.position).normalized;
+            Vector3 toCam = (_cam.position - transform.position).normalized;
+            Quaternion align = Quaternion.FromToRotation(normal, toCam);
+            _snapEndRot = align * transform.rotation;
+        }
+
+        _snapEndRot = Quaternion.Slerp(_snapStartRot, _snapEndRot, snapStrength);
+
+        if (useOutlineEffect && targetLevel.islandGameObject != null)
+        {
+            ApplyOutlineToIsland(targetLevel.islandGameObject);
         }
 
         if (PlanetGameConfigurator.Instance != null)
@@ -274,37 +528,28 @@ public class PlanetController : MonoBehaviour
         }
     }
 
-    private LevelData? FindLevelDataBySelectingSpot(Transform selectingSpot)
-    {
-        foreach (var level in levelData)
-        {
-            if (level.selectingSpot == selectingSpot)
-            {
-                return level;
-            }
-        }
-        return null;
-    }
-
-    void RunSnap()
+    private void RunSnap()
     {
         _snapLerp += Time.deltaTime / snapDuration;
-        float rawT = Mathf.Clamp01(_snapLerp);
-        float smoothT = Mathf.SmoothStep(0f, 1f, rawT);
-        float t = Mathf.Lerp(rawT, smoothT, snapSmoothStep);
+        float t = Mathf.Clamp01(_snapLerp);
 
-        transform.rotation = Quaternion.Slerp(_snapStartRot, _snapEndRot, t);
+        float smoothT = snapCurve.Evaluate(t);
+
+        transform.rotation = Quaternion.Slerp(_snapStartRot, _snapEndRot, smoothT);
         transform.position = _startPos;
 
-        if (rawT >= 1f)
+        if (t >= 1f)
         {
             _isSnapping = false;
             _isFocused = true;
+            _inputLockTimer = inputLockDuration;
+            _inputLocked = true;
+            currentState = PlanetState.Focused;
             ShowPanelFor(_snapTargetName);
         }
     }
 
-    void ShowPanelFor(string levelName)
+    private void ShowPanelFor(string levelName)
     {
         foreach (var levelInfo in levelData)
         {
@@ -324,7 +569,7 @@ public class PlanetController : MonoBehaviour
         Debug.LogWarning($"No panel assigned for level '{levelName}'");
     }
 
-    void ClosePanel()
+    private void ClosePanel()
     {
         if (_activePanel != null)
         {
@@ -344,6 +589,10 @@ public class PlanetController : MonoBehaviour
         _idleWeight = 1f;
         _bobPhase = 0f;
         transform.position = _startPos;
+        currentVelocity = Vector2.zero;
+
+        currentState = PlanetState.Active;
+        lastInputTime = Time.time;
     }
 
     private void SelectCurrentLevel()
@@ -413,39 +662,5 @@ public class PlanetController : MonoBehaviour
 
         _currentOutlinedIsland = null;
         _originalMaterials = null;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (_cam == null) return;
-
-        Gizmos.color = Color.cyan;
-        Vector3 rayStart = _cam.position;
-        Vector3 rayDirection = _cam.forward;
-        Vector3 rayEnd = rayStart + rayDirection * raycastDistance;
-
-        Gizmos.DrawLine(rayStart, rayEnd);
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(rayEnd, 0.5f);
-
-        Ray ray = new Ray(rayStart, rayDirection);
-        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(hit.point, 0.3f);
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(rayStart, hit.point);
-
-            if (hit.transform.CompareTag("Continent") && hit.transform.IsChildOf(transform))
-            {
-                Gizmos.color = Color.magenta;
-                Gizmos.DrawWireCube(hit.transform.position, Vector3.one * 2f);
-            }
-        }
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(_cam.position, _cam.forward * 3f);
     }
 }
