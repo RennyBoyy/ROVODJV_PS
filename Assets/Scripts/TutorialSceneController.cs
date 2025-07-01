@@ -66,10 +66,20 @@ public class TutorialSceneController : MonoBehaviour
                 var playerMap1 = inputActions.FindActionMap("Player");
                 var playerMap2 = inputActions.FindActionMap("Player2");
 
-                if (playerMap1 != null)
-                    confirmActions[0] = playerMap1.FindAction("Confirm");
-                if (playerMap2 != null)
-                    confirmActions[1] = playerMap2.FindAction("Confirm");
+                if (confirmActions[0] != null)
+                {
+                    Debug.Log("Player 1 confirmed");
+
+                    confirmActions[0].performed += ctx => OnPlayerConfirm(0);
+                    confirmActions[0].Enable();
+                }
+                if (confirmActions[1] != null)
+                {
+                    Debug.Log("Player 2 confirmed");
+
+                    confirmActions[1].performed += ctx => OnPlayerConfirm(1);
+                    confirmActions[1].Enable();
+                }
             }
         }
         catch (System.Exception e)
