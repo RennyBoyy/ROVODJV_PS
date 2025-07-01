@@ -84,8 +84,10 @@ public class TutorialSceneController : MonoBehaviour
         PlayerIdentity identity = (PlayerIdentity)index;
         Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
         PlayerManager.Instance.RegisterPlayer(index, pad, identity);
-
-        OnPlayerConfirm(index);
+        if (singleControllerDebug)
+        {
+            OnPlayerConfirm(index);
+        }
     }
 
     void Update()
