@@ -94,6 +94,11 @@ public class TutorialSceneController : MonoBehaviour
         PlayerIdentity identity = (PlayerIdentity)index;
         Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
         PlayerManager.Instance.RegisterPlayer(index, pad, identity);
+
+        var confirmAction = playerInput.actions["Confirm"];
+        confirmAction.performed += ctx => OnPlayerConfirm(index);
+        confirmAction.Enable(); // not always necessary but safe to ensure it's active
+
         if (singleControllerDebug)
         {
             OnPlayerConfirm(index);
