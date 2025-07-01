@@ -21,3 +21,6 @@ EditorBuildSettings:
     com.unity.input.settings: {fileID: 11400000, guid: 729a390a328f3444e804a4a4e2e0ff91, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b6407fa9b749ff0e72cbc46dbaaa20dbc6ce39d5d0c598887d49f593c95dd44
+size 818
