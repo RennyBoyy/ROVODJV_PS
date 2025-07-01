@@ -24,6 +24,8 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
     [Header("INTRO")]
     [SerializeField] private Camera gameCamera;
+    [SerializeField] private GameObject gameCameraobject;
+
     [SerializeField] private float zoomSpeed = 2f;
     [SerializeField] private AnimationCurve zoomCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private FlythroughPoint[] flythroughPoints;
@@ -67,6 +69,8 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
     [Header("Skip Intro Tooltip")]
     [SerializeField] private GameObject skipIntroTooltipPanel;
+    [SerializeField] private Animator[] kittyAnimators;
+
 
 
     private Vector3 originalCameraPosition;
@@ -78,6 +82,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     private bool gameEnded = false;
     private bool introSkipped = false;
     private bool playerInputDisabled = false;
+
 
     void Start()
     {
@@ -275,6 +280,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     // Smoothly transitions the camera back to the gameplay position
     IEnumerator ReturnToGameplayView()
     {
+        Debug.Log("Returning camera to gameplay view");
         if (gameCamera == null) yield break;
 
         Vector3 startPosition = gameCamera.transform.position;
@@ -286,7 +292,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         {
             elapsed += Time.deltaTime * zoomSpeed;
             float t = zoomCurve.Evaluate(elapsed);
-            gameObject.SetActive(false);
+            gameCameraobject.SetActive(false);
             yield return null;
         }
 
@@ -444,7 +450,10 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         {
             if (player != null)
             {
-                player.moving = true;
+                foreach (var animator in kittyAnimators)
+                {
+                    animator?.SetTrigger("Start");  
+                }
             }
         }
     }
@@ -452,7 +461,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     // Marks gameplay as active and lets players/thieves start moving
     void EnableGameplay()
     {
-        GameManager_Fruity gameManager = FindFirstObjectByType<GameManager_Fruity>();
+        GameManager_Slope gameManager = FindFirstObjectByType<GameManager_Slope>();
         if (gameManager != null)
         {
             gameManager.gameActive = true;
@@ -460,11 +469,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
         EnablePlayerInput();
 
-        TheifScript[] thieves = FindObjectsByType<TheifScript>(FindObjectsSortMode.None);
-        foreach (var thief in thieves)
-        {
-            thief.canWave = true;
-        }
+        
 
         if (gameplayUIPanel != null)
         {
@@ -577,7 +582,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
     private IEnumerator StartOutroSequence(int winningPlayer)
     {
-        gameObject.SetActive(true);
+        gameCameraobject.SetActive(true);
         yield return new WaitForSeconds(0.5f);
 
         // Move camera to outro position with smooth lerp
@@ -639,7 +644,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         // Set camera to gameplay position immediately
         if (gameCamera != null)
         {
-            gameObject.SetActive(false);
+            gameCameraobject.SetActive(false);
         }
 
         // Enable player input and start countdown sequence

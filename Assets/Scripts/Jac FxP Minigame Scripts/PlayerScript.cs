@@ -50,15 +50,14 @@ public class PlayerScript : MonoBehaviour
         playerIdentity = data.identity;
         Gamepad pad = data.gamepad;
 
-        // Set up PlayerInput if needed
         if (playerID == 0 && pad != null && player1Input != null)
         {
-            player1Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player1Input.SwitchCurrentActionMap("Player");
             player1Input.ActivateInput();
         }
         else if (playerID == 1 && pad != null && player2Input != null)
         {
-            player2Input.SwitchCurrentControlScheme("Gamepad", pad);
+            player2Input.SwitchCurrentActionMap("Player2");
             player2Input.ActivateInput();
         }
 

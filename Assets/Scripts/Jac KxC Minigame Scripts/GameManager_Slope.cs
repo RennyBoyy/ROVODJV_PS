@@ -31,31 +31,13 @@ public class GameManager_Slope : MonoBehaviour
 
     void Update()
     {
-        if (Fruit_Remaining <= 0 && !gameEnded)
+        if (gameActive)
         {
-            loseGame();
+
         }
     }
 
-    private void loseGame()
-    {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        Debug.Log("You lose!");
-
-        if (gameOverManager != null)
-        {
-            // Default: random player loses if not specified
-            bool player1Lost = Random.Range(0, 2) == 0;
-            gameOverManager.HandleGameEnd(player1Lost);
-        }
-        else
-        {
-            if (loseText != null)
-                loseText.gameObject.SetActive(true);
-        }
-    }
+    
 
     // Call this to end the game from a specific player (e.g., when a player falls off)
     public void EndGame(int winningPlayer)

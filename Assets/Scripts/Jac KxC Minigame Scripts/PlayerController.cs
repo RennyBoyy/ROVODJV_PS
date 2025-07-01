@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameManager_Slope gameManagerSlope;
 
     [Header("Gravity Scale")]
-    [Range(0.5f, 5f)]
+    [Range(0.5f, 10f)]
     [Tooltip("Multiplier on Unity’s default 9.81 m/s² gravity")]
     [SerializeField] private float gravityScale = 2f;
 
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float slopeAcceleration = 6f;
 
     [Header("Jump Settings")]
-    [Range(0f, 10f)]
+    [Range(0f, 20f)]
     [Tooltip("Peak jump height in meters")]
     [SerializeField] private float jumpHeight = 2.5f;
     [SerializeField] private float coyoteTime = 0.1f;
@@ -67,34 +67,35 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        m_Rigidbody = GetComponent<Rigidbody>();
-        gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
+        
+            m_Rigidbody = GetComponent<Rigidbody>();
+            gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
 
-        var data = PlayerManager.Instance.GetPlayer(playerID);
-        playerIdentity = data.identity;
-        Gamepad pad = data.gamepad;
+            var data = PlayerManager.Instance.GetPlayer(playerID);
+            playerIdentity = data.identity;
+            Gamepad pad = data.gamepad;
 
-        if (playerID == 0 && pad != null && player1Input != null)
-        {
-            player1Input.SwitchCurrentActionMap("Player");
-            player1Input.ActivateInput();
-        }
-        else if (playerID == 1 && pad != null && player2Input != null)
-        {
-            player2Input.SwitchCurrentActionMap("Player2");
-            player2Input.ActivateInput();
-        }
+            if (playerID == 0 && pad != null && player1Input != null)
+            {
+                player1Input.SwitchCurrentActionMap("Player");
+                player1Input.ActivateInput();
+            }
+            else if (playerID == 1 && pad != null && player2Input != null)
+            {
+                player2Input.SwitchCurrentActionMap("Player2");
+                player2Input.ActivateInput();
+            }
 
-        // (If you want to use the Gamepad for custom input, you can use 'pad' here)
+            // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
-        // strengthen Unity gravity uniformly:
-        Physics.gravity = new Vector3(0f, Physics.gravity.y * gravityScale, 0f);
-        m_Rigidbody.useGravity = true;
+            // strengthen Unity gravity uniformly:
+            Physics.gravity = new Vector3(0f, Physics.gravity.y * gravityScale, 0f);
 
-        // lock all physics-driven rotation
-        m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-        cameraShake.AmplitudeGain = 0f;
-        isGrounded = true;
+            // lock all physics-driven rotation
+            m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            cameraShake.AmplitudeGain = 0f;
+            isGrounded = true;
+        
     }
 
     void Update()
@@ -111,6 +112,11 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         ApplySlopeSlideAndLean();
         ClampHorizontalSpeed();
+        /*if (moving)
+        {   
+            Vector3 customGravity = gravityScale * Physics.gravity;
+            m_Rigidbody.AddForce(customGravity, ForceMode.Acceleration);
+        }*/
     }
 
     private void HandleJump()
@@ -147,7 +153,6 @@ public class PlayerController : MonoBehaviour
             dir = -1;
         }
         kittyAnimator?.SetInteger("MoveDirection", dir);
-        Debug.Log(kittyAnimator.GetInteger("MoveDirection"));
 
     }
 
@@ -198,12 +203,10 @@ public class PlayerController : MonoBehaviour
 
     public void startMoving()
     {
-        kittyAnimator?.SetTrigger("Start");
 
         WaitForSeconds wait = new WaitForSeconds(5.5f);
-
-        moving = true;
         m_Rigidbody.useGravity = true;
+        moving = true;
 
         // Compute the exact vertical velocity to reach jumpHeight:
         float g = Mathf.Abs(Physics.gravity.y);
