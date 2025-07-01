@@ -40123,6 +40123,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 550448477}
   m_Mesh: {fileID: 3390558720134950976, guid: 47282712690680143877a423e1473c2f, type: 3}
+--- !u!1001 &551566315
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.504938
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1153.95
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1022.72205
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 188058655708357034, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 188058655708357034, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6531e96c99be40141be04987c2586e80, type: 2}
+    - target: {fileID: 188058655708357034, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f8ac4c540fd86cf4a99d1be4f6d99dd2, type: 2}
+    - target: {fileID: 919132149155446097, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_Name
+      value: Penguin Bystander
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 9983a8f2ccbc36a4bb3a73c11097db5d, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 34e926b2682693344a3c643b1ca3037f, type: 3}
 --- !u!1 &551838428
 GameObject:
   m_ObjectHideFlags: 0
@@ -151458,3 +151531,4 @@ SceneRoots:
   - {fileID: 1938549239}
   - {fileID: 1755282789}
   - {fileID: 1482247598}
+  - {fileID: 551566315}

@@ -107,6 +107,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PenguinInIceObstacle
       objectReference: {fileID: 0}
+    - target: {fileID: 6595933197133513865, guid: b10f29b5661d28a4aa03893688e7f1db, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ee9ae42cf78e5ab4d8d143febeedb1b0, type: 2}
     m_RemovedComponents:
     - {fileID: -2807204630036860489, guid: b10f29b5661d28a4aa03893688e7f1db, type: 3}
     m_RemovedGameObjects: []
@@ -170,6 +174,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PenguinInIceObstacle (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6595933197133513865, guid: b10f29b5661d28a4aa03893688e7f1db, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ee9ae42cf78e5ab4d8d143febeedb1b0, type: 2}
     m_RemovedComponents:
     - {fileID: -2807204630036860489, guid: b10f29b5661d28a4aa03893688e7f1db, type: 3}
     m_RemovedGameObjects: []

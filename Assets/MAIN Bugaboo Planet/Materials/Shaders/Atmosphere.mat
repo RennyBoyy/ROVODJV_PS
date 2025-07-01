@@ -41,7 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Atmoshere_intensity: 40
+    - _Atmoshere_intensity: 20
     - _Atmosphere_Thickness: 0.05
     m_Colors:
     - _Atmosphere_color: {r: 0.6924528, g: 0.91772616, b: 1, a: 1}
