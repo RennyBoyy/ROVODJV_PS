@@ -97,13 +97,10 @@ public class TutorialSceneController : MonoBehaviour
 
         var confirmAction = playerInput.actions["Confirm"];
         confirmAction.performed += ctx => OnPlayerConfirm(index);
-        confirmAction.Enable(); // not always necessary but safe to ensure it's active
-
-        if (singleControllerDebug)
-        {
-            OnPlayerConfirm(index);
-            Input.GetJoystickNames();
-        }
+        confirmAction.Enable(); 
+           OnPlayerConfirm(index);
+           Input.GetJoystickNames();
+      
     }
 
     void Update()
