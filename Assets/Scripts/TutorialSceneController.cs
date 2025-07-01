@@ -4,15 +4,27 @@ using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
 
+[System.Serializable]
+public class MinigameUISet
+{
+    [Header("Main UI")]
+    public GameObject tutorialPanel;
+
+    [Header("Player 1 Ready System")]
+    public GameObject player1ReadyImage;
+    public Sprite player1WaitingSprite;
+    public Sprite player1ReadySprite;
+
+    [Header("Player 2 Ready System")]
+    public GameObject player2ReadyImage;
+    public Sprite player2WaitingSprite;
+    public Sprite player2ReadySprite;
+}
+
 public class TutorialSceneController : MonoBehaviour
 {
-    [Header("Tutorial UI Panels")]
-    [SerializeField] private GameObject[] tutorialPanels;
-
-    [Header("Ready System - Image Based")]
-    [SerializeField] private GameObject[] playerReadyImages = new GameObject[2];
-    [SerializeField] private Sprite waitingSprite;
-    [SerializeField] private Sprite readySprite;
+    [Header("Minigame UI Sets")]
+    [SerializeField] private MinigameUISet[] minigameUISets;
 
     [Header("Input Actions")]
     [SerializeField] private InputActionAsset inputActions;
@@ -24,13 +36,13 @@ public class TutorialSceneController : MonoBehaviour
     private bool[] playerReady = new bool[2];
     private int currentTutorialIndex = 0;
     private bool allPlayersReady = false;
-    private Image[] readyImages = new Image[2];
+    private Image[] currentReadyImages = new Image[2];
+    private MinigameUISet currentUISet;
 
     void Awake()
     {
         confirmActions = new InputAction[2];
         SetupInputActions();
-        CacheReadyImages();
     }
 
     void Start()
@@ -39,60 +51,10 @@ public class TutorialSceneController : MonoBehaviour
         if (sceneManager != null)
         {
             currentTutorialIndex = sceneManager.SelectedLevel;
-            Debug.Log($"Tutorial Scene: Showing tutorial for level {currentTutorialIndex}");
         }
-
-        //int playerIndex = -1;
-        //for (int i = 0; i < allPlayers.Length; i++)
-        //{
-        //    if (allPlayers[i] == this)
-        //    {
-        //        playerIndex = i;
-        //        break;
-        //    }
-        //}
-
-        //var gamepads = Gamepad.all;
-        //if (playerIndex == 0 && gamepads.Count > 0) // Fruity (P1)
-        //{
-        //    if (player1Input != null)
-        //    {
-        //        player1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
-        //        player1Input.ActivateInput();
-        //    }
-        //}
-        //else if (playerIndex == 1 && gamepads.Count > 1) // Potato (P2)
-        //{
-        //    if (player2Input != null)
-        //    {
-        //        player2Input.SwitchCurrentControlScheme("Gamepad", gamepads[1]);
-        //        player2Input.ActivateInput();
-        //    }
-        //}
-
-
 
         ShowTutorial();
         StartCoroutine(FadeInFromBlack());
-    }
-
-    void CacheReadyImages()
-    {
-        for (int i = 0; i < playerReadyImages.Length; i++)
-        {
-            if (playerReadyImages[i] != null)
-            {
-                readyImages[i] = playerReadyImages[i].GetComponent<Image>();
-                if (readyImages[i] == null)
-                {
-                    Debug.LogError($"Player {i + 1} ready image doesn't have an Image component!");
-                }
-            }
-            else
-            {
-                Debug.LogError($"Player {i + 1} ready image GameObject is not assigned!");
-            }
-        }
     }
 
     void SetupInputActions()
@@ -108,12 +70,6 @@ public class TutorialSceneController : MonoBehaviour
                     confirmActions[0] = playerMap1.FindAction("Confirm");
                 if (playerMap2 != null)
                     confirmActions[1] = playerMap2.FindAction("Confirm");
-
-                Debug.Log($"Input setup complete. Player1 action: {(confirmActions[0] != null ? "Found" : "Not found")}, Player2 action: {(confirmActions[1] != null ? "Found" : "Not found")}");
-            }
-            else
-            {
-                Debug.LogWarning("InputActions asset not assigned! Tutorial will use fallback input.");
             }
         }
         catch (System.Exception e)
@@ -129,7 +85,6 @@ public class TutorialSceneController : MonoBehaviour
         Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
         PlayerManager.Instance.RegisterPlayer(index, pad, identity);
 
-        // Mark the player ready and run the logic inside OnPlayerConfirm
         OnPlayerConfirm(index);
     }
 
@@ -165,21 +120,15 @@ public class TutorialSceneController : MonoBehaviour
 
     void ShowTutorial()
     {
-        foreach (var panel in tutorialPanels)
-        {
-            if (panel != null)
-                panel.SetActive(false);
-        }
+        HideAllMinigameUIs();
 
-        int panelIndex = Mathf.Clamp(currentTutorialIndex - 1, 0, tutorialPanels.Length - 1);
-        if (panelIndex < tutorialPanels.Length && tutorialPanels[panelIndex] != null)
+        int uiSetIndex = Mathf.Clamp(currentTutorialIndex - 1, 0, minigameUISets.Length - 1);
+
+        if (uiSetIndex < minigameUISets.Length && minigameUISets[uiSetIndex] != null)
         {
-            tutorialPanels[panelIndex].SetActive(true);
-            Debug.Log($"Showing tutorial panel {panelIndex} for level {currentTutorialIndex}");
-        }
-        else
-        {
-            Debug.LogWarning($"No tutorial panel found for level {currentTutorialIndex} (panel index {panelIndex})");
+            currentUISet = minigameUISets[uiSetIndex];
+            ShowMinigameUI(currentUISet);
+            CacheCurrentReadyImages();
         }
 
         for (int i = 0; i < playerReady.Length; i++)
@@ -190,12 +139,61 @@ public class TutorialSceneController : MonoBehaviour
         UpdateReadyUI();
     }
 
+    void HideAllMinigameUIs()
+    {
+        foreach (var uiSet in minigameUISets)
+        {
+            if (uiSet != null)
+            {
+                if (uiSet.tutorialPanel != null)
+                    uiSet.tutorialPanel.SetActive(false);
+                if (uiSet.player1ReadyImage != null)
+                    uiSet.player1ReadyImage.SetActive(false);
+                if (uiSet.player2ReadyImage != null)
+                    uiSet.player2ReadyImage.SetActive(false);
+            }
+        }
+    }
+
+    void ShowMinigameUI(MinigameUISet uiSet)
+    {
+        if (uiSet.tutorialPanel != null)
+            uiSet.tutorialPanel.SetActive(true);
+        if (uiSet.player1ReadyImage != null)
+            uiSet.player1ReadyImage.SetActive(true);
+        if (uiSet.player2ReadyImage != null)
+            uiSet.player2ReadyImage.SetActive(true);
+    }
+
+    void CacheCurrentReadyImages()
+    {
+        if (currentUISet == null) return;
+
+        if (currentUISet.player1ReadyImage != null)
+        {
+            currentReadyImages[0] = currentUISet.player1ReadyImage.GetComponent<Image>();
+        }
+        else
+        {
+            currentReadyImages[0] = null;
+        }
+
+        if (currentUISet.player2ReadyImage != null)
+        {
+            currentReadyImages[1] = currentUISet.player2ReadyImage.GetComponent<Image>();
+        }
+        else
+        {
+            currentReadyImages[1] = null;
+        }
+    }
+
     void OnPlayerConfirm(int playerIndex)
     {
         if (allPlayersReady || playerIndex >= playerReady.Length) return;
 
         playerReady[playerIndex] = true;
-        Debug.Log($"Player {playerIndex + 1} is ready!");
+
         UpdateReadyUI();
 
         bool allReady = true;
@@ -211,20 +209,24 @@ public class TutorialSceneController : MonoBehaviour
         if (allReady)
         {
             allPlayersReady = true;
-            Debug.Log("All players ready! Starting game...");
             StartCoroutine(StartGameAfterDelay());
         }
     }
 
     void UpdateReadyUI()
     {
-        for (int i = 0; i < readyImages.Length && i < playerReady.Length; i++)
+        if (currentUISet == null) return;
+
+        if (currentReadyImages[0] != null)
         {
-            if (readyImages[i] != null)
-            {
-                readyImages[i].sprite = playerReady[i] ? readySprite : waitingSprite;
-                Debug.Log($"Updated Player {i + 1} image to {(playerReady[i] ? "ready" : "waiting")} sprite");
-            }
+            Sprite spriteToUse = playerReady[0] ? currentUISet.player1ReadySprite : currentUISet.player1WaitingSprite;
+            currentReadyImages[0].sprite = spriteToUse;
+        }
+
+        if (currentReadyImages[1] != null)
+        {
+            Sprite spriteToUse = playerReady[1] ? currentUISet.player2ReadySprite : currentUISet.player2WaitingSprite;
+            currentReadyImages[1].sprite = spriteToUse;
         }
     }
 
@@ -237,16 +239,11 @@ public class TutorialSceneController : MonoBehaviour
         {
             sceneManager.LoadGameSceneWithTransition();
         }
-        else
-        {
-            Debug.LogError("PersistentSceneManager not found!");
-        }
     }
 
     IEnumerator FadeInFromBlack()
     {
         yield return new WaitForSeconds(0.1f);
-        Debug.Log("Tutorial scene loaded and faded in via PersistentSceneManager");
     }
 
     public void OnReadyButtonPressed(int playerIndex)
