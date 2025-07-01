@@ -53,8 +53,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerIdentity playerIdentity;
     public PlayerIdentity PlayerType => playerIdentity;
 
-    public PlayerInput player1Input;
-    public PlayerInput player2Input;
+    private PlayerInput playerInput;
+
 
     // runtime state
     private bool isGrounded;
@@ -65,26 +65,22 @@ public class PlayerController : MonoBehaviour
     private bool didplayer1win;
     public int playerID;
 
+    void Awake()
+    {
+        playerInput = GetComponent<PlayerInput>();
+        playerID = playerInput.playerIndex;
+        playerIdentity = (PlayerIdentity)playerID;
+
+        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");
+    }
+
     void Start()
     {
         
             m_Rigidbody = GetComponent<Rigidbody>();
             gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
 
-            var data = PlayerManager.Instance.GetPlayer(playerID);
-            playerIdentity = data.identity;
-            Gamepad pad = data.gamepad;
-
-            if (playerID == 0 && pad != null && player1Input != null)
-            {
-                player1Input.SwitchCurrentActionMap("Player");
-                player1Input.ActivateInput();
-            }
-            else if (playerID == 1 && pad != null && player2Input != null)
-            {
-                player2Input.SwitchCurrentActionMap("Player2");
-                player2Input.ActivateInput();
-            }
+            
 
             // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
@@ -95,7 +91,16 @@ public class PlayerController : MonoBehaviour
             m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             cameraShake.AmplitudeGain = 0f;
             isGrounded = true;
-        
+
+        int index = playerInput.playerIndex;
+
+        if (index == 0)
+            playerInput.SwitchCurrentActionMap("Player");
+        else if (index == 1)
+            playerInput.SwitchCurrentActionMap("Player2");
+
+        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");
+
     }
 
     void Update()
