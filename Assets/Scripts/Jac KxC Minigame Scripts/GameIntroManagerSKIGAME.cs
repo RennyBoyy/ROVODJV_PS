@@ -551,20 +551,13 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             // Note: winningPlayer parameter actually represents the LOSING player
             // 0 = P1 (Fruity) lost, so P2 (Potato) won
             // 1 = P2 (Potato) lost, so P1 (Fruity) won
-            bool isWinner = false;
-            if (winningPlayer == 0 && i == 1) // P2 (Potato) won because P1 lost
+            bool isWinner = (player.playerID == winningPlayer);
+            if (isWinner)
             {
-                isWinner = true;
                 player.transform.position = podium1stPlace.position;
             }
-            else if (winningPlayer == 1 && i == 0) // P1 (Fruity) won because P2 lost
+            else
             {
-                isWinner = true;
-                player.transform.position = podium1stPlace.position;
-            }
-            else // This player lost
-            {
-                isWinner = false;
                 player.transform.position = podium2ndPlace.position;
             }
 
