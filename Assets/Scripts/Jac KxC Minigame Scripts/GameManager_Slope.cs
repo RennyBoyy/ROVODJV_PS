@@ -13,6 +13,10 @@ public class GameManager_Slope : MonoBehaviour
     [Header("Player Detection")]
     [SerializeField] private PlayerController player1Controller;
     [SerializeField] private PlayerController player2Controller;
+    private int playersFinished = 0;
+    private int firstPlayerID = -1;
+    private Animator player1Animator;
+    private Animator player2Animator;
 
     private GameOverManager gameOverManager;
     private bool gameEnded = false;
@@ -35,8 +39,31 @@ public class GameManager_Slope : MonoBehaviour
     {
         SceneManager.LoadScene("MAIN Bugaboo Planet");
     }
+    public void PlayerReachedGoal(int playerID, Animator playerAnimator)
+    {
+        playersFinished++;
 
-    
+        // Fix: assign animator to the correct slot based on player ID
+        if (playerID == 0) player1Animator = playerAnimator;
+        else if (playerID == 1) player2Animator = playerAnimator;
+
+        // First to finish
+        if (firstPlayerID == -1)
+        {
+            firstPlayerID = playerID;
+            Debug.Log($"Player {playerID} was first to reach the goal.");
+        }
+
+        // End game once both arrived
+        if (playersFinished >= 2 && !gameEnded)
+        {
+            gameEnded = true;
+            EndGame(firstPlayerID);
+        }
+    }
+
+
+
 
     // Call this to end the game from a specific player (e.g., when a player falls off)
     public void EndGame(int winningPlayer)
@@ -45,14 +72,18 @@ public class GameManager_Slope : MonoBehaviour
         IsGameDone = true;
         WinningPlayer = winningPlayer;
 
-        // Disable all gameplay scripts
+        if (player1Animator != null)
+            player1Animator.SetTrigger(winningPlayer == 0 ? "Victory" : "Defeat");
+        if (player2Animator != null)
+            player2Animator.SetTrigger(winningPlayer == 1 ? "Victory" : "Defeat");
+
         PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
         foreach (var player in players)
             if (player != null) player.enabled = false;
 
-        // Notify GameManager (GameIntroManager)
         GameIntroManagerSKIGAME.Instance.OnGameEnd(winningPlayer);
     }
 
-   
+
+
 }
