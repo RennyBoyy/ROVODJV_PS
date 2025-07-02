@@ -39,28 +39,30 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private PlayerIdentity playerIdentity;
     public PlayerIdentity PlayerType => playerIdentity;
 
+    private PlayerInput playerInput;
+
+    void Awake()
+    {
+        playerInput = GetComponent<PlayerInput>();
+        /*playerID = playerInput.playerIndex;
+        playerIdentity = (PlayerIdentity)playerID;
+
+        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");*/
+    }
     private void Start()
     {
         bullets = maxBullets;
         minigameManager = FindFirstObjectByType<GameManager_Fruity>();
         animator = GetComponent<Animator>();
 
-        // Get assignment from PlayerManager
-        var data = PlayerManager.Instance.GetPlayer(playerID);
-        playerIdentity = data.identity;
-        Gamepad pad = data.gamepad;
+        /*int index = playerInput.playerIndex;
 
-        // Set up PlayerInput if needed
-        if (playerID == 0 && pad != null && player1Input != null)
-        {
-            player1Input.SwitchCurrentControlScheme("Gamepad", pad);
-            player1Input.ActivateInput();
-        }
-        else if (playerID == 1 && pad != null && player2Input != null)
-        {
-            player2Input.SwitchCurrentControlScheme("Gamepad", pad);
-            player2Input.ActivateInput();
-        }
+        if (index == 0)
+            playerInput.SwitchCurrentActionMap("Player");
+        else if (index == 1)
+            playerInput.SwitchCurrentActionMap("Player2");
+
+        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
 
         UpdateAmmoUI();
     }

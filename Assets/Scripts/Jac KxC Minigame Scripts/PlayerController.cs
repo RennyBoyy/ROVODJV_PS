@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameManager_Slope gameManagerSlope;
 
     [Header("Gravity Scale")]
-    [Range(0.5f, 5f)]
+    [Range(0.5f, 10f)]
     [Tooltip("Multiplier on Unity’s default 9.81 m/s² gravity")]
     [SerializeField] private float gravityScale = 2f;
 
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float slopeAcceleration = 6f;
 
     [Header("Jump Settings")]
-    [Range(0f, 10f)]
+    [Range(0f, 20f)]
     [Tooltip("Peak jump height in meters")]
     [SerializeField] private float jumpHeight = 2.5f;
     [SerializeField] private float coyoteTime = 0.1f;
@@ -53,48 +53,54 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerIdentity playerIdentity;
     public PlayerIdentity PlayerType => playerIdentity;
 
-    public PlayerInput player1Input;
-    public PlayerInput player2Input;
+    private PlayerInput playerInput;
+
 
     // runtime state
     private bool isGrounded;
-    private bool moving;
+    public bool moving;
     private float moveInput;
     private float coyoteCounter;
     private float jumpBufferCounter;
     private bool didplayer1win;
     public int playerID;
 
+    void Awake()
+    {
+        playerInput = GetComponent<PlayerInput>();
+        /*playerID = playerInput.playerIndex;
+        playerIdentity = (PlayerIdentity)playerID;
+
+        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");*/
+    }
+
     void Start()
     {
-        m_Rigidbody = GetComponent<Rigidbody>();
-        gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
+        
+            m_Rigidbody = GetComponent<Rigidbody>();
+            gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
 
-        var data = PlayerManager.Instance.GetPlayer(playerID);
-        playerIdentity = data.identity;
-        Gamepad pad = data.gamepad;
+            
 
-        if (playerID == 0 && pad != null && player1Input != null)
-        {
-            player1Input.SwitchCurrentControlScheme("Gamepad", pad);
-            player1Input.ActivateInput();
-        }
-        else if (playerID == 1 && pad != null && player2Input != null)
-        {
-            player2Input.SwitchCurrentControlScheme("Gamepad", pad);
-            player2Input.ActivateInput();
-        }
+            // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
-        // (If you want to use the Gamepad for custom input, you can use 'pad' here)
+            // strengthen Unity gravity uniformly:
+            //Physics.gravity = new Vector3(0f, -9.81f * 25, 0f); // if different scenes require different gravity, this could work (but not in a player controller!)
 
-        // strengthen Unity gravity uniformly:
-        Physics.gravity = new Vector3(0f, Physics.gravity.y * gravityScale, 0f);
-        m_Rigidbody.useGravity = true;
+            // lock all physics-driven rotation
+            m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            cameraShake.AmplitudeGain = 0f;
+            isGrounded = true;
 
-        // lock all physics-driven rotation
-        m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-        cameraShake.AmplitudeGain = 0f;
-        isGrounded = true;
+       /* int index = playerInput.playerIndex;
+
+        if (index == 0)
+            playerInput.SwitchCurrentActionMap("Player");
+        else if (index == 1)
+            playerInput.SwitchCurrentActionMap("Player2");
+
+        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
+
     }
 
     void Update()
@@ -111,6 +117,11 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         ApplySlopeSlideAndLean();
         ClampHorizontalSpeed();
+        //if (moving)
+        //{   
+        //    Vector3 customGravity = gravityScale * Physics.gravity;
+        //    m_Rigidbody.AddForce(customGravity, ForceMode.Acceleration);
+        //}
     }
 
     private void HandleJump()
@@ -147,7 +158,6 @@ public class PlayerController : MonoBehaviour
             dir = -1;
         }
         kittyAnimator?.SetInteger("MoveDirection", dir);
-        Debug.Log(kittyAnimator.GetInteger("MoveDirection"));
 
     }
 
@@ -187,7 +197,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!moving) return;
         moveInput = ctx.ReadValue<Vector2>().x;
-        Debug.Log($"Player {playerID} move input: {moveInput}");
+        //Debug.Log($"Player {playerID} move input: {moveInput}");
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
@@ -198,8 +208,11 @@ public class PlayerController : MonoBehaviour
 
     public void startMoving()
     {
-        moving = true;
+        Debug.Log("Start moving");
+        //WaitForSeconds wait = new WaitForSeconds(5.5f);
+        //Debug.Log("...didn't wait");
         m_Rigidbody.useGravity = true;
+        moving = true;
 
         // Compute the exact vertical velocity to reach jumpHeight:
         float g = Mathf.Abs(Physics.gravity.y);
@@ -261,11 +274,37 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("LoseCon")) return;
-        didplayer1win = (playerID == 1);
+
+            if (gameManagerSlope != null)
+            {
+            Debug.Log($"[PlayerController] Player {playerID} hit LoseCon.");
+            if (gameObject.CompareTag("Player")) 
+            {
+                Debug.Log($"[PlayerController] Player {playerID} lost the game.");
+                gameManagerSlope.EndGame(0);
+            }else if (gameObject.CompareTag("Player2"))
+            {
+                Debug.Log($"[PlayerController] Player {playerID} lost the game.");
+                gameManagerSlope.EndGame(1);
+            }
+        }
         moving = false;
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
         kittyAnimator?.SetTrigger(didplayer1win ? "Victory" : "Defeat");
-        gameManagerSlope?.TriggerGameEndFromPlayer(this);
+    }
+    public void PlayIntroTargetAnimation(string triggerName)
+    {
+        if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))
+            kittyAnimator.SetTrigger(triggerName);
+    }
+
+    /// <summary>
+    /// Resets an intro/target animation trigger (call at end of intro to return to default state).
+    /// </summary>
+    public void ResetIntroTargetAnimation(string triggerName)
+    {
+        if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))
+            kittyAnimator.ResetTrigger(triggerName);
     }
 }

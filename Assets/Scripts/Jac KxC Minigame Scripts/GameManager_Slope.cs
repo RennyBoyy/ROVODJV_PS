@@ -17,92 +17,42 @@ public class GameManager_Slope : MonoBehaviour
     private GameOverManager gameOverManager;
     private bool gameEnded = false;
 
+    public bool IsGameDone { get; private set; }
+    public int WinningPlayer { get; private set; }
+
     void Start()
     {
         gameOverManager = GameOverManager.Instance;
-
-        if (player1Controller == null || player2Controller == null)
-        {
-            FindPlayerControllers();
-        }
+       
     }
 
-    void FindPlayerControllers()
+    
+    public void restartGame()
     {
-        PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
-
-        foreach (PlayerController player in players)
-        {
-            if (player.playerID == 1 && player1Controller == null)
-            {
-                player1Controller = player;
-            }
-            else if (player.playerID == 2 && player2Controller == null)
-            {
-                player2Controller = player;
-            }
-        }
-
-        Debug.Log($"Found players: Player1 = {(player1Controller != null ? player1Controller.name : "None")}, Player2 = {(player2Controller != null ? player2Controller.name : "None")}");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-
-    void Update()
+    public void MainMenu()
     {
-        if (Fruit_Remaining <= 0 && !gameEnded)
-        {
-            loseGame();
-        }
+        SceneManager.LoadScene("MAIN Bugaboo Planet");
     }
 
-    private void loseGame()
-    {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        Debug.Log("You lose!");
-
-        if (gameOverManager != null)
-        {
-            // Default: random player loses if not specified
-            bool player1Lost = Random.Range(0, 2) == 0;
-            gameOverManager.HandleGameEnd(player1Lost);
-        }
-        else
-        {
-            if (loseText != null)
-                loseText.gameObject.SetActive(true);
-            StartCoroutine(LoadSceneAfterDelay());
-        }
-    }
+    
 
     // Call this to end the game from a specific player (e.g., when a player falls off)
-    public void TriggerGameEndFromPlayer(PlayerController player)
+    public void EndGame(int winningPlayer)
     {
-        if (gameEnded) return;
+        Debug.Log($"[GameManager_Slope] Ending game. Winning Player: {winningPlayer}");
+        IsGameDone = true;
+        WinningPlayer = winningPlayer;
 
-        gameEnded = true;
-        Debug.Log("[GameManager_Slope] You lose! TriggerGameEndFromPlayer called.");
+        // Disable all gameplay scripts
+        PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+        foreach (var player in players)
+            if (player != null) player.enabled = false;
 
-        bool player1Lost = (player == player1Controller);
-        Debug.Log($"[GameManager_Slope] Calling HandleGameEnd. player1Lost={player1Lost}, player={player}");
-
-        if (gameOverManager != null)
-        {
-            Debug.Log("[GameManager_Slope] gameOverManager is not null, calling HandleGameEnd.");
-            gameOverManager.HandleGameEnd(player1Lost);
-        }
-        else
-        {
-            Debug.LogWarning("[GameManager_Slope] gameOverManager is null!");
-            if (loseText != null)
-                loseText.gameObject.SetActive(true);
-            StartCoroutine(LoadSceneAfterDelay());
-        }
+        // Notify GameManager (GameIntroManager)
+        GameIntroManagerSKIGAME.Instance.OnGameEnd(winningPlayer);
     }
 
-    private IEnumerator LoadSceneAfterDelay()
-    {
-        yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene("BugabooPlanet");
-    }
+   
 }
