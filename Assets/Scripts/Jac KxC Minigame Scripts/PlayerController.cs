@@ -295,9 +295,6 @@ public class PlayerController : MonoBehaviour
             kittyAnimator.SetTrigger(triggerName);
     }
 
-    /// <summary>
-    /// Resets an intro/target animation trigger (call at end of intro to return to default state).
-    /// </summary>
     public void ResetIntroTargetAnimation(string triggerName)
     {
         if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))

@@ -15336,6 +15336,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 193215341}
   m_Mesh: {fileID: -5495902117074765545, guid: 39272df3fad6a704f8da38ffefc8caf8, type: 3}
+--- !u!1 &194424483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 194424484}
+  m_Layer: 0
+  m_Name: PlayerCamPositionEND
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &194424484
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194424483}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.06445661, y: 0.004488237, z: -0.00026034392, w: 0.9979104}
+  m_LocalPosition: {x: -5.122301, y: 100.38362, z: 4853.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &195763386
 GameObject:
   m_ObjectHideFlags: 0
@@ -28750,6 +28781,7 @@ MonoBehaviour:
   podium1stPlace: {fileID: 1468389442}
   podium2ndPlace: {fileID: 15839683}
   outroCameraTransform: {fileID: 1711422166}
+  PodeumPositionend: {fileID: 194424484}
   endgameDelay: 10
   outroCameraTransitionSpeed: 2
   outroCameraCurve:
@@ -160506,3 +160538,4 @@ SceneRoots:
   - {fileID: 1938549239}
   - {fileID: 1755282789}
   - {fileID: 1482247598}
+  - {fileID: 194424484}
