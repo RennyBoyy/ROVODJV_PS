@@ -40,10 +40,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _FoamCutOff: 8.35
+    - _NormalStrength: 0.6
     - _QueueControl: 0
     - _Smoothness: 0.5
     - _Strength: 2
     m_Colors:
-    - _ShallowWaterColor: {r: 0.098039225, g: 0.30588236, b: 0.49411768, a: 1}
+    - _DeepWaterColor: {r: 0.16691342, g: 0.46942404, b: 0.7433963, a: 1}
+    - _ShallowWaterColor: {r: 0.16862746, g: 0.47058824, b: 0.74509805, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
