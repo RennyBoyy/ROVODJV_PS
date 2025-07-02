@@ -104,6 +104,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             originalCameraRotation = gameCamera.transform.rotation;
         }
 
+
         playerScripts = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
         DisablePlayerInput();
 
@@ -621,7 +622,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
         // NOW set up the podium after the delay + camera transition
         SetupPodiumCharacters(winningPlayer);
-
+        StartCheeringSequence();
         // Show the appropriate Win UI
         if (winningPlayer == 0 && player2WinUI != null)
             player2WinUI.SetActive(true);
