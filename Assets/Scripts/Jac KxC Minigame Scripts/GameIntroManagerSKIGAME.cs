@@ -268,11 +268,12 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
         if (skipIntroTooltipPanel != null)
             skipIntroTooltipPanel.SetActive(false);
+        EnableGameplay();
 
-        EnablePlayerInput();
+
         yield return StartCoroutine(PlayCountdown());
 
-        EnableGameplay();
+       
         introComplete = true;
     }
 
@@ -548,7 +549,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             }
 
             // Make characters face the camera (screen)
-            FaceCharacterToCamera(player);
+           // FaceCharacterToCamera(player);
 
             // Play victory or defeat animation
             string animationTrigger = isWinner ? "Victory" : "Defeat";
