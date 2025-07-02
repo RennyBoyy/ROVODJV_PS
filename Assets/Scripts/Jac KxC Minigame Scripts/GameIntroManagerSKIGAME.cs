@@ -47,6 +47,9 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
     [SerializeField] private Color[] countdownColors = { Color.red, Color.yellow, Color.green };
     [SerializeField] private Color goColor = Color.white;
+    [SerializeField] private Animator[] bystanderAnimators;
+    [SerializeField] private float cheerStartDelayMin = 0f;
+    [SerializeField] private float cheerStartDelayMax = 2f;
 
     [Header("UI Canvases")]
     [SerializeField] private GameObject gameplayUIPanel;
@@ -132,6 +135,22 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         }
 
     }
+    void StartCheeringSequence()
+    {
+        foreach (var animator in bystanderAnimators)
+        {
+            float delay = Random.Range(cheerStartDelayMin, cheerStartDelayMax);
+            StartCoroutine(StartCheerWithDelay(animator, delay));
+        }
+    }
+
+    private IEnumerator StartCheerWithDelay(Animator animator, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        animator.SetBool("isCheering", true);
+        yield return new WaitForSeconds(20f);
+        animator.SetBool("isCheering", false);
+    }
 
     IEnumerator FlyThroughCameraPath()
     {
@@ -142,6 +161,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
         for (int i = 1; i < flythroughPoints.Length - 2; i++)
         {
+            StartCheeringSequence();
             Transform p0 = flythroughPoints[i - 1].point;
             Transform p1 = flythroughPoints[i].point;
             Transform p2 = flythroughPoints[i + 1].point;
@@ -293,11 +313,10 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         {
             elapsed += Time.deltaTime * zoomSpeed;
             float t = zoomCurve.Evaluate(elapsed);
-            gameCameraobject.SetActive(false);
             yield return null;
         }
 
-
+        gameCameraobject.SetActive(false);
         yield return new WaitForSeconds(0.3f);
     }
 
