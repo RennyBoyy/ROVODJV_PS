@@ -58,7 +58,8 @@ public class GameManager_Slope : MonoBehaviour
         if (playersFinished >= 2 && !gameEnded)
         {
             gameEnded = true;
-            EndGame(firstPlayerID);
+            int losingPlayerID = (firstPlayerID == 0) ? 1 : 0;
+            EndGame(losingPlayerID);
             if (player1Animator != null)
                 player1Animator?.ResetTrigger("Stop");
             if (player2Animator != null)
