@@ -268,11 +268,12 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
         if (skipIntroTooltipPanel != null)
             skipIntroTooltipPanel.SetActive(false);
+        EnableGameplay();
 
-        EnablePlayerInput();
+
         yield return StartCoroutine(PlayCountdown());
 
-        EnableGameplay();
+       
         introComplete = true;
     }
 
@@ -548,7 +549,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             }
 
             // Make characters face the camera (screen)
-            FaceCharacterToCamera(player);
+           // FaceCharacterToCamera(player);
 
             // Play victory or defeat animation
             string animationTrigger = isWinner ? "Victory" : "Defeat";
@@ -582,8 +583,12 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
     private IEnumerator StartOutroSequence(int winningPlayer)
     {
-        gameCameraobject.transform.position = outroCameraTransform.position;
-        gameCameraobject.transform.rotation = outroCameraTransform.rotation;
+        if (PodeumPositionend != null)
+        {
+            gameCameraobject.transform.position = PodeumPositionend.position;
+            gameCameraobject.transform.rotation = PodeumPositionend.rotation;
+        }
+
         gameCameraobject.SetActive(true);
 
         // ⏳ Delay BEFORE we teleport players or animate
