@@ -583,8 +583,12 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
     private IEnumerator StartOutroSequence(int winningPlayer)
     {
-        gameCameraobject.transform.position = outroCameraTransform.position;
-        gameCameraobject.transform.rotation = outroCameraTransform.rotation;
+        if (PodeumPositionend != null)
+        {
+            gameCameraobject.transform.position = PodeumPositionend.position;
+            gameCameraobject.transform.rotation = PodeumPositionend.rotation;
+        }
+
         gameCameraobject.SetActive(true);
 
         // ⏳ Delay BEFORE we teleport players or animate
