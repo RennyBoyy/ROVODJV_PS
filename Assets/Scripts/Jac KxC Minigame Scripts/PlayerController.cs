@@ -222,7 +222,7 @@ public class PlayerController : MonoBehaviour
         // Build a flat forward direction (ignore any residual Y)
         Vector3 forwardDir = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
 
-        m_Rigidbody.linearVelocity = forwardDir * 20f
+        m_Rigidbody.linearVelocity = forwardDir * 35f
                              + Vector3.up * vY;
 
     }

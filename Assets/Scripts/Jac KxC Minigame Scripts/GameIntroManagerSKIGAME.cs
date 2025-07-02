@@ -568,7 +568,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             }
 
             // Make characters face the camera (screen)
-           // FaceCharacterToCamera(player);
+            FaceCharacterToCamera(player);
 
             // Play victory or defeat animation
             string animationTrigger = isWinner ? "Victory" : "Defeat";
@@ -589,13 +589,13 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         {
             // P1 Fruity's model faces -Z, so we need to rotate 180 degrees
             // to make it face the camera properly
-            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera) * Quaternion.Euler(0, 180, 0);
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
             player.transform.rotation = targetRotation;
         }
         else if (player.PlayerType == PlayerIdentity.Potato)
         {
             // P2 Potato's model faces +Z, so normal facing works
-            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera) * Quaternion.Euler(0, 180, 0);
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
             player.transform.rotation = targetRotation;
         }
     }
