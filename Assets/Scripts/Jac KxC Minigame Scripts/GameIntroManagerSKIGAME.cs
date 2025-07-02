@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -58,6 +58,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     [SerializeField] private Transform podium1stPlace;
     [SerializeField] private Transform podium2ndPlace;
     [SerializeField] private Transform outroCameraTransform;
+    [SerializeField] private Transform PodeumPositionend;
     [SerializeField] private float endgameDelay = 3f;
     [SerializeField] private float outroCameraTransitionSpeed = 2f;
     [SerializeField] private AnimationCurve outroCameraCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -82,7 +83,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     private bool gameEnded = false;
     private bool introSkipped = false;
     private bool playerInputDisabled = false;
-
 
     void Start()
     {
@@ -582,24 +582,31 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
     private IEnumerator StartOutroSequence(int winningPlayer)
     {
+        gameCameraobject.transform.position = outroCameraTransform.position;
+        gameCameraobject.transform.rotation = outroCameraTransform.rotation;
         gameCameraobject.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
 
-        // Move camera to outro position with smooth lerp
+        // ⏳ Delay BEFORE we teleport players or animate
+        yield return new WaitForSeconds(endgameDelay);
+
+        // Move camera to outro position
         if (outroCameraTransform != null && gameCamera != null)
         {
             yield return StartCoroutine(SmoothLerpToOutro());
         }
 
-        // Show Win UI after camera has moved to podium
-        if (winningPlayer == 0 && player2WinUI != null) // P2 won
+        // NOW set up the podium after the delay + camera transition
+        SetupPodiumCharacters(winningPlayer);
+
+        // Show the appropriate Win UI
+        if (winningPlayer == 0 && player2WinUI != null)
             player2WinUI.SetActive(true);
-        else if (winningPlayer == 1 && player1WinUI != null) // P1 won
+        else if (winningPlayer == 1 && player1WinUI != null)
             player1WinUI.SetActive(true);
 
-        // Start the endgame outro handling
         StartCoroutine(HandleEndgameOutro());
     }
+
 
     private IEnumerator SmoothLerpToOutro()
     {

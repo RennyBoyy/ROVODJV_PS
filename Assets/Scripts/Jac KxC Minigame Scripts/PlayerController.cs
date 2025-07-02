@@ -56,7 +56,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
 
 
-    // runtime state
+    private int playersFinished = 0;
+    private int firstPlayerID = -1;
     private bool isGrounded;
     public bool moving;
     private float moveInput;
@@ -274,34 +275,26 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("LoseCon")) return;
-
-            if (gameManagerSlope != null)
-            {
-            Debug.Log($"[PlayerController] Player {playerID} hit LoseCon.");
-            if (gameObject.CompareTag("Player")) 
-            {
-                Debug.Log($"[PlayerController] Player {playerID} lost the game.");
-                gameManagerSlope.EndGame(0);
-            }else if (gameObject.CompareTag("Player2"))
-            {
-                Debug.Log($"[PlayerController] Player {playerID} lost the game.");
-                gameManagerSlope.EndGame(1);
-            }
-        }
-        moving = false;
+        kittyAnimator?.SetTrigger("Stop");
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
-        kittyAnimator?.SetTrigger(didplayer1win ? "Victory" : "Defeat");
+        m_Rigidbody.angularVelocity = Vector3.zero;
+        m_Rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+
+        Debug.Log($"[PlayerController] Player {playerID} hit LoseCon.");
+
+        if (gameManagerSlope != null)
+        {
+            gameManagerSlope.PlayerReachedGoal(playerID, kittyAnimator);
+        }
     }
+
     public void PlayIntroTargetAnimation(string triggerName)
     {
         if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))
             kittyAnimator.SetTrigger(triggerName);
     }
 
-    /// <summary>
-    /// Resets an intro/target animation trigger (call at end of intro to return to default state).
-    /// </summary>
     public void ResetIntroTargetAnimation(string triggerName)
     {
         if (kittyAnimator != null && !string.IsNullOrEmpty(triggerName))
