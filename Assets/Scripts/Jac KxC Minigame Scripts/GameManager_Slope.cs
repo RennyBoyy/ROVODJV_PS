@@ -59,6 +59,11 @@ public class GameManager_Slope : MonoBehaviour
         {
             gameEnded = true;
             EndGame(firstPlayerID);
+            if (player1Animator != null)
+                player1Animator?.ResetTrigger("Stop");
+            if (player2Animator != null)
+                player2Animator?.ResetTrigger("Stop");
+
         }
     }
 

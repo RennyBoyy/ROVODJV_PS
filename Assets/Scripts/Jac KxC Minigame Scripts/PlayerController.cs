@@ -275,7 +275,7 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("LoseCon")) return;
-
+        kittyAnimator?.SetTrigger("Stop");
         m_Rigidbody.useGravity = false;
         m_Rigidbody.linearVelocity = Vector3.zero;
         m_Rigidbody.angularVelocity = Vector3.zero;
