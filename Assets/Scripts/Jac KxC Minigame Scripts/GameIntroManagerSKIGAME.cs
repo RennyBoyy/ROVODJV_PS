@@ -36,7 +36,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     [SerializeField] private GameObject potatoNameUI;
     [SerializeField] private GameObject vsSplashUI;
     [SerializeField] private Transform vsSplashPoint;
-    [SerializeField] private float splashDisplayDuration = 1.5f;
     [Space(30)]
     [SerializeField] private GameObject countdownCanvas;
     [SerializeField] private TextMeshProUGUI countdownText;
@@ -86,7 +85,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     private PlayerController[] playerScripts;
     private bool gameEnded = false;
     private bool introSkipped = false;
-    private bool playerInputDisabled = false;
 
 
     [SerializeField] private GameObject retryButtonHighlight;
@@ -588,7 +586,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     void DisablePlayerInput()
     {
         Debug.Log("Disabling player input during camera animation");
-        playerInputDisabled = true;
         foreach (var player in playerScripts)
         {
             if (player != null)
@@ -602,7 +599,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     void EnablePlayerInput()
     {
         Debug.Log("Enabling player input for countdown phase");
-        playerInputDisabled = false;
         foreach (var player in playerScripts)
         {
             if (player != null)

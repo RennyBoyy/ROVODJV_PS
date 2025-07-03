@@ -42,7 +42,6 @@ public class GameOverManager : MonoBehaviour
 
     [Header("Scene Settings")]
     [SerializeField] private string planetSceneName = "BugabooPlanet";
-    [SerializeField] private float choiceExecutionDelay = 3f;
 
     [Header("Podium Settings")]
     [SerializeField] private Transform podiumWinnerSpot;
