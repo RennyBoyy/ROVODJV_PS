@@ -6528,7 +6528,6 @@ MonoBehaviour:
   - {fileID: 1821924897}
   - {fileID: 1323389510}
   hand: {fileID: 85195548}
-  laneGroupName: Collider_Lives
   player1Input: {fileID: 36897388}
   player2Input: {fileID: 0}
   maxBullets: 5
@@ -38209,7 +38208,6 @@ GameObject:
   - component: {fileID: 726760473}
   - component: {fileID: 726760472}
   - component: {fileID: 726760471}
-  - component: {fileID: 726760475}
   m_Layer: 5
   m_Name: -----UI-----
   m_TagString: Untagged
@@ -38308,18 +38306,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &726760475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 726760470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9d7f718fdafcc04980e50686bc2fec5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &729181529
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58369,7 +58355,6 @@ MonoBehaviour:
   potatoNameUI: {fileID: 466058279}
   vsSplashUI: {fileID: 471742922}
   vsSplashPoint: {fileID: 552928857}
-  splashDisplayDuration: 1.5
   countdownCanvas: {fileID: 0}
   countdownText: {fileID: 0}
   countdownFrom: 3
@@ -62605,14 +62590,13 @@ MonoBehaviour:
   - {fileID: 1592706404}
   - {fileID: 996064827}
   hand: {fileID: 330583031}
-  laneGroupName: Collider_Lives
   player1Input: {fileID: 0}
   player2Input: {fileID: 1438236996}
   maxBullets: 5
   bullets: 5
   laneMoveDuration: 0.25
   canMove: 1
-  playerID: 0
+  playerID: 1
   minigameManager: {fileID: 0}
   playerIdentity: 1
 --- !u!1001 &1448205465
@@ -68198,7 +68182,6 @@ MonoBehaviour:
   - {fileID: 1592706404}
   - {fileID: 996064827}
   hand: {fileID: 0}
-  laneGroupName: Collider_Lives
   player1Input: {fileID: 1532708944}
   player2Input: {fileID: 0}
   maxBullets: 5
@@ -69712,6 +69695,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1682059144}
   - component: {fileID: 1682059145}
+  - component: {fileID: 1682059146}
   m_Layer: 0
   m_Name: LoseConFruty
   m_TagString: LoseCon1
@@ -69755,6 +69739,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 15.255602, y: 1, z: 1}
   m_Center: {x: 0.03896594, y: 0, z: 0}
+--- !u!114 &1682059146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682059143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88042714204b55a479d54cb79d0df0b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerToLose: 0
 --- !u!1001 &1700083249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -73666,6 +73663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1909864603}
   - component: {fileID: 1909864604}
+  - component: {fileID: 1909864605}
   m_Layer: 0
   m_Name: LoseConPotato
   m_TagString: LoseCon
@@ -73709,6 +73707,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 15.255602, y: 1.9208479, z: 1}
   m_Center: {x: 0.03896618, y: 0.46042395, z: 3.508912e-15}
+--- !u!114 &1909864605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909864602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88042714204b55a479d54cb79d0df0b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerToLose: 1
 --- !u!1 &1911771436
 GameObject:
   m_ObjectHideFlags: 0

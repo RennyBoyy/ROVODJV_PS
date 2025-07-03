@@ -28,9 +28,6 @@ public class TutorialSceneController : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] private InputActionAsset inputActions;
 
-    [Header("Debug Options")]
-    [SerializeField] private bool singleControllerDebug = false;
-
     private InputAction[] confirmActions;
     private bool[] playerReady = new bool[2];
     private int currentTutorialIndex = 0;
@@ -56,7 +53,6 @@ public class TutorialSceneController : MonoBehaviour
         {
             currentTutorialIndex = sceneManager.SelectedLevel;
         }
-
         ShowTutorial();
         StartCoroutine(FadeInFromBlack());
     }
@@ -110,46 +106,21 @@ public class TutorialSceneController : MonoBehaviour
         }
     }
 
-    public void OnPlayerJoined(PlayerInput playerInput)
-    {
-        int index = playerInput.playerIndex;
-        PlayerIdentity identity = (PlayerIdentity)index;
-        Gamepad pad = playerInput.devices.Count > 0 ? playerInput.devices[0] as Gamepad : null;
-        PlayerManager.Instance.RegisterPlayer(index, pad, identity);
-
-        var confirmAction = playerInput.actions["Confirm"];
-        confirmAction.performed += ctx => OnPlayerConfirm(index);
-        confirmAction.Enable(); 
-           OnPlayerConfirm(index);
-           Input.GetJoystickNames();
-      
-    }
+   
 
     void Update()
     {
-        if (singleControllerDebug)
+       
+        if (confirmActions[0] == null || confirmActions[1] == null)
         {
-            if (Input.GetKeyDown(KeyCode.JoystickButton1))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                for (int i = 0; i < playerReady.Length; i++)
-                {
-                    if (!playerReady[i])
-                    {
-                        OnPlayerConfirm(i);
-                        return;
-                    }
-                }
-            }
-        }
-        else if (confirmActions[0] == null || confirmActions[1] == null)
-        {
-            if (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space))
-            {
+
                 OnPlayerConfirm(0);
                 PlayReadySound();
             }
 
-            if (Input.GetKeyDown(KeyCode.Joystick2Button1) || Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return))
             {
                 OnPlayerConfirm(1);
                 PlayReadySound();
@@ -230,7 +201,6 @@ public class TutorialSceneController : MonoBehaviour
     void OnPlayerConfirm(int playerIndex)
     {
         if (allPlayersReady || playerIndex >= playerReady.Length) return;
-
         playerReady[playerIndex] = true;
 
         UpdateReadyUI();

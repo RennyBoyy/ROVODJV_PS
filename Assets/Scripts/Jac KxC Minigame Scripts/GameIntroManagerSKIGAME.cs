@@ -615,10 +615,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     void EnableGameplay()
     {
         GameManager_Slope gameManager = FindFirstObjectByType<GameManager_Slope>();
-        if (gameManager != null)
-        {
-            gameManager.gameActive = true;
-        }
 
         EnablePlayerInput();
 
@@ -662,8 +658,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             Debug.Log("Gameplay UI panel deactivated at game end");
         }
 
-        // Teleport players to podiums and set up their animations
-        SetupPodiumCharacters(winningPlayer);
+       
 
         // Start the outro sequence with a small delay
         StartCoroutine(StartOutroSequence(winningPlayer));
@@ -680,7 +675,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             if (player == null) continue;
 
             // Determine if this player won or lost
-            // Note: winningPlayer parameter actually represents the LOSING player
             // 0 = P1 (Fruity) lost, so P2 (Potato) won
             // 1 = P2 (Potato) lost, so P1 (Fruity) won
             bool isWinner = (player.playerID == winningPlayer);
@@ -749,10 +743,10 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         SetupPodiumCharacters(winningPlayer);
         StartCheeringSequence();
         // Show the appropriate Win UI
-        if (winningPlayer == 0 && player2WinUI != null)
-            player2WinUI.SetActive(true);
-        else if (winningPlayer == 1 && player1WinUI != null)
+        if (winningPlayer == 0 && player1WinUI != null)
             player1WinUI.SetActive(true);
+        else if (winningPlayer == 1 && player2WinUI != null)
+            player2WinUI.SetActive(true);
 
         StartCoroutine(HandleEndgameOutro());
     }
