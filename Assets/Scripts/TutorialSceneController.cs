@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using TMPro;
 using System.Collections;
 
 [System.Serializable]
@@ -39,10 +38,15 @@ public class TutorialSceneController : MonoBehaviour
     private Image[] currentReadyImages = new Image[2];
     private MinigameUISet currentUISet;
 
+    [SerializeField] private AudioSource sfxSource;
+    [Range(0f, 1f)][SerializeField] private float sfxVolume = 1f;
+    [SerializeField] private AudioClip readySound;
+
     void Awake()
     {
         confirmActions = new InputAction[2];
         SetupInputActions();
+        ConfigureAudioSource(sfxSource, sfxVolume, false);
     }
 
     void Start()
@@ -55,6 +59,24 @@ public class TutorialSceneController : MonoBehaviour
 
         ShowTutorial();
         StartCoroutine(FadeInFromBlack());
+    }
+
+    private void ConfigureAudioSource(AudioSource source, float volume, bool loop)
+    {
+        if (source != null)
+        {
+            source.loop = loop;
+            source.playOnAwake = false;
+            source.volume = volume;
+        }
+    }
+
+    public void PlayReadySound()
+    {
+        if (sfxSource != null && readySound != null)
+        {
+            sfxSource.PlayOneShot(readySound);
+        }
     }
 
     void SetupInputActions()
@@ -124,11 +146,13 @@ public class TutorialSceneController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space))
             {
                 OnPlayerConfirm(0);
+                PlayReadySound();
             }
 
             if (Input.GetKeyDown(KeyCode.Joystick2Button1) || Input.GetKeyDown(KeyCode.Return))
             {
                 OnPlayerConfirm(1);
+                PlayReadySound();
             }
         }
     }
