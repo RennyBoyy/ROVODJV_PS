@@ -42,13 +42,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Clarity: 0.7
+    - _Clarity: 0.51
     - _Lighting_Cutoff: -0.17
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Scratch_Clarity: 0.7
     - _Shadow_Brightness: 1
-    - _Strength: 0.4
+    - _Strength: 0.16
     m_Colors:
     - _InnerColor: {r: 0.05306101, g: 0, b: 1, a: 1}
     - _OuterColor: {r: 0.111320674, g: 0.77050596, b: 1, a: 1}
