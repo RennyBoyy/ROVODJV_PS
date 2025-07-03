@@ -6,19 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class GameManager_Slope : MonoBehaviour
 {
-    public int Fruit_Remaining = 1;
-    public bool gameActive = false;
     [SerializeField] private TextMeshProUGUI loseText;
 
     [Header("Player Detection")]
-    [SerializeField] private PlayerController player1Controller;
-    [SerializeField] private PlayerController player2Controller;
     private int playersFinished = 0;
     private int firstPlayerID = -1;
     private Animator player1Animator;
     private Animator player2Animator;
 
-    private GameOverManager gameOverManager;
     private bool gameEnded = false;
 
     public bool IsGameDone { get; private set; }
@@ -26,7 +21,6 @@ public class GameManager_Slope : MonoBehaviour
 
     void Start()
     {
-        gameOverManager = GameOverManager.Instance;
        
     }
 
@@ -58,8 +52,8 @@ public class GameManager_Slope : MonoBehaviour
         if (playersFinished >= 2 && !gameEnded)
         {
             gameEnded = true;
-            int losingPlayerID = (firstPlayerID == 0) ? 1 : 0;
-            EndGame(losingPlayerID);
+            int winningPlayer = firstPlayerID;
+            EndGame(winningPlayer);
             if (player1Animator != null)
                 player1Animator?.ResetTrigger("Stop");
             if (player2Animator != null)
@@ -68,10 +62,6 @@ public class GameManager_Slope : MonoBehaviour
         }
     }
 
-
-
-
-    // Call this to end the game from a specific player (e.g., when a player falls off)
     public void EndGame(int winningPlayer)
     {
         Debug.Log($"[GameManager_Slope] Ending game. Winning Player: {winningPlayer}");

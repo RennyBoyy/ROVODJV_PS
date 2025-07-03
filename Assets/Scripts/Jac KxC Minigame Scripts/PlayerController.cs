@@ -10,11 +10,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator kittyAnimator;
     [SerializeField] private GameManager_Slope gameManagerSlope;
 
-    [Header("Gravity Scale")]
-    [Range(0.5f, 10f)]
-    [Tooltip("Multiplier on Unity’s default 9.81 m/s² gravity")]
-    [SerializeField] private float gravityScale = 2f;
-
     private float maxLeanAngle = 20f;
     private float leanSpeed = 5f;
 
@@ -55,8 +50,6 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
 
 
-    private int playersFinished = 0;
-    private int firstPlayerID = -1;
     private bool isGrounded;
     public bool moving;
     private float moveInput;

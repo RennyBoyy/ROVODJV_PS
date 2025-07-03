@@ -47,7 +47,6 @@ public class GameIntroManager : MonoBehaviour
     [SerializeField] private GameObject potatoNameUI;
     [SerializeField] private GameObject vsSplashUI;
     [SerializeField] private Transform vsSplashPoint;
-    [SerializeField] private float splashDisplayDuration = 1.5f;
     [Space(30)]
     [SerializeField] private GameObject countdownCanvas;
     [SerializeField] private TextMeshProUGUI countdownText;
@@ -91,7 +90,6 @@ public class GameIntroManager : MonoBehaviour
     private PlayerScript[] playerScripts;
     private bool gameEnded = false;
     private bool introSkipped = false;
-    private bool playerInputDisabled = false;
 
 
 
@@ -582,7 +580,6 @@ public class GameIntroManager : MonoBehaviour
     void DisablePlayerInput()
     {
         Debug.Log("Disabling player input during camera animation");
-        playerInputDisabled = true;
         foreach (var player in playerScripts)
         {
             if (player != null)
@@ -596,7 +593,6 @@ public class GameIntroManager : MonoBehaviour
     void EnablePlayerInput()
     {
         Debug.Log("Enabling player input for countdown phase");
-        playerInputDisabled = false;
         foreach (var player in playerScripts)
         {
             if (player != null)
@@ -675,37 +671,25 @@ public class GameIntroManager : MonoBehaviour
     private void SetupPodiumCharacters(int winningPlayer)
     {
         var players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
-        
-        for (int i = 0; i < players.Length; i++)
+
+        foreach (var player in players)
         {
-            PlayerScript player = players[i];
             if (player == null) continue;
 
-            // Determine if this player won or lost
-            // Note: winningPlayer parameter actually represents the LOSING player
-            // 0 = P1 (Fruity) lost, so P2 (Potato) won
-            // 1 = P2 (Potato) lost, so P1 (Fruity) won
             bool isWinner = false;
-            if (winningPlayer == 0 && i == 1) // P2 (Potato) won because P1 lost
+
+            if ((winningPlayer == 0 && player.PlayerType == PlayerIdentity.Potato) ||
+                (winningPlayer == 1 && player.PlayerType == PlayerIdentity.Fruity))
             {
                 isWinner = true;
                 player.transform.position = podium1stPlace.position;
             }
-            else if (winningPlayer == 1 && i == 0) // P1 (Fruity) won because P2 lost
+            else
             {
-                isWinner = true;
-                player.transform.position = podium1stPlace.position;
-            }
-            else // This player lost
-            {
-                isWinner = false;
                 player.transform.position = podium2ndPlace.position;
             }
 
-            // Make characters face the camera (screen)
             FaceCharacterToCamera(player);
-
-            // Play victory or defeat animation
             string animationTrigger = isWinner ? "Victory" : "Defeat";
             player.PlayIntroTargetAnimation(animationTrigger);
         }
@@ -747,10 +731,10 @@ public class GameIntroManager : MonoBehaviour
         }
         
         // Show Win UI after camera has moved to podium
-        if (winningPlayer == 0 && player2WinUI != null) // P2 won
-            player2WinUI.SetActive(true);
-        else if (winningPlayer == 1 && player1WinUI != null) // P1 won
+        if (winningPlayer == 0 && player1WinUI != null) // P2 won
             player1WinUI.SetActive(true);
+        else if (winningPlayer == 1 && player2WinUI != null) // P1 won
+            player2WinUI.SetActive(true);
         
         // Start the endgame outro handling
         StartCoroutine(HandleEndgameOutro());

@@ -153,38 +153,28 @@ public class MonsterBad : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Don't process triggers if dying
         if (isDying) return;
 
         if (other.CompareTag("Tomato"))
         {
-            // Monster takes damage on Tomato hit
             monsterHealth--;
             Debug.Log("Monster hit by Tomato! Health now: " + monsterHealth);
         }
         else if (other.CompareTag("Lives") && !isEating)
         {
-            // Found a life. Stop to eat it:
             isEating = true;
             eatingTimer = 0f;
             targetLife = other.gameObject;
             _anim.SetBool("MonchTime", true);
-            Debug.Log("Monster found food, stopping to eat.");
-
-            // Play eating sound when starting to eat
             FruityGameConfigurator.Instance?.PlayScarecrowEatingSound();
         }
-        else if (other.CompareTag("LoseCon"))
+        else if (other.TryGetComponent<LoseTrigger>(out var loseTrigger))
         {
-            // Monster reached the "lose" trigger for player1
             if (gameManager != null)
-                gameManager.EndGame(0); // 0 = player1 lost
-        }
-        else if (other.CompareTag("LoseCon1"))
-        {
-            // Monster reached the "lose" trigger for player2
-            if (gameManager != null)
-                gameManager.EndGame(1); // 1 = player2 lost
+            {
+                int losingPlayer = loseTrigger.playerToLose == PlayerIdentity.Fruity ? 0 : 1;
+                gameManager.EndGame(losingPlayer);
+            }
         }
     }
 }

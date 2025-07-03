@@ -12,7 +12,6 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform[] lanePoints;
     [SerializeField] private Transform hand;
-    [SerializeField] private string laneGroupName = "Collliders_Lives";
     public PlayerInput player1Input;
     public PlayerInput player2Input;
     public int maxBullets = 5;
