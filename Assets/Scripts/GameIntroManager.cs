@@ -649,7 +649,8 @@ public class GameIntroManager : MonoBehaviour
     public void OnGameEnd(int winningPlayer)
     {
         gameEnded = true;
-        
+
+        FruityGameConfigurator.Instance?.PlayLoseSound();
         // Disable player input during outro
         DisablePlayerInput();
 

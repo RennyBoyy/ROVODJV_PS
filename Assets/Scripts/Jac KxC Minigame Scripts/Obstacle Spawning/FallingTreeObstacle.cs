@@ -140,7 +140,7 @@ public class FallingTreeObstacle : MonoBehaviour
     {
         if (hasHitGround || !hasTriggered) return;
 
-        if (collision.gameObject.CompareTag("Slope") || collision.gameObject.name.ToLower().Contains("ground"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Terrain"))
         {
             hasHitGround = true;
 

@@ -163,11 +163,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e83e0453ed371f4a8ee9a23cf8cf359, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e83e0453ed371f4a8ee9a23cf8cf359, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e83e0453ed371f4a8ee9a23cf8cf359, type: 3}
       propertyPath: m_LocalRotation.y
@@ -179,7 +179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e83e0453ed371f4a8ee9a23cf8cf359, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e83e0453ed371f4a8ee9a23cf8cf359, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3e7148aa720bf4889ed927ea4751c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPosition: {x: 250, y: 400, z: 0}
+  startPosition: {x: 350, y: 400, z: 0}
   fallDirection: -1
   leftEndPosition: {x: -30, y: 5, z: 0}
   rightEndPosition: {x: 30, y: 5, z: 0}

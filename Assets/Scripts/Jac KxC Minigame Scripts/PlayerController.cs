@@ -272,6 +272,7 @@ public class PlayerController : MonoBehaviour
         m_Rigidbody.linearVelocity = Vector3.zero;
         m_Rigidbody.angularVelocity = Vector3.zero;
         m_Rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+        transform.rotation = Quaternion.identity;
 
         Debug.Log($"[PlayerController] Player {playerID} hit LoseCon.");
 

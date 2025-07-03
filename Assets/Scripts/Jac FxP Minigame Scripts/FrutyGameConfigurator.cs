@@ -66,7 +66,6 @@ public class FruityGameConfigurator : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             InitializeAudioSources();
         }
         else

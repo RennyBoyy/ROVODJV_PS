@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class SkiGameConfigurator : MonoBehaviour
@@ -71,7 +70,6 @@ public class SkiGameConfigurator : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             InitializeAudioSources();
         }
         else

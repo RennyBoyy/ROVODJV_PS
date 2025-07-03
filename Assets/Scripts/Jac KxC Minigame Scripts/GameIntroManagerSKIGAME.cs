@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -426,7 +427,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         EnableGameplay();
 
 
-        yield return StartCoroutine(PlayCountdown());
+        //yield return StartCoroutine(PlayCountdown());
 
        
         introComplete = true;
@@ -537,7 +538,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
                            Color.white;
         countdownText.color = targetColor;
 
-        FruityGameConfigurator.Instance?.PlayCountdownNumberSound();
+        SkiGameConfigurator.Instance?.PlayCountdownNumberSound();
 
         yield return StartCoroutine(AnimateCountdownElement(countdownDuration));
     }
@@ -550,7 +551,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         countdownText.text = goText;
         countdownText.color = goColor;
 
-        FruityGameConfigurator.Instance?.PlayCountdownGoSound();
+        SkiGameConfigurator.Instance?.PlayCountdownGoSound();
 
         yield return StartCoroutine(AnimateCountdownElement(goDuration));
     }
@@ -618,6 +619,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
         EnablePlayerInput();
 
+
         
 
         if (gameplayUIPanel != null)
@@ -647,6 +649,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     public void OnGameEnd(int winningPlayer)
     {
         gameEnded = true;
+        FruityGameConfigurator.Instance?.PlayLoseSound();
 
         // Disable player input during outro
         DisablePlayerInput();
