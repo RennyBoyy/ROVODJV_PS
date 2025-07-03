@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections;
 using TMPro;
-using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [System.Serializable]
 
@@ -87,6 +88,21 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     private bool introSkipped = false;
     private bool playerInputDisabled = false;
 
+
+    [SerializeField] private GameObject retryButtonHighlight;
+    [SerializeField] private GameObject planetButtonHighlight;
+    [SerializeField] private string currentSceneName = "GameScene";
+    [SerializeField] private string planetSceneName = "PlanetScene";
+    [SerializeField] private KeyCode selectKey = KeyCode.Space;
+    [SerializeField] private KeyCode upKey = KeyCode.W;
+    [SerializeField] private KeyCode downKey = KeyCode.S;
+
+
+
+    private int currentEndgameSelection = 0; // 0 = Retry, 1 = Planet
+    private bool endgameUIActive = false;
+    private bool endgameInputEnabled = false;
+
     void Start()
     {
         if (gameplayUIPanel != null)
@@ -135,7 +151,127 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             }
         }
 
+        if (endgameUIActive && endgameInputEnabled)
+        {
+            HandleEndgameUIInput();
+        }
+
     }
+
+    // === ENDGAME BULLSHIT UI===
+
+    private void InitializeEndgameUI()
+    {
+        if (retryButtonHighlight != null)
+            retryButtonHighlight.SetActive(false);
+        if (planetButtonHighlight != null)
+            planetButtonHighlight.SetActive(false);
+    }
+
+    private void HandleEndgameUIInput()
+    {
+        bool upPressed = Input.GetKeyDown(upKey) ||
+                        (Gamepad.current != null && Gamepad.current.dpad.up.wasPressedThisFrame) ||
+                        (Gamepad.current != null && Gamepad.current.leftStick.ReadValue().y > 0.5f);
+
+        bool downPressed = Input.GetKeyDown(downKey) ||
+                          (Gamepad.current != null && Gamepad.current.dpad.down.wasPressedThisFrame) ||
+                          (Gamepad.current != null && Gamepad.current.leftStick.ReadValue().y < -0.5f);
+
+        if (upPressed)
+        {
+            NavigateEndgameUp();
+        }
+        else if (downPressed)
+        {
+            NavigateEndgameDown();
+        }
+
+        if (Input.GetKeyDown(selectKey) ||
+            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
+        {
+            SelectCurrentEndgameOption();
+        }
+    }
+
+    private void NavigateEndgameUp()
+    {
+        currentEndgameSelection = (currentEndgameSelection - 1 + 2) % 2;
+        UpdateEndgameSelectionDisplay();
+    }
+
+    private void NavigateEndgameDown()
+    {
+        currentEndgameSelection = (currentEndgameSelection + 1) % 2;
+        UpdateEndgameSelectionDisplay();
+    }
+
+    private void UpdateEndgameSelectionDisplay()
+    {
+        if (retryButtonHighlight != null)
+            retryButtonHighlight.SetActive(currentEndgameSelection == 0);
+
+        if (planetButtonHighlight != null)
+            planetButtonHighlight.SetActive(currentEndgameSelection == 1);
+    }
+
+    private void SelectCurrentEndgameOption()
+    {
+
+        switch (currentEndgameSelection)
+        {
+            case 0:
+                RetryGame();
+                break;
+            case 1:
+                GoToPlanet();
+                break;
+        }
+    }
+
+    private void RetryGame()
+    {
+        endgameInputEnabled = false;
+
+        if (!string.IsNullOrEmpty(currentSceneName))
+        {
+            SceneManager.LoadScene(currentSceneName);
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+    }
+
+    private void GoToPlanet()
+    {
+        endgameInputEnabled = false;
+
+        if (!string.IsNullOrEmpty(planetSceneName))
+        {
+            SceneManager.LoadScene(planetSceneName);
+        }
+    }
+
+    private void ShowEndgameUI()
+    {
+        endgameUIActive = true;
+        currentEndgameSelection = 0;
+        UpdateEndgameSelectionDisplay();
+        endgameInputEnabled = true;
+    }
+
+    public void SetCurrentSceneName(string sceneName)
+    {
+        currentSceneName = sceneName;
+    }
+
+    public void SetPlanetSceneName(string sceneName)
+    {
+        planetSceneName = sceneName;
+    }
+
+
     void StartCheeringSequence()
     {
         foreach (var animator in bystanderAnimators)
@@ -651,6 +787,8 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     {
         yield return new WaitForSeconds(endgameDelay);
         // Endgame UI is now visible, input is handled in Update()
+
+        ShowEndgameUI();
     }
 
     public void SkipIntro()

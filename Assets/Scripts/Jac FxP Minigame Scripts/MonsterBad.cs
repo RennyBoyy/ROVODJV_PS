@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using TMPro;
-using UnityEditor.TerrainTools;
 
 public class MonsterBad : MonoBehaviour
 {
