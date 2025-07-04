@@ -19,11 +19,6 @@ public class GameManager_Slope : MonoBehaviour
     public bool IsGameDone { get; private set; }
     public int WinningPlayer { get; private set; }
 
-    void Start()
-    {
-       
-    }
-
     
     public void restartGame()
     {

@@ -6537,6 +6537,11 @@ MonoBehaviour:
   playerID: 0
   minigameManager: {fileID: 0}
   playerIdentity: 0
+  playerAmmoPickups:
+  - {fileID: 661435503}
+  - {fileID: 1323389512}
+  pulseDuration: 0.5
+  tooltipSound: {fileID: 0}
 --- !u!1001 &37848815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11459,8 +11464,9 @@ MonoBehaviour:
   - {fileID: 1452316139}
   - {fileID: 115483848}
   - {fileID: 1947275827}
-  fillRate: 0.5
+  fillRate: 0.8
   respawnDelay: 3
+  outlineMaterialIndex: 1
 --- !u!1 &340124007
 GameObject:
   m_ObjectHideFlags: 0
@@ -36438,8 +36444,9 @@ MonoBehaviour:
   - {fileID: 30309859}
   - {fileID: 1900101839}
   - {fileID: 1155900955}
-  fillRate: 0.5
+  fillRate: 0.8
   respawnDelay: 3
+  outlineMaterialIndex: 2
 --- !u!1001 &663549783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37056,9 +37063,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 63084ceaeb4f074479d0ff857803bc27, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
     - target: {fileID: 919132149155446097, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
       propertyPath: m_Name
       value: Basket
@@ -37138,9 +37153,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 63084ceaeb4f074479d0ff857803bc27, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
     - target: {fileID: 919132149155446097, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
       propertyPath: m_Name
       value: Basket
@@ -47349,8 +47372,9 @@ MonoBehaviour:
   - {fileID: 2075616889}
   - {fileID: 166128476}
   - {fileID: 45794079}
-  fillRate: 0.5
+  fillRate: 0.8
   respawnDelay: 3
+  outlineMaterialIndex: 1
 --- !u!1 &998892698
 GameObject:
   m_ObjectHideFlags: 0
@@ -53949,9 +53973,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 63084ceaeb4f074479d0ff857803bc27, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
     - target: {fileID: 919132149155446097, guid: 38e36d0097c4dd746ad2c68d8d004109, type: 3}
       propertyPath: m_Name
       value: Basket
@@ -59000,8 +59032,9 @@ MonoBehaviour:
   - {fileID: 933473911}
   - {fileID: 1061742718}
   - {fileID: 817379108}
-  fillRate: 0.5
+  fillRate: 0.8
   respawnDelay: 3
+  outlineMaterialIndex: 2
 --- !u!1001 &1326009244
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62599,6 +62632,11 @@ MonoBehaviour:
   playerID: 1
   minigameManager: {fileID: 0}
   playerIdentity: 1
+  playerAmmoPickups:
+  - {fileID: 338140472}
+  - {fileID: 996064829}
+  pulseDuration: 0.5
+  tooltipSound: {fileID: 0}
 --- !u!1001 &1448205465
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -67410,6 +67448,9 @@ MonoBehaviour:
   playerID: 0
   minigameManager: {fileID: 0}
   playerIdentity: 0
+  playerAmmoPickups: []
+  pulseDuration: 0.5
+  tooltipSound: {fileID: 0}
 --- !u!95 &1588593916
 Animator:
   serializedVersion: 7
@@ -81438,6 +81479,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1668647502}
     m_Modifications:
+    - target: {fileID: 2551462811847617000, guid: ea02a0e462e7351449cf3df0be33349a, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2551462811847617000, guid: ea02a0e462e7351449cf3df0be33349a, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdfc53160b1a3a8408743ee70ea7bf69, type: 2}
     - target: {fileID: 3684983757314724487, guid: ea02a0e462e7351449cf3df0be33349a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.06000024

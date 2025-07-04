@@ -76,8 +76,6 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
     [SerializeField] private GameObject skipIntroTooltipPanel;
     [SerializeField] private Animator[] kittyAnimators;
 
-
-
     private Vector3 originalCameraPosition;
     private Quaternion originalCameraRotation;
     private RectTransform countdownRectTransform;
@@ -270,6 +268,10 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         planetSceneName = sceneName;
     }
 
+    public bool WasIntroSkipped()
+    {
+        return introSkipped;
+    }
 
     void StartCheeringSequence()
     {
@@ -427,9 +429,9 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         EnableGameplay();
 
 
-        //yield return StartCoroutine(PlayCountdown());
+        yield return StartCoroutine(PlayCountdown());
 
-       
+
         introComplete = true;
     }
 
@@ -606,7 +608,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             {
                 foreach (var animator in kittyAnimators)
                 {
-                    animator?.SetTrigger("Start");  
+                    animator?.SetTrigger("Start");
                 }
             }
         }
@@ -620,7 +622,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
         EnablePlayerInput();
 
 
-        
+
 
         if (gameplayUIPanel != null)
         {
@@ -633,7 +635,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
 
 
 
-    
+
 
     public bool IsIntroComplete()
     {
@@ -661,7 +663,7 @@ public class GameIntroManagerSKIGAME : MonoBehaviour
             Debug.Log("Gameplay UI panel deactivated at game end");
         }
 
-       
+
 
         // Start the outro sequence with a small delay
         StartCoroutine(StartOutroSequence(winningPlayer));

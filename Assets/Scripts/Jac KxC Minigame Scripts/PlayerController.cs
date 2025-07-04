@@ -47,9 +47,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerIdentity playerIdentity;
     public PlayerIdentity PlayerType => playerIdentity;
 
+    [Header("Rough Terrain Tutorial Thing")]
+    [SerializeField] private GameObject roughTerrainTooltip;
+    [SerializeField] private float tooltipDisplayDuration = 3f;
+    [SerializeField] private AudioClip tooltipSound;
+    private bool hasShownRoughTerrainTooltip = false;
+
     private PlayerInput playerInput;
-
-
     private bool isGrounded;
     public bool moving;
     private float moveInput;
@@ -69,30 +73,36 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        
-            m_Rigidbody = GetComponent<Rigidbody>();
-            gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
 
-            
+        m_Rigidbody = GetComponent<Rigidbody>();
+        gameManagerSlope = FindFirstObjectByType<GameManager_Slope>();
 
-            // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
-            // strengthen Unity gravity uniformly:
-            //Physics.gravity = new Vector3(0f, -9.81f * 25, 0f); // if different scenes require different gravity, this could work (but not in a player controller!)
 
-            // lock all physics-driven rotation
-            m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-            cameraShake.AmplitudeGain = 0f;
-            isGrounded = true;
+        // (If you want to use the Gamepad for custom input, you can use 'pad' here)
 
-       /* int index = playerInput.playerIndex;
+        // strengthen Unity gravity uniformly:
+        //Physics.gravity = new Vector3(0f, -9.81f * 25, 0f); // if different scenes require different gravity, this could work (but not in a player controller!)
 
-        if (index == 0)
-            playerInput.SwitchCurrentActionMap("Player");
-        else if (index == 1)
-            playerInput.SwitchCurrentActionMap("Player2");
+        // lock all physics-driven rotation
+        m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        cameraShake.AmplitudeGain = 0f;
+        isGrounded = true;
 
-        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
+        // Initialize tooltip state
+        if (roughTerrainTooltip != null)
+        {
+            roughTerrainTooltip.SetActive(false);
+        }
+
+        /* int index = playerInput.playerIndex;
+
+         if (index == 0)
+             playerInput.SwitchCurrentActionMap("Player");
+         else if (index == 1)
+             playerInput.SwitchCurrentActionMap("Player2");
+
+         Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
 
     }
 
@@ -195,8 +205,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-            if (ctx.performed && isGrounded && moving)
-                jumpBufferCounter = jumpBufferTime;
+        if (ctx.performed && isGrounded && moving)
+            jumpBufferCounter = jumpBufferTime;
     }
 
     public void startMoving()
@@ -235,22 +245,48 @@ public class PlayerController : MonoBehaviour
             SkiGameConfigurator.Instance?.PlayObstacleHitSound(playerID == 1);
             Destroy(col.gameObject);
             StartCoroutine(CollisionRecovery());
-         
+
 
         }
 
         if (col.gameObject.CompareTag("RoughTerrain"))
-
         {
             maxSpeed = 60;
+
+            ShowRoughTerrainTooltipIfNeeded();
         }
-
-
     }
 
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("RoughTerrain")) maxSpeed = 100;
+    }
+
+    private void ShowRoughTerrainTooltipIfNeeded()
+    {
+        if (hasShownRoughTerrainTooltip) return;
+
+        GameIntroManagerSKIGAME introManager = GameIntroManagerSKIGAME.Instance;
+        if (introManager != null && introManager.WasIntroSkipped()) return;
+
+        if (roughTerrainTooltip == null) return;
+
+        hasShownRoughTerrainTooltip = true;
+        StartCoroutine(DisplayRoughTerrainTooltip());
+    }
+
+    private IEnumerator DisplayRoughTerrainTooltip()
+    {
+        roughTerrainTooltip.SetActive(true);
+
+        if (tooltipSound != null)
+        {
+            SkiGameConfigurator.Instance?.PlaySFX(tooltipSound);
+        }
+
+        yield return new WaitForSeconds(tooltipDisplayDuration);
+
+        roughTerrainTooltip.SetActive(false);
     }
 
     private IEnumerator CollisionRecovery()
