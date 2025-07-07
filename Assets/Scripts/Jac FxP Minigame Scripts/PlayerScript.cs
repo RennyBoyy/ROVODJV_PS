@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-// Used for modular intro/target animation assignment in minigames
-
-
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private GameObject projectile;
@@ -15,6 +12,13 @@ public class PlayerScript : MonoBehaviour
     public PlayerInput player1Input;
     public PlayerInput player2Input;
     public int maxBullets = 5;
+
+    [Header("Reload Points")]
+    [SerializeField] private ApplePickup[] reloadPoints = new ApplePickup[2];
+
+    [Header("Ammo UI Background")]
+    [SerializeField] private Image normalAmmoBackgroundUI;
+    [SerializeField] private Image emptyAmmoBackgroundUI;
 
     public int bullets;
     private int currentLane = 3;
@@ -43,25 +47,13 @@ public class PlayerScript : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        /*playerID = playerInput.playerIndex;
-        playerIdentity = (PlayerIdentity)playerID;
-
-        Debug.Log($"[PlayerController] Player {playerID} using device: {playerInput.devices[0].displayName}");*/
     }
+
     private void Start()
     {
         bullets = maxBullets;
         minigameManager = FindFirstObjectByType<GameManager_Fruity>();
         animator = GetComponent<Animator>();
-
-        /*int index = playerInput.playerIndex;
-
-        if (index == 0)
-            playerInput.SwitchCurrentActionMap("Player");
-        else if (index == 1)
-            playerInput.SwitchCurrentActionMap("Player2");
-
-        Debug.Log($"Player {index} using map: {playerInput.currentActionMap.name}");*/
 
         UpdateAmmoUI();
     }
@@ -200,6 +192,24 @@ public class PlayerScript : MonoBehaviour
             minigameManager.UpdateP1AmmoUI(bullets);
         else
             minigameManager.UpdateP2AmmoUI(bullets);
+
+        UpdateAmmoBackgroundUI();
+    }
+
+    private void UpdateAmmoBackgroundUI()
+    {
+        if (normalAmmoBackgroundUI == null || emptyAmmoBackgroundUI == null) return;
+
+        if (bullets <= 0)
+        {
+            normalAmmoBackgroundUI.gameObject.SetActive(false);
+            emptyAmmoBackgroundUI.gameObject.SetActive(true);
+        }
+        else
+        {
+            normalAmmoBackgroundUI.gameObject.SetActive(true);
+            emptyAmmoBackgroundUI.gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator MoveLock()
@@ -207,8 +217,6 @@ public class PlayerScript : MonoBehaviour
         yield return new WaitForSeconds(laneMoveDuration);
         canMove = true;
     }
-
-  
 
     public void ReloadAmmo(int amount)
     {
@@ -241,18 +249,12 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Plays an intro/target animation by trigger name (for use in intro cinematics, etc).
-    /// </summary>
     public void PlayIntroTargetAnimation(string triggerName)
     {
         if (animator != null && !string.IsNullOrEmpty(triggerName))
             animator.SetTrigger(triggerName);
     }
 
-    /// <summary>
-    /// Resets an intro/target animation trigger (call at end of intro to return to default state).
-    /// </summary>
     public void ResetIntroTargetAnimation(string triggerName)
     {
         if (animator != null && !string.IsNullOrEmpty(triggerName))
